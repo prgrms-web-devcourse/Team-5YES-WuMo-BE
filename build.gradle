@@ -47,6 +47,9 @@ dependencies {
     //MySQL
     runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'org.testcontainers:mysql'
+
+    //Swagger
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
 }
 
 dependencyManagement {

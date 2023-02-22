@@ -6,3 +6,17 @@ spring:
         - prod
       local:
         - local
+
+springdoc:
+  version: v1.0.0
+  packages-to-scan: org.prgrms.wumo
+  swagger-ui:
+    path: /wumo-ui
+    tags-sorter: method
+    operations-sorter: method
+  api-docs:
+    path: /wumo
+    groups.enabled: true
+  cache.disabled: true
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
