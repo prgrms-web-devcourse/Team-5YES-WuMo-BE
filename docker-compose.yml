@@ -1,0 +1,12 @@
+version: "3"
+services:
+  db:
+    container_name: wumo-db
+    image: mysql
+    env_file:
+      - db.env
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysqldata:/var/lib/mysql
+    restart: always
