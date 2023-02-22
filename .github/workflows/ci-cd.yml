@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  DEPLOY_ZIP_FILE: wumo-deploy.zip
+  S3_DEPLOY_BUCKET: wumo-bucket
+  DEPLOY_GROUP_NAME: wumo-prod
+  DEPLOY_APPLICATION_NAME: wumo-deploy
+
 permissions:
   contents: read
 
@@ -26,7 +32,6 @@ jobs:
         run: |
           echo "${{ secrets.DB_ENV }}" >> db.env
           echo "${{ secrets.SPRING_ENV }}" >> spring.env
-
       - name: Run docker-compose
         uses: isbang/compose-action@v1.4.1
         with:
@@ -37,3 +42,22 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew clean build
+
+      - name: Make zip file
+        run: sudo zip -qq -r ./$DEPLOY_ZIP_FILE .
+
+      - name: Setting for AWS
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./$DEPLOY_ZIP_FILE s3://$S3_DEPLOY_BUCKET/build.zip
+
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name $DEPLOY_APPLICATION_NAME
+          --deployment-config-name CodeDeployDefault.AllAtOnce
+          --deployment-group-name $DEPLOY_GROUP_NAME
+          --s3-location bucket=$S3_DEPLOY_BUCKET,bundleType=zip,key=build.zip
