@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.prgrms.wumo.global.audit.BaseTimeEntity;
 
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseTimeEntity {
 
