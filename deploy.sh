@@ -5,7 +5,7 @@ APP_NAME=wumo
 JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep '.jar' | tail -n 1)
 JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
 
-cp /home/ec2-user/env/spring.env $REPOSITORY/build/libs/spring.env
+cp /home/ec2-user/env/spring.env $REPOSITORY/spring.env
 
 CURRENT_PID=$(pgrep -f $APP_NAME)
 
