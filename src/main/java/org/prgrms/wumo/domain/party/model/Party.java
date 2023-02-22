@@ -7,7 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
+import org.prgrms.wumo.global.audit.BaseTimeEntity;
 import org.springframework.util.Assert;
 
 import lombok.AccessLevel;
@@ -17,8 +19,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Table(name = "party")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Party {
+public class Party extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

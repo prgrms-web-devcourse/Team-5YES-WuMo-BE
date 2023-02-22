@@ -7,8 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import org.prgrms.wumo.domain.member.model.Member;
+import org.prgrms.wumo.global.audit.BaseTimeEntity;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,8 +19,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Table(name = "party_member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PartyMember {
+public class PartyMember extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
