@@ -18,7 +18,10 @@
 
 ---
 
+<br/>
+
 ## 🏝 프로젝트 소개
+
 
 <img src="https://user-images.githubusercontent.com/39071638/220715210-18e29cdc-b12e-470a-8e11-ed2122091e15.png" width="100%"/>
 
@@ -29,6 +32,7 @@
  
 ---
 
+<br/>
 
 ## 🍡 서비스 소개
 ```
@@ -54,6 +58,8 @@
 
 그렇다면 모임, 여행을 빠르게 계획하고 완성해가며 추억을 기록할 도구가 있다면 어떨까요?
 
+<br/>
+
 ## 🍭 기능 간단 소개
 
 - 이메일 이용 회원 가입
@@ -65,6 +71,8 @@
 - 다른 공유된 일정 참고
 
 ---
+
+<br/>
 
 ## 🍉 프로젝트 관련 문서
 
@@ -79,6 +87,8 @@
 - ### 🍑 [트러블 슈팅](https://backend-devcourse.notion.site/e9edda393f1c4a8e813ff461a0191f36)
 
 ---
+
+<br/>
 
 ## 👪 팀 소개
 
@@ -139,17 +149,19 @@
 
 <br/>
 
-<h2 align="center"> 📕📗 기술 스택 📘📙 </>
+<h2 align="center"> 📕📗 기술 스택 📘📙 </h2>
 
-<h3 align="center"> 🛠 개발 / 테스트 👩‍🔬 </>
+
+<h3 align="center"> 🛠 개발 / 테스트 👩‍🔬 </h3>
 
 
 <p align="center">
 <img src="https://img.shields.io/badge/Java 17-008FC7?style=flat-square&logo=Java&logoColor=white"/></img>
 <img src="https://img.shields.io/badge/Gradle-02303A?style=flat-square&logo=Gradle&logoColor=white"/></img>
-<img src="https://img.shields.io/badge/IntelliJ IDEA-000000.svg?style=flat-square&logo=IntelliJ IDEA&logoColor=white"/>
+<img src="https://img.shields.io/badge/IntelliJ IDEA-000000.svg?style=flat-square&logo=IntelliJ IDEA&logoColor=white"/></img>
+</p>
 
-
+<p align="center">
 <img src="https://img.shields.io/badge/Spring-58CC02?style=flat-square&logo=Spring&logoColor=white"/></img>
 <img src="https://img.shields.io/badge/Spring Boot 2.7.8-6DB33F?style=flat-square&logo=Spring Boot&logoColor=white"/></img>
 <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat-square&logo=Spring Security&logoColor=white"/></img>
@@ -161,14 +173,16 @@
 <img src="https://img.shields.io/badge/TestContainers-01334B?style=flat-square&logo=TestContainers&logoColor=white"/></img>
 </p>
 
-<h3 align="center"> 🎶 DB 🎶 </>
+<h3 align="center"> 🎶 DB 🎶 </h3>
+
 
 <p align="center">
 <img src="https://img.shields.io/badge/MySQL 8.0-4479A1?style=flat-square&logo=MySQL&logoColor=white"/></img>
 <img src="https://img.shields.io/badge/Flyway-CC0200?style=flat-square&logo=Flyway&logoColor=white"/></img>
 </p>
 
-<h3 align="center"> 🍱 CI / CD 🍱 </>
+<h3 align="center"> 🍱 CI / CD 🍱 </h3>
+
 <p align="center">
 
 <img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=flat-square&logo=GitHub Actions&logoColor=white"/>
@@ -181,7 +195,8 @@
 
 </p>
 
-<h3 align="center"> ✏️ 문서 / 협업 👨‍💻 </>
+<h3 align="center"> ✏️ 문서 / 협업 👨‍💻 </h3>
+
 <p align="center">
 <img src="https://img.shields.io/badge/Swagger-85EA2D?style=flat-square&logo=Swagger&logoColor=white"/>
 <img src="https://img.shields.io/badge/Notion-000000?style=flat-square&logo=Notion&logoColor=white"/>
@@ -192,9 +207,8 @@
 <img src="https://img.shields.io/badge/Salck-4A154B?style=flat-square&logo=Slack&logoColor=white"/>
 <img src="https://img.shields.io/badge/Postman-FF6C37.svg?style=flat-square&logo=Postman&logoColor=white"/>
 
-
 </p>
-<br/>
+
 
 ---
 
@@ -205,7 +219,7 @@
 ![image](https://user-images.githubusercontent.com/39071638/220716506-45c91c7d-b6c0-4069-9803-7abb91c49523.png)
 
 
-🔗[ERD 보러가기](https://www.erdcloud.com/d/c3RbJe8yM3hncaMRh)
+🔗[ERD 보러가기](https://www.erdcloud.com/d/c3RbJe8yM3hncaMRh)
 
 
 ---
