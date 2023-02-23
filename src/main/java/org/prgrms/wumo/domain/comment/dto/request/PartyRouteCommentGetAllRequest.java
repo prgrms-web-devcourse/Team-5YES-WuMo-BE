@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-@Schema(name = "비공개 루트 댓글 전체 조회 요청 정보")
-public record PrivateRouteCommentGetAllRequest(
+@Schema(name = "모임 내 루트 댓글 전체 조회 요청 정보")
+public record PartyRouteCommentGetAllRequest(
 
 		@Schema(description = "커서 아이디", example = "0", required = false)
 		Long cursorId,

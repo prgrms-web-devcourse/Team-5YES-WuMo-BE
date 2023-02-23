@@ -30,9 +30,9 @@ public class LocationComment extends Comment {
 	private PartyMember partyMember;
 
 	//@Builder
-	public LocationComment(Long id, Member member, String content, ContentType contentType, Long locationId,
+	public LocationComment(Long id, Member member, String content, String image, Long locationId,
 		PartyMember partyMember, boolean isEdited) {
-		super(id, member, content, contentType, isEdited);
+		super(id, member, content, image, isEdited);
 		this.locationId = locationId;
 		this.partyMember = partyMember;
 	}

@@ -1,27 +1,36 @@
 package org.prgrms.wumo.domain.comment.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
-import org.prgrms.wumo.domain.comment.model.ContentType;
 
-@Schema(name = "비공개 루트 댓글 생성 요청")
-public record PrivateRouteCommentRegisterRequest(
+@Schema(name = "모임 내 루트 댓글 생성 요청")
+public record PartyRouteCommentRegisterRequest(
 
 		@NotNull(message = "댓글 성성 요청자의 id는 필수 입력값입니다")
 		@Schema(description = "댓글 생성 요청자 id", example = "1", required = true)
 		Long memberId,
 
-		@NotEmpty(message = "댓글의 내용은 공백일 수 없습니다.")
 		@Schema(description = "댓글 내용", example = "댓글", required = true)
 		String content,
 
-		@NotNull(message = "댓글 내용의 타입은 필수 입력값입니다.")
-		@Schema(description = "댓글 내용 형식", example = "TEXT", required = true)
-		ContentType contentType,
+		@Schema(description = "댓글 사진 링크", example = "http://", required = true)
+		String image,
 
 		@NotNull(message = "댓글이 쓰여지는 경로의 id는 필수 입력값입니다.")
 		@Schema(description = "루트 id", example = "1", required = true)
 		Long routeId
 ) {
+	public PartyRouteCommentRegisterRequest(
+			Long memberId, String content, String image, Long routeId
+	) {
+		if (content.isEmpty() && image.isEmpty()) {
+			throw new ValidationException("");
+		}
+
+		this.memberId = memberId;
+		this.content = content;
+		this.image = image;
+		this.routeId = routeId;
+	}
 }
