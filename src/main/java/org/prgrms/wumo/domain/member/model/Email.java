@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 public class Email {
 
-	private static final String EMAIL_PATTERN = "b[w.-]+@[w.-]+.w{1,10}b";
+	private static final String EMAIL_PATTERN = "\\b[\\w\\.-]+@[\\w\\.-]+\\.\\w{1,10}\\b";
 
 	@Column(name = "email", nullable = false, updatable = false, unique = true)
 	private String email;
