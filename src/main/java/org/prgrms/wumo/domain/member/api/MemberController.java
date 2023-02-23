@@ -50,7 +50,7 @@ public class MemberController {
 		@RequestBody @Valid MemberEmailCheckRequest memberEmailCheckRequest) {
 
 		memberService.checkEmail(memberEmailCheckRequest);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	@PostMapping("/check-nickname")
@@ -58,7 +58,8 @@ public class MemberController {
 	public ResponseEntity<Void> checkNickname(
 		@RequestBody @Valid MemberNicknameCheckRequest memberNicknameCheckRequest) {
 
-		return ResponseEntity.ok().build();
+		memberService.checkNickname(memberNicknameCheckRequest);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	@PostMapping("/login")
