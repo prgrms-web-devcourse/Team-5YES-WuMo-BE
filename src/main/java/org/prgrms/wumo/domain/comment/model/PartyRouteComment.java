@@ -17,10 +17,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "private_route_comment")
-@DiscriminatorValue("Private_Route")
+@Table(name = "party_route_comment")
+@DiscriminatorValue("Party_Route")
 @NoArgsConstructor(access = PROTECTED)
-public class PrivateRouteComment extends Comment {
+public class PartyRouteComment extends Comment {
 
 	@Column(name = "route_id", nullable = false, updatable = true, unique = false)
 	private Long routeId;
@@ -30,9 +30,9 @@ public class PrivateRouteComment extends Comment {
 	private PartyMember partyMember;
 
 	//@Builder
-	public PrivateRouteComment(Long id, Member member, String content, ContentType contentType, Long routeId,
+	public PartyRouteComment(Long id, Member member, String content, String image, Long routeId,
 		PartyMember partyMember, boolean isEdited) {
-		super(id, member, content, contentType, isEdited);
+		super(id, member, content, image, isEdited);
 		this.routeId = routeId;
 		this.partyMember = partyMember;
 	}
