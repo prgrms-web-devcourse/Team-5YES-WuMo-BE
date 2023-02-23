@@ -16,7 +16,7 @@ import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Service layer를 통해 ")
+@DisplayName("MemberService의 ")
 public class MemberServiceTest {
 
 	@InjectMocks
@@ -26,7 +26,7 @@ public class MemberServiceTest {
 	MemberRepository memberRepository;
 
 	@Nested
-	@DisplayName("이메일 중복체크 요청 시 ")
+	@DisplayName("registerMember 메소드는 이메일 중복체크 요청 시 ")
 	class RegisterMember {
 
 		//given

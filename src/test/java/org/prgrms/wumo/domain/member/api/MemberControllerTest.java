@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@DisplayName("Controller layer를 통해 ")
+@DisplayName("MemberController를 통해 ")
 public class MemberControllerTest extends MysqlTestContainer {
 
 	@Autowired
