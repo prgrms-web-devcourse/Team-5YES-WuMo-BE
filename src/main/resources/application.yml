@@ -7,6 +7,13 @@ spring:
       local:
         - local
 
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration
+    sql-migration-suffixes: ddl
+    baseline-on-migrate: true
+    baseline-version: 0
+
 springdoc:
   version: v1.0.0
   packages-to-scan: org.prgrms.wumo

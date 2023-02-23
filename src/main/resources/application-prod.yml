@@ -18,10 +18,3 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
-  flyway:
-    enabled: true
-    locations: classpath:/db/migration
-    sql-migration-suffixes: ddl
-    baseline-on-migrate: true
-    baseline-version: 0
