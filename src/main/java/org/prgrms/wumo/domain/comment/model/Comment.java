@@ -1,10 +1,9 @@
 package org.prgrms.wumo.domain.comment.model;
 
+import static lombok.AccessLevel.PROTECTED;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,7 +17,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.global.audit.BaseTimeEntity;
-import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
@@ -36,22 +34,21 @@ public class Comment extends BaseTimeEntity {
 	@JoinColumn(name = "member_id")
 	protected Member member;
 
-	@Column(name = "content", nullable = false, unique = false, updatable = true, length = 255)
+	@Column(name = "content", nullable = true, unique = false, updatable = true, length = 255)
 	protected String content;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "content_type", nullable = false, updatable = true, unique = false)
-	protected ContentType contentType;
+	@Column(name = "image_url", nullable = true, unique = true, updatable = true, length = 255)
+	protected String image;
 
 	@Column(name = "is_edited", nullable = false, updatable = true, unique = false)
 	protected boolean isEdited;
 
 	@Builder
-	public Comment(Long id, Member member, String content, ContentType contentType, boolean isEdited) {
+	public Comment(Long id, Member member, String content, String image, boolean isEdited) {
 		this.id = id;
 		this.member = member;
 		this.content = content;
-		this.contentType = contentType;
+		this.image = image;
 		this.isEdited = isEdited;
 	}
 }
