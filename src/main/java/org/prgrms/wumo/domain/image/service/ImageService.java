@@ -9,14 +9,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.prgrms.wumo.domain.image.dto.request.ImageDeleteRequest;
 import org.prgrms.wumo.domain.image.dto.request.ImageRegisterRequest;
 import org.prgrms.wumo.domain.image.dto.response.ImageRegisterResponse;
+import org.prgrms.wumo.global.exception.ImageDeleteFailedException;
 import org.prgrms.wumo.global.exception.ImageUploadFailedException;
 import org.prgrms.wumo.global.exception.InvalidImageFormatException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 
@@ -41,6 +44,14 @@ public class ImageService {
 		}
 
 		return toImageRegisterResponse(uploadImage(imageRegisterRequest.image()));
+	}
+
+	public void deleteImage(ImageDeleteRequest imageDeleteRequest) {
+		try {
+			amazonS3.deleteObject(bucket, extractImagePath(imageDeleteRequest.imageUrl()));
+		} catch (AmazonServiceException e) {
+			throw new ImageDeleteFailedException("버킷에서 이미지 삭제에 실패했습니다.");
+		}
 	}
 
 	private boolean validateContentType(MultipartFile multipartFile) {
@@ -69,6 +80,11 @@ public class ImageService {
 		} catch (Exception e) {
 			throw new InvalidImageFormatException("올바르지 않은 파일명 또는 형식입니다.");
 		}
+	}
+
+	private String extractImagePath(String imageUrl) {
+		String url = imageUrl.replaceAll("(http|https)://", "");
+		return url.substring(url.indexOf("/") + 1);
 	}
 
 }

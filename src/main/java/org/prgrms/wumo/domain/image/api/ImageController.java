@@ -40,6 +40,7 @@ public class ImageController {
 	public ResponseEntity<Void> deleteImage(
 			@RequestBody @Valid ImageDeleteRequest imageDeleteRequest
 	) {
+		imageService.deleteImage(imageDeleteRequest);
 		return ResponseEntity.ok().build();
 	}
 
