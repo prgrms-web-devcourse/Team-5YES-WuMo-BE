@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.prgrms.wumo.domain.route.dto.request.RouteGetAllRequest;
 import org.prgrms.wumo.domain.route.dto.request.RouteRegisterRequest;
+import org.prgrms.wumo.domain.route.dto.request.RouteUpdateStatusRequest;
 import org.prgrms.wumo.domain.route.dto.response.RouteGetAllResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
@@ -55,6 +56,14 @@ public class RouteController {
 	@Operation(summary = "루트에서 후보지 삭제")
 	public ResponseEntity<Void> deleteLocation(
 		@RequestParam @Parameter(description = "루트에서 삭제할 후보장소 아이디") Long locationId) {
+
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping
+	@Operation(summary = "루트 공개여부 변경")
+	public ResponseEntity<Void> updateRoutePublicStatus(
+		@RequestBody @Valid RouteUpdateStatusRequest routeUpdateStatusRequest) {
 
 		return ResponseEntity.ok().build();
 	}
