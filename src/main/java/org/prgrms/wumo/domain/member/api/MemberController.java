@@ -44,7 +44,7 @@ public class MemberController {
 		return new ResponseEntity<>(null, HttpStatus.CREATED);
 	}
 
-	@PostMapping("/check_email")
+	@PostMapping("/check-email")
 	@Operation(summary = "이메일 중복체크")
 	public ResponseEntity<Void> checkEmail(
 		@RequestBody @Valid MemberEmailCheckRequest memberEmailCheckRequest) {
@@ -53,7 +53,7 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/check_nickname")
+	@PostMapping("/check-nickname")
 	@Operation(summary = "닉네임 중복체크")
 	public ResponseEntity<Void> checkNickname(
 		@RequestBody @Valid MemberNicknameCheckRequest memberNicknameCheckRequest) {
