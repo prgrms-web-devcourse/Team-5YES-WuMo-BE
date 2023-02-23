@@ -58,6 +58,9 @@ dependencies {
     //Flyway
     implementation 'org.flywaydb:flyway-core:7.0.0'
     implementation 'org.flywaydb:flyway-mysql'
+
+    //AWS S3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 dependencyManagement {

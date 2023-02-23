@@ -11,9 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-	@ExceptionHandler(DuplicateException.class)
-	public ResponseEntity<ExceptionResponse> handleEntityNotFoundException(DuplicateException duplicateException) {
-		log.info("exception : " + duplicateException);
-		return ResponseEntity.badRequest().body(new ExceptionResponse(duplicateException.getMessage()));
+	@ExceptionHandler({DuplicateException.class, ImageUploadFailedException.class, InvalidImageFormatException.class})
+	public ResponseEntity<ExceptionResponse> handleException(RuntimeException runtimeException) {
+		log.info("exception : " + runtimeException);
+		return ResponseEntity.badRequest().body(new ExceptionResponse(runtimeException.getMessage()));
 	}
+
 }
