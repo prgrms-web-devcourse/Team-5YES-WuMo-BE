@@ -24,8 +24,8 @@ public class PublicRouteComment extends Comment {
 
 	//@Builder
 	public PublicRouteComment(Long id, Member member, String content,
-		ContentType contentType, Long routeId, boolean isEdited) {
-		super(id, member, content, contentType, isEdited);
+		String image, Long routeId, boolean isEdited) {
+		super(id, member, content, image, isEdited);
 		this.routeId = routeId;
 	}
 }
