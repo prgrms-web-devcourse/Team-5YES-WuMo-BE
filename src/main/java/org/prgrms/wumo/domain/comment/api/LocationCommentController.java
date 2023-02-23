@@ -25,16 +25,16 @@ public class LocationCommentController {
 	@PostMapping
 	@Operation(summary = "후보지 댓글 등록")
 	public ResponseEntity<LocationCommentRegisterResponse> registerLocationComment(
-			@RequestBody
-			@Valid
-			LocationCommentRegisterRequest request
+			@RequestBody @Valid LocationCommentRegisterRequest request
 	) {
 		return new ResponseEntity<>(null, HttpStatus.CREATED);
 	}
 
 	@PatchMapping
 	@Operation(summary = "후보지 댓글 수정")
-	public ResponseEntity<Void> updateLocationComment(@RequestBody @Valid LocationCommentUpdateRequest request){
+	public ResponseEntity<Void> updateLocationComment(
+			@RequestBody @Valid LocationCommentUpdateRequest request
+	){
 		return ResponseEntity.ok().build();
 	}
 

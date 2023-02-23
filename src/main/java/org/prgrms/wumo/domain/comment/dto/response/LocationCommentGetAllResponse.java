@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import org.prgrms.wumo.domain.comment.model.ContentType;
 
-@Schema(name = "후보지 댓글 전체 조회 결과 정보")
+@Schema(name = "후보지 댓글 전체 조회 응답 정보")
 public record LocationCommentGetAllResponse(
 
 		@Schema(description = "댓글 id")

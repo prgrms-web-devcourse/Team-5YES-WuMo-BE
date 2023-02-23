@@ -31,11 +31,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class RouteCommentController {
 
 	@PostMapping("/private")
-	@Operation(summary = "비공개 루트 댓글 생성")
+	@Operation(summary = "모임 내 루트 댓글 생성")
 	public ResponseEntity<PrivateRouteCommentRegisterResponse> registerPrivateRouteComment(
-			@RequestBody
-			@Valid
-			PrivateRouteCommentRegisterRequest request
+			@RequestBody @Valid PrivateRouteCommentRegisterRequest request
 	) {
 		return new ResponseEntity<>(null, HttpStatus.CREATED);
 	}
@@ -43,19 +41,15 @@ public class RouteCommentController {
 	@PostMapping("/public")
 	@Operation(summary = "공개 루트 댓글 생성")
 	public ResponseEntity<PublicRouteCommentRegisterResponse> registerPublicRouteComment(
-			@RequestBody
-			@Valid
-			PublicRouteCommentRegisterRequest request
+			@RequestBody @Valid PublicRouteCommentRegisterRequest request
 	) {
 		return new ResponseEntity<>(null, HttpStatus.CREATED);
 	}
 
 	@GetMapping("/private")
-	@Operation(summary = "비공개 루트 댓글 전체 조회")
+	@Operation(summary = "모임 내 루트 댓글 전체 조회")
 	public ResponseEntity<PrivateRouteCommentGetAllResponse> getAllPrivateRouteComment(
-			@RequestBody
-			@Valid
-			PrivateRouteCommentGetAllRequest request
+			@RequestBody @Valid PrivateRouteCommentGetAllRequest request
 	) {
 		return ResponseEntity.ok(null);
 	}
@@ -63,27 +57,29 @@ public class RouteCommentController {
 	@GetMapping("/public")
 	@Operation(summary = "공개 루트 댓글 전체 조회")
 	public ResponseEntity<PublicRouteCommentGetAllResponse> getAllPublicRouteComment(
-			@RequestBody
-			@Valid
-			PublicRouteCommentGetAllRequest request
+			@RequestBody @Valid PublicRouteCommentGetAllRequest request
 	) {
 		return ResponseEntity.ok(null);
 	}
 
 	@PatchMapping("/private")
-	@Operation(summary = "비공개 루트 댓글 수정")
-	public ResponseEntity<Void> updatePrivateRouteComment(@RequestBody @Valid PrivateRouteCommentUpdateRequest request) {
+	@Operation(summary = "모임 내 루트 댓글 수정")
+	public ResponseEntity<Void> updatePrivateRouteComment(
+			@RequestBody @Valid PrivateRouteCommentUpdateRequest request
+	) {
 		return ResponseEntity.ok().build();
 	}
 
 	@PatchMapping("/public")
 	@Operation(summary = "공개 루트 댓글 수정")
-	public ResponseEntity<Void> updatePublicRouteComment(@RequestBody @Valid PublicRouteCommentUpdateRequest request) {
+	public ResponseEntity<Void> updatePublicRouteComment(
+			@RequestBody @Valid PublicRouteCommentUpdateRequest request
+	) {
 		return ResponseEntity.ok().build();
 	}
 
 	@DeleteMapping("/private/{id}")
-	@Operation(summary = "비공개 루트 댓글 삭제")
+	@Operation(summary = "모임 내 루트 댓글 삭제")
 	public ResponseEntity<Void> deletePrivateRouteComment(
 			@PathVariable("id") @Parameter(description = "삭제하고자 하는 비공개 루트 댓글") Long id
 	) {
