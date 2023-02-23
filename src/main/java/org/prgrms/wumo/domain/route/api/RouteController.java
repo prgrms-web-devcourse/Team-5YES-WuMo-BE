@@ -65,7 +65,7 @@ public class RouteController {
 	public ResponseEntity<Void> updateRoutePublicStatus(
 		@RequestBody @Valid RouteStatusUpdateRequest routeStatusUpdateRequest) {
 
-		return new ResponseEntity<>(null, HttpStatus.CREATED);
+		return ResponseEntity.ok().build();
 	}
 
 }
