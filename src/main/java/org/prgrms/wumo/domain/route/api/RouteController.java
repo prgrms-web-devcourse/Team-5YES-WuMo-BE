@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.prgrms.wumo.domain.route.dto.request.RouteGetAllRequest;
 import org.prgrms.wumo.domain.route.dto.request.RouteRegisterRequest;
+import org.prgrms.wumo.domain.route.dto.request.RouteStatusUpdateRequest;
 import org.prgrms.wumo.domain.route.dto.response.RouteGetAllResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,9 +55,18 @@ public class RouteController {
 
 	@DeleteMapping
 	@Operation(summary = "루트에서 후보지 삭제")
-	public ResponseEntity<Void> deleteLocation(
+	public ResponseEntity<Void> deleteRouteLocation(
 		@RequestParam @Parameter(description = "루트에서 삭제할 후보장소 아이디") Long locationId) {
 
 		return ResponseEntity.ok().build();
 	}
+
+	@PatchMapping
+	@Operation(summary = "루트 공개여부 변경")
+	public ResponseEntity<Void> updateRoutePublicStatus(
+		@RequestBody @Valid RouteStatusUpdateRequest routeStatusUpdateRequest) {
+
+		return ResponseEntity.ok().build();
+	}
+
 }
