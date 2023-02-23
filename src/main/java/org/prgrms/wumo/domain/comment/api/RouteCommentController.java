@@ -4,14 +4,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
-import org.prgrms.wumo.domain.comment.dto.request.PrivateRouteCommentGetAllRequest;
-import org.prgrms.wumo.domain.comment.dto.request.PrivateRouteCommentRegisterRequest;
-import org.prgrms.wumo.domain.comment.dto.request.PrivateRouteCommentUpdateRequest;
+import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentGetAllRequest;
+import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentUpdateRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PublicRouteCommentGetAllRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PublicRouteCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PublicRouteCommentUpdateRequest;
-import org.prgrms.wumo.domain.comment.dto.response.PrivateRouteCommentGetAllResponse;
-import org.prgrms.wumo.domain.comment.dto.response.PrivateRouteCommentRegisterResponse;
+import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetAllResponse;
+import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PublicRouteCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PublicRouteCommentRegisterResponse;
 import org.springframework.http.HttpStatus;
@@ -32,8 +32,8 @@ public class RouteCommentController {
 
 	@PostMapping("/private")
 	@Operation(summary = "모임 내 루트 댓글 생성")
-	public ResponseEntity<PrivateRouteCommentRegisterResponse> registerPrivateRouteComment(
-			@RequestBody @Valid PrivateRouteCommentRegisterRequest request
+	public ResponseEntity<PartyRouteCommentRegisterResponse> registerPrivateRouteComment(
+			@RequestBody @Valid PartyRouteCommentRegisterRequest request
 	) {
 		return new ResponseEntity<>(null, HttpStatus.CREATED);
 	}
@@ -48,8 +48,8 @@ public class RouteCommentController {
 
 	@GetMapping("/private")
 	@Operation(summary = "모임 내 루트 댓글 전체 조회")
-	public ResponseEntity<PrivateRouteCommentGetAllResponse> getAllPrivateRouteComment(
-			@RequestBody @Valid PrivateRouteCommentGetAllRequest request
+	public ResponseEntity<PartyRouteCommentGetAllResponse> getAllPrivateRouteComment(
+			@RequestBody @Valid PartyRouteCommentGetAllRequest request
 	) {
 		return ResponseEntity.ok(null);
 	}
@@ -65,7 +65,7 @@ public class RouteCommentController {
 	@PatchMapping("/private")
 	@Operation(summary = "모임 내 루트 댓글 수정")
 	public ResponseEntity<Void> updatePrivateRouteComment(
-			@RequestBody @Valid PrivateRouteCommentUpdateRequest request
+			@RequestBody @Valid PartyRouteCommentUpdateRequest request
 	) {
 		return ResponseEntity.ok().build();
 	}
