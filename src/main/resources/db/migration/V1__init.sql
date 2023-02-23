@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `party_member` (
 `member_id`	    BIGINT	    NOT NULL,
 `party_id`	    BIGINT	    NOT NULL,
 `role`	        VARCHAR(10)	NULL,
-`is_leader`	    BIT	        NULL,
+`is_leader`	    BIT	        NOT NULL    DEFAULT 0,
 `created_at`	TIMESTAMP	NOT NULL,
 `updated_at`	TIMESTAMP	NOT NULL
 );
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `invitation` (
 `id`	        BIGINT	        NOT NULL,
 `party_id`	    BIGINT	        NOT NULL,
 `expired_date`	TIMESTAMP	    NOT NULL,
-`link`	        VARCHAR(255)	NOT NULL
+`code`	        VARCHAR(255)	NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `location` (
@@ -42,13 +42,13 @@ CREATE TABLE IF NOT EXISTS `location` (
 `name`	        VARCHAR(50)	    NOT NULL,
 `address`	    VARCHAR(100)	NOT NULL,
 `latitude`	    FLOAT	        NOT NULL,
-`longtitude`	FLOAT	        NOT NULL,
+`longitude`	    FLOAT	        NOT NULL,
 `image_url`	    VARCHAR(255)	NOT NULL,
 `category`	    VARCHAR(20)	    NOT NULL,
 `description`	VARCHAR(50)	    NULL,
 `visit_date`	TIMESTAMP	    NOT NULL,
 `expected_cost`	INT	            NOT NULL,
-`spending`	    INT	            NULL,
+`spending`	    INT	            NOT NULL    DEFAULT 0,
 `createdAt`	    TIMESTAMP	    NOT NULL,
 `updatedAt`	    TIMESTAMP	    NOT NULL,
 `party_id`	    BIGINT	        NOT NULL,
@@ -56,28 +56,28 @@ CREATE TABLE IF NOT EXISTS `location` (
 );
 
 CREATE TABLE IF NOT EXISTS `route` (
-`id`	        BIGINT	    NOT NULL,
-`name`	        VARCHAR(20)	NULL,
-`is_public`	    BIT	        NOT NULL	DEFAULT 0,
-`created_at`	TIMESTAMP	NOT NULL,
-`updated_at`	TIMESTAMP	NOT NULL,
-`party_id`	    BIGINT	    NOT NULL
+`id`	        BIGINT	        NOT NULL,
+`name`	        VARCHAR(20)	    NULL,
+`is_public`	    BIT	            NOT NULL    DEFAULT 0,
+`created_at`	TIMESTAMP	    NOT NULL,
+`updated_at`	TIMESTAMP	    NOT NULL,
+`party_id`	    BIGINT	        NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `comment` (
 `id`	        BIGINT	        NOT NULL,
 `member_id`	    BIGINT	        NOT NULL,
-`contents`	    VARCHAR(255)	NULL,
+`content`	    VARCHAR(255)	NULL,
 `image_url`	    VARCHAR(255)	NULL,
-`DTYPE`	        VARCHAR(10)	    NOT NULL,
-`is_edited`	    BIT	            NOT NULL,
+`DTYPE`	        VARCHAR(20)	    NOT NULL,
+`is_edited`	    BIT	            NOT NULL DEFAULT 0,
 `created_at`	TIMESTAMP	    NOT NULL,
 `updated_at`	TIMESTAMP	    NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `location_comment` (
 `id`	            BIGINT	NOT NULL,
-`location_id`	B   IGINT	NOT NULL,
+`location_id`	    BIGINT	NOT NULL,
 `party_member_id`	BIGINT	NOT NULL
 );
 
@@ -103,4 +103,10 @@ ALTER TABLE `invitation` ADD CONSTRAINT `PK_INVITATION` PRIMARY KEY (`id`);
 
 ALTER TABLE `location_comment` ADD CONSTRAINT `PK_LOCATION_COMMENT` PRIMARY KEY (`id`);
 
-ALTER TABLE `public_route_comment` ADD CONSTRAINT `PK_PUBLIC_ROUTE_COMMENT` PRIMARY KEY (`id`);
+ALTER TABLE `party_route_comment` ADD CONSTRAINT `PK_PARTY_ROUTE_COMMENT` PRIMARY KEY (`id`);
+
+ALTER TABLE `invitation` MODIFY COLUMN `code` VARCHAR(255) UNIQUE;
+
+ALTER TABLE `member` MODIFY COLUMN `email` VARCHAR(255) UNIQUE;
+
+ALTER TABLE `member` MODIFY COLUMN `nickname` VARCHAR(255) UNIQUE;

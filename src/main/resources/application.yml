@@ -10,9 +10,8 @@ spring:
   flyway:
     enabled: true
     locations: classpath:/db/migration
-    sql-migration-suffixes: ddl
+    sql-migration-suffixes: sql
     baseline-on-migrate: true
-    baseline-version: 0
 
 springdoc:
   version: v1.0.0
