@@ -10,6 +10,7 @@ import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
+import org.prgrms.wumo.domain.member.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +24,15 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/members")
+@RequiredArgsConstructor
 @Tag(name = "회원 API")
 public class MemberController {
+
+	private final MemberService memberService;
 
 	//////비밀번호 찾기(재설정)
 
@@ -39,15 +44,16 @@ public class MemberController {
 		return new ResponseEntity<>(null, HttpStatus.CREATED);
 	}
 
-	@PostMapping("/check_email")
+	@PostMapping("/check-email")
 	@Operation(summary = "이메일 중복체크")
 	public ResponseEntity<Void> checkEmail(
 		@RequestBody @Valid MemberEmailCheckRequest memberEmailCheckRequest) {
 
+		memberService.checkEmail(memberEmailCheckRequest);
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/check_nickname")
+	@PostMapping("/check-nickname")
 	@Operation(summary = "닉네임 중복체크")
 	public ResponseEntity<Void> checkNickname(
 		@RequestBody @Valid MemberNicknameCheckRequest memberNicknameCheckRequest) {

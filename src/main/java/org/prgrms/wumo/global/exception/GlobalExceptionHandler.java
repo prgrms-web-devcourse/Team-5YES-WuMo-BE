@@ -1,0 +1,19 @@
+package org.prgrms.wumo.global.exception;
+
+import org.prgrms.wumo.global.exception.custom.DuplicateException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+	@ExceptionHandler(DuplicateException.class)
+	public ResponseEntity<ExceptionResponse> handleEntityNotFoundException(DuplicateException duplicateException) {
+		log.info("exception : " + duplicateException);
+		return ResponseEntity.badRequest().body(new ExceptionResponse(duplicateException.getMessage()));
+	}
+}
