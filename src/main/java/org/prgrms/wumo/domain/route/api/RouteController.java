@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.prgrms.wumo.domain.route.dto.request.RouteGetAllRequest;
 import org.prgrms.wumo.domain.route.dto.request.RouteRegisterRequest;
+import org.prgrms.wumo.domain.route.dto.request.RouteStatusUpdateRequest;
 import org.prgrms.wumo.domain.route.dto.response.RouteGetAllResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
@@ -58,4 +59,13 @@ public class RouteController {
 
 		return ResponseEntity.ok().build();
 	}
+
+	@PostMapping
+	@Operation(summary = "루트 공개여부 변경")
+	public ResponseEntity<Void> updateRoutePublicStatus(
+		@RequestBody @Valid RouteStatusUpdateRequest routeStatusUpdateRequest) {
+
+		return new ResponseEntity<>(null, HttpStatus.CREATED);
+	}
+
 }
