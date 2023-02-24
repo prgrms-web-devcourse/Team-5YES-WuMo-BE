@@ -7,13 +7,8 @@ import javax.validation.Valid;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentGetAllRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentUpdateRequest;
-import org.prgrms.wumo.domain.comment.dto.request.PublicRouteCommentGetAllRequest;
-import org.prgrms.wumo.domain.comment.dto.request.PublicRouteCommentRegisterRequest;
-import org.prgrms.wumo.domain.comment.dto.request.PublicRouteCommentUpdateRequest;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResponse;
-import org.prgrms.wumo.domain.comment.dto.response.PublicRouteCommentGetAllResponse;
-import org.prgrms.wumo.domain.comment.dto.response.PublicRouteCommentRegisterResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,11 +21,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/route-comments")
+@RequestMapping("/api/v1/party-route-comments")
 @Tag(name = "루트 댓글 api")
 public class RouteCommentController {
 
-	@PostMapping("/private")
+	@PostMapping
 	@Operation(summary = "모임 내 루트 댓글 생성")
 	public ResponseEntity<PartyRouteCommentRegisterResponse> registerPrivateRouteComment(
 			@RequestBody @Valid PartyRouteCommentRegisterRequest request
@@ -38,15 +33,7 @@ public class RouteCommentController {
 		return new ResponseEntity<>(null, HttpStatus.CREATED);
 	}
 
-	@PostMapping("/public")
-	@Operation(summary = "공개 루트 댓글 생성")
-	public ResponseEntity<PublicRouteCommentRegisterResponse> registerPublicRouteComment(
-			@RequestBody @Valid PublicRouteCommentRegisterRequest request
-	) {
-		return new ResponseEntity<>(null, HttpStatus.CREATED);
-	}
-
-	@GetMapping("/private")
+	@GetMapping
 	@Operation(summary = "모임 내 루트 댓글 전체 조회")
 	public ResponseEntity<PartyRouteCommentGetAllResponse> getAllPrivateRouteComment(
 			@RequestBody @Valid PartyRouteCommentGetAllRequest request
@@ -54,15 +41,7 @@ public class RouteCommentController {
 		return ResponseEntity.ok(null);
 	}
 
-	@GetMapping("/public")
-	@Operation(summary = "공개 루트 댓글 전체 조회")
-	public ResponseEntity<PublicRouteCommentGetAllResponse> getAllPublicRouteComment(
-			@RequestBody @Valid PublicRouteCommentGetAllRequest request
-	) {
-		return ResponseEntity.ok(null);
-	}
-
-	@PatchMapping("/private")
+	@PatchMapping
 	@Operation(summary = "모임 내 루트 댓글 수정")
 	public ResponseEntity<Void> updatePrivateRouteComment(
 			@RequestBody @Valid PartyRouteCommentUpdateRequest request
@@ -70,26 +49,10 @@ public class RouteCommentController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PatchMapping("/public")
-	@Operation(summary = "공개 루트 댓글 수정")
-	public ResponseEntity<Void> updatePublicRouteComment(
-			@RequestBody @Valid PublicRouteCommentUpdateRequest request
-	) {
-		return ResponseEntity.ok().build();
-	}
-
-	@DeleteMapping("/private/{id}")
+	@DeleteMapping("/{id}")
 	@Operation(summary = "모임 내 루트 댓글 삭제")
 	public ResponseEntity<Void> deletePrivateRouteComment(
 			@PathVariable("id") @Parameter(description = "삭제하고자 하는 비공개 루트 댓글") Long id
-	) {
-		return ResponseEntity.ok().build();
-	}
-
-	@DeleteMapping("/public/{id}")
-	@Operation(summary = "공개 루트 댓글 삭제")
-	public ResponseEntity<Void> deletePublicRouteComment(
-			@PathVariable("id") @Parameter(description = "삭제하고자 하는 공개 루트 댓글") Long id
 	) {
 		return ResponseEntity.ok().build();
 	}
