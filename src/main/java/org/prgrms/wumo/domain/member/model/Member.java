@@ -28,7 +28,7 @@ public class Member extends BaseTimeEntity {
 	@Embedded
 	private Email email;
 
-	@Column(name = "nickname", nullable = false, updatable = true, unique = true)
+	@Column(name = "nickname", nullable = false, updatable = true, unique = true, length = 20)
 	private String nickname;
 
 	@Embedded

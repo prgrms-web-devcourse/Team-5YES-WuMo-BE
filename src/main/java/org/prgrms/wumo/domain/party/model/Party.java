@@ -1,6 +1,6 @@
 package org.prgrms.wumo.domain.party.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,10 +31,10 @@ public class Party extends BaseTimeEntity {
 	private String name;
 
 	@Column(name = "start_date", nullable = false, unique = false)
-	private LocalDate startDate;
+	private LocalDateTime startDate;
 
 	@Column(name = "end_date", nullable = false, unique = false)
-	private LocalDate endDate;
+	private LocalDateTime endDate;
 
 	@Column(name = "description", nullable = true, unique = false, length = 255)
 	private String description;
@@ -46,8 +46,9 @@ public class Party extends BaseTimeEntity {
 	private String password;
 
 	@Builder
-	public Party(Long id, String name, LocalDate startDate, LocalDate endDate, String description, String coverImage,
-			String password) {
+	public Party(Long id, String name, LocalDateTime startDate, LocalDateTime endDate, String description,
+		String coverImage,
+		String password) {
 		Assert.isTrue(startDate.isBefore(endDate), "종료일이 시작일보다 빠를 수 없습니다.");
 
 		this.id = id;

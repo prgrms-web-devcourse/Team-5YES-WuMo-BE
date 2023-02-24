@@ -1,6 +1,6 @@
 package org.prgrms.wumo.domain.party.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,13 +33,13 @@ public class Invitation extends BaseTimeEntity {
 	private Party party;
 
 	@Column(name = "expired_date", nullable = false, unique = false)
-	private LocalDate expiredDate;
+	private LocalDateTime expiredDate;
 
 	@Column(name = "code", nullable = false, unique = true, length = 255)
 	private String code;
 
 	@Builder
-	public Invitation(Long id, Party party, LocalDate expiredDate, String code) {
+	public Invitation(Long id, Party party, LocalDateTime expiredDate, String code) {
 		this.id = id;
 		this.party = party;
 		this.expiredDate = expiredDate;

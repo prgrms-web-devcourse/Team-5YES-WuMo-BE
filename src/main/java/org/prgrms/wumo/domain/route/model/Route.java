@@ -30,8 +30,6 @@ public class Route extends BaseTimeEntity {
 
 	private boolean isPublic;
 
-	private long likeCount;
-
 	@OneToMany(mappedBy = "route")
 	private List<Location> locations;
 
