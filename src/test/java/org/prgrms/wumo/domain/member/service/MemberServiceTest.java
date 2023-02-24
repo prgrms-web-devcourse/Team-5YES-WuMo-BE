@@ -79,7 +79,7 @@ public class MemberServiceTest {
 		@DisplayName("이미 가입된 이메일이라면 예외가 발생한다")
 		void with_exist_emil() {
 			//mocking
-			given(memberRepository.existsByEmail(new Email(memberEmailCheckRequest.email())))
+			given(memberRepository.existsByEmail(any(Email.class)))
 				.willReturn(true);
 
 			//when, then
