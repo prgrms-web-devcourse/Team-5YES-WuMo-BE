@@ -12,9 +12,8 @@ import java.util.UUID;
 import org.prgrms.wumo.domain.image.dto.request.ImageDeleteRequest;
 import org.prgrms.wumo.domain.image.dto.request.ImageRegisterRequest;
 import org.prgrms.wumo.domain.image.dto.response.ImageRegisterResponse;
-import org.prgrms.wumo.global.exception.ImageDeleteFailedException;
-import org.prgrms.wumo.global.exception.ImageUploadFailedException;
-import org.prgrms.wumo.global.exception.InvalidImageFormatException;
+import org.prgrms.wumo.global.exception.custom.ImageDeleteFailedException;
+import org.prgrms.wumo.global.exception.custom.ImageUploadFailedException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,7 +39,7 @@ public class ImageService {
 
 	public ImageRegisterResponse registerImage(ImageRegisterRequest imageRegisterRequest) {
 		if (!validateContentType(imageRegisterRequest.image())) {
-			throw new InvalidImageFormatException("이미지가 아닌 데이터를 요청했습니다.");
+			throw new IllegalArgumentException("이미지가 아닌 데이터를 요청했습니다.");
 		}
 
 		return toImageRegisterResponse(uploadImage(imageRegisterRequest.image()));
@@ -78,7 +77,7 @@ public class ImageService {
 			String date = LocalDate.now(ZoneId.of("Asia/Tokyo")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 			return String.format("%s/%s%s", date, UUID.randomUUID(), originName.substring(originName.lastIndexOf(".")));
 		} catch (Exception e) {
-			throw new InvalidImageFormatException("올바르지 않은 파일명 또는 형식입니다.");
+			throw new IllegalArgumentException("올바르지 않은 파일명 또는 형식입니다.");
 		}
 	}
 

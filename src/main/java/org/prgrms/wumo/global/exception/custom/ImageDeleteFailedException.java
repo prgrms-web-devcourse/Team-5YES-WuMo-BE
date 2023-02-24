@@ -1,4 +1,4 @@
-package org.prgrms.wumo.global.exception;
+package org.prgrms.wumo.global.exception.custom;
 
 public class ImageDeleteFailedException extends RuntimeException {
 
