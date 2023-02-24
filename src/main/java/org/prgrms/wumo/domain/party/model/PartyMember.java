@@ -28,17 +28,17 @@ public class PartyMember extends BaseTimeEntity {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "member_id", nullable = false)
+	@JoinColumn(name = "member_id", nullable = false, unique = false)
 	private Member member;
 
 	@ManyToOne
-	@JoinColumn(name = "party_id", nullable = false)
+	@JoinColumn(name = "party_id", nullable = false, unique = false)
 	private Party party;
 
-	@Column(name = "role", nullable = true, length = 10)
+	@Column(name = "role", nullable = true, unique = false, length = 10)
 	private String role;
 
-	@Column(name = "is_leader", nullable = false)
+	@Column(name = "is_leader", nullable = false, unique = false)
 	private boolean isLeader;
 
 	@Builder

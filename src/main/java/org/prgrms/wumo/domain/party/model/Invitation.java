@@ -11,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.global.audit.BaseTimeEntity;
 
 import lombok.AccessLevel;
@@ -30,14 +29,14 @@ public class Invitation extends BaseTimeEntity {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "party_id", nullable = false)
+	@JoinColumn(name = "party_id", nullable = false, unique = false)
 	private Party party;
 
-	@Column(name = "expired_date", nullable = false)
+	@Column(name = "expired_date", nullable = false, unique = false)
 	private LocalDate expiredDate;
 
-	@Column(name = "code", nullable = false, length = 255)
-	private String code; // Unique
+	@Column(name = "code", nullable = false, unique = true, length = 255)
+	private String code;
 
 	@Builder
 	public Invitation(Long id, Party party, LocalDate expiredDate, String code) {

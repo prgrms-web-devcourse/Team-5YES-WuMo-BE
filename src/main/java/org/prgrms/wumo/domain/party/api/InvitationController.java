@@ -25,11 +25,8 @@ public class InvitationController {
 	@PostMapping("/{partyId}/invitation")
 	@Operation(summary = "모임 초대 코드 생성")
 	public ResponseEntity<InvitationRegisterResponse> registerInvitation(
-			@PathVariable
-			@Parameter(description = "파티 식별자", required = true) long partyId,
-
-			@RequestBody @Valid
-			InvitationRegisterRequest request
+			@PathVariable @Parameter(description = "파티 식별자", required = true) Long partyId,
+			@RequestBody @Valid InvitationRegisterRequest request
 	) {
 		return new ResponseEntity<>(null, HttpStatus.CREATED);
 	}
@@ -37,11 +34,8 @@ public class InvitationController {
 	@PostMapping("/join/{code}")
 	@Operation(summary = "모임 참여 요청")
 	public ResponseEntity<Void> joinParty(
-			@PathVariable
-			@Parameter(description = "초대 코드", required = true) String code,
-
-			@RequestBody @Valid
-			PartyJoinRequest request
+			@PathVariable @Parameter(description = "초대 코드", required = true) String code,
+			@RequestBody @Valid PartyJoinRequest request
 	) {
 		return new ResponseEntity<>(null, HttpStatus.CREATED);
 	}

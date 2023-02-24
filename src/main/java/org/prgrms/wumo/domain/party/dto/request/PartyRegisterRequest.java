@@ -35,7 +35,14 @@ public record PartyRegisterRequest(
 
 		@Length(min = 4, max = 4, message = "비밀번호는 {min}자리가 필요합니다.")
 		@Schema(description = "입장 비밀번호", example = "1234", required = true)
-		String password
+		String password,
+
+		@NotNull(message = "모임 생성 사용자 식별자는 필수 입력사항입니다.")
+		@Schema(description = "사용자 식별자", example = "1", required = true)
+		Long memberId,
+
+		@Schema(description = "역할", example = "총무", required = false)
+		String role
 
 ) {
 }

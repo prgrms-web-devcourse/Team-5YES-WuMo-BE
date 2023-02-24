@@ -31,8 +31,7 @@ public class PartyController {
 	@PostMapping
 	@Operation(summary = "모임 등록")
 	public ResponseEntity<PartyRegisterResponse> registerParty(
-			@RequestBody @Valid
-			PartyRegisterRequest partyRegisterRequest
+			@RequestBody @Valid PartyRegisterRequest partyRegisterRequest
 	) {
 		return new ResponseEntity<>(null, HttpStatus.CREATED);
 	}
@@ -40,12 +39,8 @@ public class PartyController {
 	@GetMapping("/members/{memberId}")
 	@Operation(summary = "사용자 기준 모임 목록 조회")
 	public ResponseEntity<PartyGetAllResponse> getAllParty(
-			@PathVariable
-			@Parameter(description = "사용자 식별자", required = true)
-			Long memberId,
-
-			@Valid
-			PartyGetRequest request
+			@PathVariable @Parameter(description = "사용자 식별자", required = true) Long memberId,
+			@Valid PartyGetRequest request
 	) {
 		return ResponseEntity.ok(null);
 	}
@@ -53,9 +48,7 @@ public class PartyController {
 	@GetMapping("/{partyId}")
 	@Operation(summary = "모임 상세 조회")
 	public ResponseEntity<PartyGetDetailResponse> getParty(
-			@PathVariable
-			@Parameter(description = "모임 식별자", required = true)
-			Long partyId
+			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId
 	) {
 		return ResponseEntity.ok(null);
 	}
@@ -63,12 +56,8 @@ public class PartyController {
 	@PatchMapping("/{partyId}")
 	@Operation(summary = "모임 수정")
 	public ResponseEntity<Void> updateParty(
-			@PathVariable
-			@Parameter(description = "모임 식별자", required = true)
-			Long partyId,
-
-			@RequestBody @Valid
-			PartyUpdateRequest request
+			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId,
+			@RequestBody @Valid PartyUpdateRequest request
 	) {
 		return ResponseEntity.ok(null);
 	}
@@ -76,9 +65,7 @@ public class PartyController {
 	@DeleteMapping("/{partyId}")
 	@Operation(summary = "모임 삭제")
 	public ResponseEntity<Void> deleteParty(
-			@PathVariable
-			@Parameter(description = "모임 식별자", required = true)
-			Long partyId
+			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId
 	) {
 		return ResponseEntity.ok(null);
 	}
