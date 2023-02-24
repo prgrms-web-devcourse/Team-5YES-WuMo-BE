@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.prgrms.wumo.domain.member.dto.request.MemberEmailCheckRequest;
+import org.prgrms.wumo.domain.member.dto.request.MemberNicknameCheckRequest;
 import org.prgrms.wumo.domain.member.model.Email;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
@@ -26,8 +27,8 @@ public class MemberServiceTest {
 	MemberRepository memberRepository;
 
 	@Nested
-	@DisplayName("registerMember 메소드는 이메일 중복체크 요청 시 ")
-	class RegisterMember {
+	@DisplayName("checkEmail 메소드는 이메일 중복체크 요청 시 ")
+	class CheckEmail {
 
 		//given
 		Email email = new Email("5yes@gmail.com");
@@ -46,6 +47,30 @@ public class MemberServiceTest {
 			assertThatThrownBy(() -> memberService.checkEmail(memberEmailCheckRequest))
 				.isInstanceOf(DuplicateException.class)
 				.hasMessage("이메일이 중복됩니다.");
+		}
+	}
+
+	@Nested
+	@DisplayName("checkNickname 메소드는 닉네임 중복체크 요청 시 ")
+	class CheckNickname {
+
+		//given
+		String nickname = "오예스";
+
+		MemberNicknameCheckRequest memberNicknameCheckRequest
+			= new MemberNicknameCheckRequest(nickname);
+
+		@Test
+		@DisplayName("이미 사용중인 닉네임이라면 예외가 발생한다")
+		void with_exist_emil() {
+			//mocking
+			given(memberRepository.existsByNickname(nickname))
+				.willReturn(true);
+
+			//when, then
+			assertThatThrownBy(() -> memberService.checkNickname(memberNicknameCheckRequest))
+				.isInstanceOf(DuplicateException.class)
+				.hasMessage("닉네임이 중복됩니다.");
 		}
 	}
 }

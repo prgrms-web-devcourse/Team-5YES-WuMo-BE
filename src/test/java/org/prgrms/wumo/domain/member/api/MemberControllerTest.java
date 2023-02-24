@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.prgrms.wumo.MysqlTestContainer;
 import org.prgrms.wumo.domain.member.dto.request.MemberEmailCheckRequest;
+import org.prgrms.wumo.domain.member.dto.request.MemberNicknameCheckRequest;
 import org.prgrms.wumo.domain.member.model.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -45,6 +46,24 @@ public class MemberControllerTest extends MysqlTestContainer {
 
 		//then
 		resultActions
-			.andExpect(status().isOk());
+			.andExpect(status().isNoContent());
+	}
+
+	@Test
+	@DisplayName("회원 닉네임의 중복체크를 한다")
+	void check_nickname_not_duplicate() throws Exception {
+		//given
+		MemberNicknameCheckRequest memberNicknameCheckRequest
+			= new MemberNicknameCheckRequest("오예스");
+
+		//when
+		ResultActions resultActions
+			= mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/members/check-nickname")
+			.contentType(MediaType.APPLICATION_JSON_VALUE)
+			.content(objectMapper.writeValueAsString(memberNicknameCheckRequest)));
+
+		//then
+		resultActions
+			.andExpect(status().isNoContent());
 	}
 }

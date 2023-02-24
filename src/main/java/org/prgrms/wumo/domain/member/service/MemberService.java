@@ -1,6 +1,7 @@
 package org.prgrms.wumo.domain.member.service;
 
 import org.prgrms.wumo.domain.member.dto.request.MemberEmailCheckRequest;
+import org.prgrms.wumo.domain.member.dto.request.MemberNicknameCheckRequest;
 import org.prgrms.wumo.domain.member.model.Email;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
@@ -20,7 +21,17 @@ public class MemberService {
 		}
 	}
 
+	public void checkNickname(MemberNicknameCheckRequest memberNicknameCheckRequest) {
+		if (checkNicknameDuplicate(memberNicknameCheckRequest.nickname())) {
+			throw new DuplicateException("닉네임이 중복됩니다.");
+		}
+	}
+
 	private boolean checkEmailDuplicate(Email email) {
 		return memberRepository.existsByEmail(email);
+	}
+
+	private boolean checkNicknameDuplicate(String nickname) {
+		return memberRepository.existsByNickname(nickname);
 	}
 }
