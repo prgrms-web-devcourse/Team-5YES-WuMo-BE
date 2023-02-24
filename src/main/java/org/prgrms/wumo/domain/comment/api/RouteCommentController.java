@@ -21,11 +21,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/route-comments")
+@RequestMapping("/api/v1/party-route-comments")
 @Tag(name = "루트 댓글 api")
 public class RouteCommentController {
 
-	@PostMapping("/party")
+	@PostMapping
 	@Operation(summary = "모임 내 루트 댓글 생성")
 	public ResponseEntity<PartyRouteCommentRegisterResponse> registerPrivateRouteComment(
 			@RequestBody @Valid PartyRouteCommentRegisterRequest request
@@ -33,7 +33,7 @@ public class RouteCommentController {
 		return new ResponseEntity<>(null, HttpStatus.CREATED);
 	}
 
-	@GetMapping("/party")
+	@GetMapping
 	@Operation(summary = "모임 내 루트 댓글 전체 조회")
 	public ResponseEntity<PartyRouteCommentGetAllResponse> getAllPrivateRouteComment(
 			@RequestBody @Valid PartyRouteCommentGetAllRequest request
@@ -41,7 +41,7 @@ public class RouteCommentController {
 		return ResponseEntity.ok(null);
 	}
 
-	@PatchMapping("/party")
+	@PatchMapping
 	@Operation(summary = "모임 내 루트 댓글 수정")
 	public ResponseEntity<Void> updatePrivateRouteComment(
 			@RequestBody @Valid PartyRouteCommentUpdateRequest request
@@ -49,7 +49,7 @@ public class RouteCommentController {
 		return ResponseEntity.ok().build();
 	}
 
-	@DeleteMapping("/party/{id}")
+	@DeleteMapping("/{id}")
 	@Operation(summary = "모임 내 루트 댓글 삭제")
 	public ResponseEntity<Void> deletePrivateRouteComment(
 			@PathVariable("id") @Parameter(description = "삭제하고자 하는 비공개 루트 댓글") Long id
