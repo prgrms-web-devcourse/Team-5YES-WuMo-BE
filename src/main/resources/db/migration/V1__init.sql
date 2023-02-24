@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `member` (
 `id`	        BIGINT	        NOT NULL,
-`email`	        VARCHAR(255)	NOT NULL,
-`nickname`	    VARCHAR(255)	NOT NULL,
+`email`	        VARCHAR(50)	    NOT NULL,
+`nickname`	    VARCHAR(20)	    NOT NULL,
 `password`	    VARCHAR(60)	    NOT NULL,
 `image_url`	    VARCHAR(255)	NULL,
 `created_at`	TIMESTAMP	    NOT NULL,
@@ -49,8 +49,8 @@ CREATE TABLE IF NOT EXISTS `location` (
 `visit_date`	TIMESTAMP	    NOT NULL,
 `expected_cost`	INT	            NOT NULL,
 `spending`	    INT	            NOT NULL    DEFAULT 0,
-`createdAt`	    TIMESTAMP	    NOT NULL,
-`updatedAt`	    TIMESTAMP	    NOT NULL,
+`created_at`	TIMESTAMP	    NOT NULL,
+`updated_at`	TIMESTAMP	    NOT NULL,
 `party_id`	    BIGINT	        NOT NULL,
 `route_id`	    BIGINT	        NULL
 );
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `comment` (
 `member_id`	    BIGINT	        NOT NULL,
 `content`	    VARCHAR(255)	NULL,
 `image_url`	    VARCHAR(255)	NULL,
-`DTYPE`	        VARCHAR(20)	    NOT NULL,
+`dtype`	        VARCHAR(25)	    NOT NULL,
 `is_edited`	    BIT	            NOT NULL DEFAULT 0,
 `created_at`	TIMESTAMP	    NOT NULL,
 `updated_at`	TIMESTAMP	    NOT NULL
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `location_comment` (
 );
 
 CREATE TABLE IF NOT EXISTS `party_route_comment` (
-`id`	            VARCHAR(255)	NOT NULL,
+`id`	            BIGINT      	NOT NULL,
 `route_id`	        BIGINT	        NOT NULL,
 `party_member_id`	BIGINT	        NOT NULL
 );
@@ -107,6 +107,6 @@ ALTER TABLE `party_route_comment` ADD CONSTRAINT `PK_PARTY_ROUTE_COMMENT` PRIMAR
 
 ALTER TABLE `invitation` MODIFY COLUMN `code` VARCHAR(255) UNIQUE;
 
-ALTER TABLE `member` MODIFY COLUMN `email` VARCHAR(255) UNIQUE;
+ALTER TABLE `member` MODIFY COLUMN `email` VARCHAR(50) UNIQUE;
 
-ALTER TABLE `member` MODIFY COLUMN `nickname` VARCHAR(255) UNIQUE;
+ALTER TABLE `member` MODIFY COLUMN `nickname` VARCHAR(20) UNIQUE;
