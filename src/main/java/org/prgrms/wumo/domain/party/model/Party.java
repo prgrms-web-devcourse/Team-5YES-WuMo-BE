@@ -27,22 +27,22 @@ public class Party extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "name", nullable = false, length = 40)
+	@Column(name = "name", nullable = false, unique = false, length = 40)
 	private String name;
 
-	@Column(name = "start_date", nullable = false)
+	@Column(name = "start_date", nullable = false, unique = false)
 	private LocalDate startDate;
 
-	@Column(name = "end_date", nullable = false)
+	@Column(name = "end_date", nullable = false, unique = false)
 	private LocalDate endDate;
 
-	@Column(name = "description", nullable = true, length = 255)
+	@Column(name = "description", nullable = true, unique = false, length = 255)
 	private String description;
 
-	@Column(name = "image_url", nullable = false, length = 255)
+	@Column(name = "image_url", nullable = false, unique = false, length = 255)
 	private String coverImage;
 
-	@Column(name = "password", nullable = true, length = 4)
+	@Column(name = "password", nullable = true, unique = false, length = 4)
 	private String password;
 
 	@Builder
