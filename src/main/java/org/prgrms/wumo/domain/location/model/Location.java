@@ -1,6 +1,7 @@
 package org.prgrms.wumo.domain.location.model;
 
 import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,11 +13,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.prgrms.wumo.domain.route.model.Route;
+import org.prgrms.wumo.global.audit.BaseTimeEntity;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.prgrms.wumo.domain.route.model.Route;
-import org.prgrms.wumo.global.audit.BaseTimeEntity;
 
 @Getter
 @Entity
@@ -35,10 +38,10 @@ public class Location extends BaseTimeEntity {
 	private String address;
 
 	@Column(name = "latitude", nullable = false, updatable = true, unique = false)
-	private String latitude;
+	private Float latitude;
 
 	@Column(name = "longitude", nullable = false, updatable = true, unique = false)
-	private String longitude;
+	private Float longitude;
 
 	@Column(name = "image_url", nullable = false, updatable = true, unique = false)
 	private String image;
