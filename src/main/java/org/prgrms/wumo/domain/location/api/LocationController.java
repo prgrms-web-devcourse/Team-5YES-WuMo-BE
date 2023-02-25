@@ -4,12 +4,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.prgrms.wumo.domain.location.dto.request.LocationGetAllRequest;
 import org.prgrms.wumo.domain.location.dto.request.LocationRegisterRequest;
 import org.prgrms.wumo.domain.location.dto.request.LocationUpdateRequest;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetAllResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationRegisterResponse;
+import org.prgrms.wumo.domain.location.service.LocationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,15 +25,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/locations")
+@RequiredArgsConstructor
 @Tag(name = "후보장소 API")
 public class LocationController {
+	private final LocationService locationService;
 
 	@PostMapping
 	@Operation(summary = "후보장소 등록")
 	public ResponseEntity<LocationRegisterResponse> registerLocation(
 			@RequestBody @Valid LocationRegisterRequest locationRegisterRequest) {
 
-		return new ResponseEntity<>(null, HttpStatus.CREATED);
+		return new ResponseEntity<>(locationService.registerLocation(locationRegisterRequest), HttpStatus.CREATED);
 	}
 
 	@GetMapping("/{locationId}")
