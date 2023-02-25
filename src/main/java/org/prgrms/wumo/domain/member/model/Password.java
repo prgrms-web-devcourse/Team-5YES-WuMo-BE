@@ -1,6 +1,6 @@
 package org.prgrms.wumo.domain.member.model;
 
-import static lombok.AccessLevel.*;
+import static lombok.AccessLevel.PROTECTED;
 
 import java.util.regex.Pattern;
 
@@ -19,18 +19,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 public class Password {
 
-	private static final String PASSWORD_PATTERN = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,16}$";
+	private static final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,12}$";
+
+	@Transient
+	private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+	@Column(name = "password", nullable = false, updatable = true, length = 60)
+	private String password;
 
 	public Password(String password) {
 		validatePattern(password);
 		this.password = passwordEncoder.encode(password);
 	}
-
-	@Column(name = "password", nullable = false, updatable = true, length = 60)
-	private String password;
-
-	@Transient
-	private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 	public boolean isValidPassword(String inputPassword) {
 		return passwordEncoder.matches(inputPassword, password);

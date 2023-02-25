@@ -41,7 +41,7 @@ public class MemberController {
 	public ResponseEntity<MemberRegisterResponse> registerMember(
 		@RequestBody @Valid MemberRegisterRequest memberRegisterRequest) {
 
-		return new ResponseEntity<>(null, HttpStatus.CREATED);
+		return new ResponseEntity<>(memberService.registerMember(memberRegisterRequest), HttpStatus.CREATED);
 	}
 
 	@PostMapping("/check-email")
@@ -49,7 +49,7 @@ public class MemberController {
 	public ResponseEntity<Void> checkEmail(
 		@RequestBody @Valid MemberEmailCheckRequest memberEmailCheckRequest) {
 
-		memberService.checkEmail(memberEmailCheckRequest);
+		memberService.checkEmail(memberEmailCheckRequest.email());
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
@@ -58,7 +58,7 @@ public class MemberController {
 	public ResponseEntity<Void> checkNickname(
 		@RequestBody @Valid MemberNicknameCheckRequest memberNicknameCheckRequest) {
 
-		memberService.checkNickname(memberNicknameCheckRequest);
+		memberService.checkNickname(memberNicknameCheckRequest.nickname());
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
