@@ -46,9 +46,9 @@ class PartyControllerTest extends MysqlTestContainer {
 	void setup() {
 		member = memberRepository.save(
 				Member.builder()
-						.email("5yes@gmail.com")
+						.email("ted-change@gmail.com")
 						.password("qwe12345")
-						.nickname("오예스오리지널")
+						.nickname("테드창")
 						.build()
 		);
 	}
