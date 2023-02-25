@@ -1,6 +1,6 @@
 package org.prgrms.wumo.domain.party.dto.request;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -19,14 +19,14 @@ public record PartyRegisterRequest(
 
 		@NotNull(message = "시작일은 필수 입력사항입니다.")
 		@Schema(description = "시작일", example = "2023-02-21", required = true)
-		LocalDate startDate,
+		LocalDateTime startDate,
 
 		@NotNull(message = "종료일은 필수 입력사항입니다.")
 		@Schema(description = "종료일", example = "2023-02-22", required = true)
-		LocalDate endDate,
+		LocalDateTime endDate,
 
 		@Length(max = 255, message = "모임 설명은 {max}자를 초과할 수 없습니다.")
-		@Schema(description = "종료일", example = "팀 설립 기념 워크샵", required = true)
+		@Schema(description = "모임 설명", example = "팀 설립 기념 워크샵", required = true)
 		String description,
 
 		@Length(max = 255, message = "이미지 경로는 {max}자를 초과할 수 없습니다.")
