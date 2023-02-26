@@ -17,7 +17,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final JwtTokenProvider jwtTokenProvider;
+	private final JwtConfig jwtConfig;
+
+	@Bean
+	public JwtTokenProvider jwtTokenProvider() {
+		return new JwtTokenProvider(jwtConfig.getIssuer(), jwtConfig.getSecretKey(),
+			jwtConfig.getAccessTokenExpireSeconds(), jwtConfig.getRefreshTokenExpireSeconds());
+	}
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -30,7 +36,8 @@ public class SecurityConfig {
 			.antMatchers("/api/v1/members/signup", "/api/v1/members/login", "/swagger-ui.html")
 			.permitAll()
 			.and()
-			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider()),
+				UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

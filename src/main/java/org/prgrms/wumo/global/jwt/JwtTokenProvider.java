@@ -5,10 +5,8 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -21,25 +19,18 @@ import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Component
 public class JwtTokenProvider {
 
 	private static final String BEARER_TYPE = "Bearer";
 
 	private final String issuer;
-	private final String key;
 	private final long ACCESS_TOKEN_EXPIRE_SECONDS;
 	private final long REFRESH_TOKEN_EXPIRE_SECONDS;
 
 	private final SecretKey secretKey;
 
-	public JwtTokenProvider(
-		@Value("${jwt.issuer}") String issuer,
-		@Value("${jwt.secret-key}") String key,
-		@Value("${jwt.access-token-expire-seconds}") long accessSeconds,
-		@Value("${jwt.refresh-token-expire-seconds}") long refreshSeconds) {
+	public JwtTokenProvider(String issuer, String key, long accessSeconds, long refreshSeconds) {
 		this.issuer = issuer;
-		this.key = key;
 		this.ACCESS_TOKEN_EXPIRE_SECONDS = accessSeconds;
 		this.REFRESH_TOKEN_EXPIRE_SECONDS = refreshSeconds;
 		this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
