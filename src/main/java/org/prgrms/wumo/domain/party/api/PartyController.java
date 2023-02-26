@@ -47,7 +47,7 @@ public class PartyController {
 			@PathVariable @Parameter(description = "사용자 식별자", required = true) Long memberId,
 			@Valid PartyGetRequest partyGetRequest
 	) {
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(partyService.getAllParty(memberId, partyGetRequest));
 	}
 
 	@GetMapping("/{partyId}")

@@ -1,6 +1,6 @@
 package org.prgrms.wumo.domain.party.dto.response;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -14,10 +14,10 @@ public record PartyGetDetailResponse(
 		String name,
 
 		@Schema(description = "시작일", example = "2023-02-21", required = true)
-		LocalDate startDate,
+		LocalDateTime startDate,
 
 		@Schema(description = "종료일", example = "2023-02-22", required = true)
-		LocalDate endDate,
+		LocalDateTime endDate,
 
 		@Schema(description = "종료일", example = "팀 설립 기념 워크샵", required = true)
 		String description,

@@ -1,6 +1,11 @@
 package org.prgrms.wumo.global.mapper;
 
+import java.util.List;
+
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
+import org.prgrms.wumo.domain.party.dto.response.PartyGetAllResponse;
+import org.prgrms.wumo.domain.party.dto.response.PartyGetDetailResponse;
+import org.prgrms.wumo.domain.party.dto.response.PartyGetResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 
@@ -23,6 +28,24 @@ public class PartyMapper {
 
 	public static PartyRegisterResponse toPartyRegisterResponse(Party party) {
 		return new PartyRegisterResponse(party.getId());
+	}
+
+	public static PartyGetAllResponse toPartyGetAllResponse(List<Party> parties) {
+		List<PartyGetResponse> partyGetResponses = parties.stream()
+				.map(party -> new PartyGetResponse(party.getId(), party.getName(), party.getCoverImage()))
+				.toList();
+		return new PartyGetAllResponse(partyGetResponses);
+	}
+
+	public static PartyGetDetailResponse toPartyGetDetailResponse(Party party) {
+		return new PartyGetDetailResponse(
+				party.getId(),
+				party.getName(),
+				party.getStartDate(),
+				party.getEndDate(),
+				party.getDescription(),
+				party.getCoverImage()
+		);
 	}
 
 }
