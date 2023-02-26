@@ -10,9 +10,12 @@ import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
+import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -70,10 +73,15 @@ public class MemberController {
 		return ResponseEntity.ok(memberService.login(memberLoginRequest));
 	}
 
-	@PostMapping("/logout")
+	@DeleteMapping("/logout")
 	@Operation(summary = "로그아웃")
-	public ResponseEntity<Void> logoutMember() {
+	public ResponseEntity<Void> logoutMember(
+		Authentication authentication) {
 
+		if (authentication != null) {
+			long memberId = ((Member)authentication.getPrincipal()).getId();
+			memberService.logout(memberId);
+		}
 		return ResponseEntity.ok().build();
 	}
 

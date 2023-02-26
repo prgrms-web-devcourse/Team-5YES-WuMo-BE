@@ -61,10 +61,17 @@ public class MemberService {
 		}
 
 		WumoJwt wumoJwt = jwtTokenProvider.generateToken(String.valueOf(member.getId()));
-		String refreshToken = wumoJwt.getRefreshToken();
-		member.updateRefreshToken(refreshToken);
+		member.updateRefreshToken(wumoJwt.getRefreshToken());
 
 		return toMemberLoginResponse(wumoJwt);
+	}
+
+	@Transactional
+	public void logout(long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
+
+		member.logout();
 	}
 
 	private boolean checkEmailDuplicate(String email) {
