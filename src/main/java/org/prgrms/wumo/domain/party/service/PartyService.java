@@ -2,6 +2,7 @@ package org.prgrms.wumo.domain.party.service;
 
 import static org.prgrms.wumo.global.mapper.PartyMapper.toParty;
 import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyGetAllResponse;
+import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyGetDetailResponse;
 import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyRegisterResponse;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyGetRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetAllResponse;
+import org.prgrms.wumo.domain.party.dto.response.PartyGetDetailResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
@@ -61,9 +63,19 @@ public class PartyService {
 		return toPartyGetAllResponse(parties);
 	}
 
+	@Transactional(readOnly = true)
+	public PartyGetDetailResponse getParty(Long partyId) {
+		return toPartyGetDetailResponse(getPartyEntity(partyId));
+	}
+
 	private Member getMemberEntity(Long memberId) {
 		return memberRepository.findById(memberId)
 				.orElseThrow(() -> new EntityNotFoundException("사용자 아이디에 문제가 발생했습니다."));
+	}
+
+	private Party getPartyEntity(Long partyId) {
+		return partyRepository.findById(partyId)
+				.orElseThrow(() -> new EntityNotFoundException("일치하는 모임이 없습니다."));
 	}
 
 }

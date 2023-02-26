@@ -55,7 +55,7 @@ public class PartyController {
 	public ResponseEntity<PartyGetDetailResponse> getParty(
 			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId
 	) {
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(partyService.getParty(partyId));
 	}
 
 	@PatchMapping("/{partyId}")
