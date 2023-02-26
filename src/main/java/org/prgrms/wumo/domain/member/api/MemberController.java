@@ -67,7 +67,7 @@ public class MemberController {
 	public ResponseEntity<MemberLoginResponse> loginMember(
 		@RequestBody @Valid MemberLoginRequest memberLoginRequest) {
 
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(memberService.login(memberLoginRequest));
 	}
 
 	@PostMapping("/logout")

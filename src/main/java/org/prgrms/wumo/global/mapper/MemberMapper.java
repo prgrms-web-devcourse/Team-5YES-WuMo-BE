@@ -1,8 +1,10 @@
 package org.prgrms.wumo.global.mapper;
 
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
+import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
 import org.prgrms.wumo.domain.member.model.Member;
+import org.prgrms.wumo.global.jwt.WumoJwt;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -20,5 +22,10 @@ public class MemberMapper {
 
 	public static MemberRegisterResponse toMemberRegisterResponse(Long memberId) {
 		return new MemberRegisterResponse(memberId);
+	}
+
+	public static MemberLoginResponse toMemberLoginResponse(WumoJwt wumoJwt) {
+		return new MemberLoginResponse(
+			wumoJwt.getGrantType(), wumoJwt.getAccessToken(), wumoJwt.getRefreshToken());
 	}
 }

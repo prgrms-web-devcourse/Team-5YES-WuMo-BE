@@ -37,7 +37,8 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "image_url", nullable = true, updatable = true, unique = false)
 	private String profileImage;
 
-	//refreshToken
+	@Column(name = "refresh_token", nullable = true, updatable = true, unique = false, length = 132)
+	private String refreshToken;
 
 	@Builder
 	public Member(Long id, String email, String nickname, String password, String profileImage) {
@@ -46,5 +47,13 @@ public class Member extends BaseTimeEntity {
 		this.nickname = nickname;
 		this.password = new Password(password);
 		this.profileImage = profileImage;
+	}
+
+	public boolean isNotValidPassword(String inputPassword) {
+		return !password.isValidPassword(inputPassword);
+	}
+
+	public void updateRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 }
