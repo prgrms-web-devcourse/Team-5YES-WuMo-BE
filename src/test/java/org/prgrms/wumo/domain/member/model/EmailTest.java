@@ -9,8 +9,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 @DisplayName("Email 형식이 ")
 public class EmailTest {
 
-	@DisplayName("올바르지 않으면 예외가 발생한다")
 	@ParameterizedTest
+	@DisplayName("올바르지 않으면 예외가 발생한다")
 	@ValueSource(strings = {"@@gmail.com", "@gmail..com", "", " ", "123@gmail.", "123.com", "tae"})
 	void check_email_pattern(String email) {
 		assertThatThrownBy(() -> new Email(email))

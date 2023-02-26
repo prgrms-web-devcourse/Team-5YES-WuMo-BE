@@ -81,12 +81,12 @@ public class JwtTokenProvider {
 		return new UsernamePasswordAuthenticationToken(claims.getSubject(), "", Collections.emptyList());
 	}
 
-	public boolean validateToken(String token) {
+	public boolean validateToken(String accessToken) {
 		try {
 			Jwts.parserBuilder()
 				.setSigningKey(secretKey)
 				.build()
-				.parseClaimsJws(token);
+				.parseClaimsJws(accessToken);
 			return true;
 		} catch (SecurityException | MalformedJwtException exception) {
 			log.info("Invalid JWT Token", exception);
@@ -107,8 +107,8 @@ public class JwtTokenProvider {
 				.build()
 				.parseClaimsJws(accessToken)
 				.getBody();
-		} catch (ExpiredJwtException e) {
-			return e.getClaims();
+		} catch (ExpiredJwtException exception) {
+			return exception.getClaims();
 		}
 	}
 }

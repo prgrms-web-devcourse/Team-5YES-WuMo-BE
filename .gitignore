@@ -15,6 +15,7 @@
 
 # AWS User-specific
 .idea/**/aws.xml
+spring.env
 
 # Generated files
 .idea/**/contentModel.xml
