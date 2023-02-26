@@ -7,6 +7,8 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -22,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
+import org.prgrms.wumo.domain.party.dto.response.PartyGetAllResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
@@ -44,41 +47,42 @@ class PartyServiceTest {
 	@InjectMocks
 	PartyService partyService;
 
+	//given
+	Member member = Member.builder()
+			.id(1L)
+			.email("5yes@gmail.com")
+			.nickname("오예스오리지널")
+			.password("qwe12345")
+			.build();
+	PartyRegisterRequest partyRegisterRequest = new PartyRegisterRequest(
+			"오예스 워크샵",
+			LocalDateTime.now(),
+			LocalDateTime.now().plusDays(1),
+			"팀 설립 기념 워크샵",
+			"https://~.jpeg",
+			"1234",
+			1L,
+			"총무"
+	);
+	Party party = Party.builder()
+			.id(1L)
+			.name(partyRegisterRequest.name())
+			.startDate(partyRegisterRequest.startDate())
+			.endDate(partyRegisterRequest.endDate())
+			.description(partyRegisterRequest.description())
+			.coverImage(partyRegisterRequest.coverImage())
+			.password(partyRegisterRequest.password())
+			.build();
+	PartyMember partyMember = PartyMember.builder()
+			.member(member)
+			.party(party)
+			.role(partyRegisterRequest.role())
+			.isLeader(true)
+			.build();
+
 	@Nested
 	@DisplayName("registerParty 메소드는 등록 요청시")
 	class RegisterParty {
-		//given
-		Member member = Member.builder()
-				.id(1L)
-				.email("5yes@gmail.com")
-				.nickname("오예스오리지널")
-				.password("qwe12345")
-				.build();
-		PartyRegisterRequest partyRegisterRequest = new PartyRegisterRequest(
-				"오예스 워크샵",
-				LocalDateTime.now(),
-				LocalDateTime.now().plusDays(1),
-				"팀 설립 기념 워크샵",
-				"https://~.jpeg",
-				"1234",
-				1L,
-				"총무"
-		);
-		Party party = Party.builder()
-				.id(1L)
-				.name(partyRegisterRequest.name())
-				.startDate(partyRegisterRequest.startDate())
-				.endDate(partyRegisterRequest.endDate())
-				.description(partyRegisterRequest.description())
-				.coverImage(partyRegisterRequest.coverImage())
-				.password(partyRegisterRequest.password())
-				.build();
-		PartyMember partyMember = PartyMember.builder()
-				.member(member)
-				.party(party)
-				.role(partyRegisterRequest.role())
-				.isLeader(true)
-				.build();
 
 		@Test
 		@DisplayName("모임을 생성하고 생성을 요청한 사용자를 파티장으로 등록한다.")
@@ -107,6 +111,7 @@ class PartyServiceTest {
 
 			assertThat(response.id()).isEqualTo(party.getId());
 		}
+
 		@Test
 		@DisplayName("유효하지 않은 사용자면 예외가 발생한다.")
 		void failed() {
@@ -127,4 +132,67 @@ class PartyServiceTest {
 
 	}
 
+	@Nested
+	@DisplayName("getAllParty 메소드는 조회시")
+	class GetAllParty {
+
+		@Test
+		@DisplayName("사용자가 속한 모임 목록을 반환한다.")
+		void success() {
+			//mocking
+			given(partyMemberRepository.findAllByMember(member))
+					.willReturn(List.of(partyMember));
+			given(memberRepository.findById(member.getId()))
+					.willReturn(Optional.of(member));
+
+			//when
+			PartyGetAllResponse myParty = partyService.getAllParty(member.getId(), null);
+
+			//then
+			assertThat(myParty.party()).isNotEmpty();
+
+			then(partyMemberRepository)
+					.should()
+					.findAllByMember(member);
+			then(memberRepository)
+					.should()
+					.findById(member.getId());
+		}
+
+		@Test
+		@DisplayName("사용자가 속한 모임이 없다면 빈 목록을 반환한다.")
+		void empty() {
+			//mocking
+			given(partyMemberRepository.findAllByMember(member))
+					.willReturn(Collections.emptyList());
+			given(memberRepository.findById(member.getId()))
+					.willReturn(Optional.of(member));
+
+			//when
+			PartyGetAllResponse myEmptyParty = partyService.getAllParty(member.getId(), null);
+
+			//then
+			assertThat(myEmptyParty.party()).isEmpty();
+
+			then(partyMemberRepository)
+					.should()
+					.findAllByMember(member);
+			then(memberRepository)
+					.should()
+					.findById(member.getId());
+		}
+
+		@Test
+		@DisplayName("존재하지 않는 사용자라면 예외가 발생한다.")
+		void failed() {
+			//mocking
+			given(memberRepository.findById(member.getId()))
+					.willReturn(Optional.empty());
+
+			//when
+			//then
+			Assertions.assertThrows(EntityNotFoundException.class, () -> partyService.getAllParty(member.getId(), null));
+		}
+
+	}
 }
