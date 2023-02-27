@@ -15,7 +15,7 @@ import org.prgrms.wumo.domain.party.dto.request.PartyGetRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyUpdateRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetAllResponse;
-import org.prgrms.wumo.domain.party.dto.response.PartyGetDetailResponse;
+import org.prgrms.wumo.domain.party.dto.response.PartyGetResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
@@ -57,20 +57,24 @@ public class PartyService {
 
 	@Transactional(readOnly = true)
 	public PartyGetAllResponse getAllParty(Long memberId, PartyGetRequest partyGetRequest) {
-		List<Party> parties = partyMemberRepository.findAllByMember(getMemberEntity(memberId)).stream()
+		List<PartyMember> partyMembers = partyMemberRepository.findAllByMemberId(memberId, partyGetRequest.cursorId(), partyGetRequest.pageSize());
+
+		long lastId = (partyMembers.size() > 0) ? partyMembers.get(partyMembers.size()-1).getId() : -1L;
+
+		List<Party> parties = partyMembers.stream()
 				.map(PartyMember::getParty)
 				.toList();
 
-		return toPartyGetAllResponse(parties);
+		return toPartyGetAllResponse(parties, lastId);
 	}
 
 	@Transactional(readOnly = true)
-	public PartyGetDetailResponse getParty(Long partyId) {
+	public PartyGetResponse getParty(Long partyId) {
 		return toPartyGetDetailResponse(getPartyEntity(partyId));
 	}
 
 	@Transactional
-	public PartyGetDetailResponse updateParty(Long partyId, PartyUpdateRequest partyUpdateRequest) {
+	public PartyGetResponse updateParty(Long partyId, PartyUpdateRequest partyUpdateRequest) {
 		Party party = getPartyEntity(partyId);
 		party.update(
 				partyUpdateRequest.name(),

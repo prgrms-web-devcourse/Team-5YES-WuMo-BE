@@ -6,7 +6,7 @@ import org.prgrms.wumo.domain.party.dto.request.PartyGetRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyUpdateRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetAllResponse;
-import org.prgrms.wumo.domain.party.dto.response.PartyGetDetailResponse;
+import org.prgrms.wumo.domain.party.dto.response.PartyGetResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.service.PartyService;
 import org.springframework.http.HttpStatus;
@@ -52,7 +52,7 @@ public class PartyController {
 
 	@GetMapping("/{partyId}")
 	@Operation(summary = "모임 상세 조회")
-	public ResponseEntity<PartyGetDetailResponse> getParty(
+	public ResponseEntity<PartyGetResponse> getParty(
 			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId
 	) {
 		return ResponseEntity.ok(partyService.getParty(partyId));
@@ -60,7 +60,7 @@ public class PartyController {
 
 	@PatchMapping("/{partyId}")
 	@Operation(summary = "모임 수정")
-	public ResponseEntity<PartyGetDetailResponse> updateParty(
+	public ResponseEntity<PartyGetResponse> updateParty(
 			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId,
 			@RequestBody @Valid PartyUpdateRequest partyUpdateRequest
 	) {

@@ -106,6 +106,7 @@ class PartyControllerTest extends MysqlTestContainer {
 				.andExpect(jsonPath("$.party[0].id").value(partyRegisterResponse.id()))
 				.andExpect(jsonPath("$.party[0].name").value(partyRegisterRequest.name()))
 				.andExpect(jsonPath("$.party[0].coverImage").value(partyRegisterRequest.coverImage()))
+				.andExpect(jsonPath("$.lastId").isNotEmpty())
 				.andDo(print());
 	}
 

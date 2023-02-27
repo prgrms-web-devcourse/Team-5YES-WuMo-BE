@@ -23,10 +23,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
+import org.prgrms.wumo.domain.party.dto.request.PartyGetRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyUpdateRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetAllResponse;
-import org.prgrms.wumo.domain.party.dto.response.PartyGetDetailResponse;
+import org.prgrms.wumo.domain.party.dto.response.PartyGetResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
@@ -76,6 +77,7 @@ class PartyServiceTest {
 			.password(partyRegisterRequest.password())
 			.build();
 	PartyMember partyMember = PartyMember.builder()
+			.id(1L)
 			.member(member)
 			.party(party)
 			.role(partyRegisterRequest.role())
@@ -142,58 +144,37 @@ class PartyServiceTest {
 		@DisplayName("사용자가 속한 모임 목록을 반환한다.")
 		void success() {
 			//mocking
-			given(partyMemberRepository.findAllByMember(member))
+			given(partyMemberRepository.findAllByMemberId(member.getId(), null, 1))
 					.willReturn(List.of(partyMember));
-			given(memberRepository.findById(member.getId()))
-					.willReturn(Optional.of(member));
 
 			//when
-			PartyGetAllResponse myParty = partyService.getAllParty(member.getId(), null);
+			PartyGetAllResponse partyGetAllResponse = partyService.getAllParty(member.getId(), new PartyGetRequest(null, 1));
 
 			//then
-			assertThat(myParty.party()).isNotEmpty();
+			assertThat(partyGetAllResponse.party()).isNotEmpty();
 
 			then(partyMemberRepository)
 					.should()
-					.findAllByMember(member);
-			then(memberRepository)
-					.should()
-					.findById(member.getId());
+					.findAllByMemberId(member.getId(), null, 1);
 		}
 
 		@Test
 		@DisplayName("사용자가 속한 모임이 없다면 빈 목록을 반환한다.")
 		void empty() {
 			//mocking
-			given(partyMemberRepository.findAllByMember(member))
+			given(partyMemberRepository.findAllByMemberId(member.getId(), null, 1))
 					.willReturn(Collections.emptyList());
-			given(memberRepository.findById(member.getId()))
-					.willReturn(Optional.of(member));
 
 			//when
-			PartyGetAllResponse myEmptyParty = partyService.getAllParty(member.getId(), null);
+			PartyGetAllResponse partyGetAllResponse = partyService.getAllParty(member.getId(), new PartyGetRequest(null, 1));
 
 			//then
-			assertThat(myEmptyParty.party()).isEmpty();
+			assertThat(partyGetAllResponse.party()).isEmpty();
+			assertThat(partyGetAllResponse.lastId()).isEqualTo(-1L);
 
 			then(partyMemberRepository)
 					.should()
-					.findAllByMember(member);
-			then(memberRepository)
-					.should()
-					.findById(member.getId());
-		}
-
-		@Test
-		@DisplayName("존재하지 않는 사용자라면 예외가 발생한다.")
-		void failed() {
-			//mocking
-			given(memberRepository.findById(member.getId()))
-					.willReturn(Optional.empty());
-
-			//when
-			//then
-			Assertions.assertThrows(EntityNotFoundException.class, () -> partyService.getAllParty(member.getId(), null));
+					.findAllByMemberId(member.getId(), null, 1);
 		}
 
 	}
@@ -210,7 +191,7 @@ class PartyServiceTest {
 					.willReturn(Optional.of(party));
 
 			//when
-			PartyGetDetailResponse myParty = partyService.getParty(party.getId());
+			PartyGetResponse myParty = partyService.getParty(party.getId());
 
 			//then
 			assertThat(myParty.id()).isEqualTo(party.getId());
@@ -261,15 +242,15 @@ class PartyServiceTest {
 					.willReturn(party);
 
 			//when
-			PartyGetDetailResponse partyGetDetailResponse = partyService.updateParty(party.getId(), partyUpdateRequest);
+			PartyGetResponse partyGetResponse = partyService.updateParty(party.getId(), partyUpdateRequest);
 
 			//then
-			assertThat(partyGetDetailResponse.id()).isEqualTo(party.getId());
-			assertThat(partyGetDetailResponse.name()).isEqualTo(partyUpdateRequest.name());
-			assertThat(partyGetDetailResponse.startDate()).isEqualTo(partyUpdateRequest.startDate());
-			assertThat(partyGetDetailResponse.endDate()).isEqualTo(partyUpdateRequest.endDate());
-			assertThat(partyGetDetailResponse.description()).isEqualTo(partyUpdateRequest.description());
-			assertThat(partyGetDetailResponse.coverImage()).isEqualTo(party.getCoverImage());
+			assertThat(partyGetResponse.id()).isEqualTo(party.getId());
+			assertThat(partyGetResponse.name()).isEqualTo(partyUpdateRequest.name());
+			assertThat(partyGetResponse.startDate()).isEqualTo(partyUpdateRequest.startDate());
+			assertThat(partyGetResponse.endDate()).isEqualTo(partyUpdateRequest.endDate());
+			assertThat(partyGetResponse.description()).isEqualTo(partyUpdateRequest.description());
+			assertThat(partyGetResponse.coverImage()).isEqualTo(party.getCoverImage());
 
 			then(partyRepository)
 					.should()
