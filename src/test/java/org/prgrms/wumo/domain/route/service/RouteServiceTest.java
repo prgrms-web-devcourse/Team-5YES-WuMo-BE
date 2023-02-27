@@ -185,7 +185,6 @@ public class RouteServiceTest {
 	private Route getRouteData() {
 		return Route.builder()
 			.id(routeId)
-			.isPublic(false)
 			.locations(new ArrayList<>() {{
 				add(getLocationData());
 			}})

@@ -38,9 +38,9 @@ public class Route extends BaseTimeEntity {
 	private Party party;
 
 	@Builder
-	public Route(Long id, boolean isPublic, List<Location> locations, Party party) {
+	public Route(Long id, List<Location> locations, Party party) {
 		this.id = id;
-		this.isPublic = isPublic;
+		this.isPublic = false;
 		this.locations = locations;
 		this.party = party;
 	}

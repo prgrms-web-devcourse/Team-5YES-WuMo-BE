@@ -19,7 +19,6 @@ public class RouteMapper {
 
 	public static Route toRoute(Location location, Party party) {
 		return Route.builder()
-			.isPublic(false)
 			.locations(List.of(location))
 			.party(party)
 			.build();
