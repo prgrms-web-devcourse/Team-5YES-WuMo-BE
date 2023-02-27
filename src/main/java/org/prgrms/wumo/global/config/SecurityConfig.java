@@ -1,5 +1,7 @@
 package org.prgrms.wumo.global.config;
 
+import org.prgrms.wumo.global.exception.custom.CustomAccessDeniedHandler;
+import org.prgrms.wumo.global.exception.custom.CustomAuthenticationEntryPoint;
 import org.prgrms.wumo.global.jwt.JwtAuthenticationFilter;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +12,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -18,11 +22,22 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private final JwtConfig jwtConfig;
+	private final ObjectMapper objectMapper;
 
 	@Bean
 	public JwtTokenProvider jwtTokenProvider() {
 		return new JwtTokenProvider(jwtConfig.getIssuer(), jwtConfig.getSecretKey(),
 			jwtConfig.getAccessTokenExpireSeconds(), jwtConfig.getRefreshTokenExpireSeconds());
+	}
+
+	@Bean
+	public CustomAuthenticationEntryPoint customAuthenticationEntryPoint() {
+		return new CustomAuthenticationEntryPoint(objectMapper);
+	}
+
+	@Bean
+	public CustomAccessDeniedHandler customAccessDeniedHandler() {
+		return new CustomAccessDeniedHandler(objectMapper);
 	}
 
 	@Bean
@@ -37,7 +52,10 @@ public class SecurityConfig {
 			.permitAll()
 			.and()
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider()),
-				UsernamePasswordAuthenticationFilter.class);
+				UsernamePasswordAuthenticationFilter.class)
+			.exceptionHandling()
+			.authenticationEntryPoint(customAuthenticationEntryPoint())
+			.accessDeniedHandler(customAccessDeniedHandler());
 
 		return http.build();
 	}
