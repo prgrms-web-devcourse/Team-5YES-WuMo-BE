@@ -13,6 +13,7 @@ import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyGetRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
+import org.prgrms.wumo.domain.party.dto.request.PartyUpdateRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetAllResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetDetailResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
@@ -63,16 +64,31 @@ public class PartyService {
 		return toPartyGetAllResponse(parties);
 	}
 
+	@Transactional(readOnly = true)
+	public PartyGetDetailResponse getParty(Long partyId) {
+		return toPartyGetDetailResponse(getPartyEntity(partyId));
+	}
+
+	@Transactional
+	public PartyGetDetailResponse updateParty(Long partyId, PartyUpdateRequest partyUpdateRequest) {
+		Party party = getPartyEntity(partyId);
+		party.update(
+				partyUpdateRequest.name(),
+				partyUpdateRequest.startDate(),
+				partyUpdateRequest.endDate(),
+				partyUpdateRequest.description(),
+				partyUpdateRequest.coverImage(),
+				partyUpdateRequest.password()
+		);
+
+		return toPartyGetDetailResponse(partyRepository.save(party));
+	}
+
 	@Transactional
 	public void deleteParty(Long partyId) {
 		Party party = getPartyEntity(partyId);
 		partyMemberRepository.deleteAllByParty(party);
 		partyRepository.delete(party);
-	}
-
-	@Transactional(readOnly = true)
-	public PartyGetDetailResponse getParty(Long partyId) {
-		return toPartyGetDetailResponse(getPartyEntity(partyId));
 	}
 
 	private Member getMemberEntity(Long memberId) {
