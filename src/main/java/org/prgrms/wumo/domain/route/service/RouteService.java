@@ -17,6 +17,7 @@ import org.prgrms.wumo.domain.route.model.Route;
 import org.prgrms.wumo.domain.route.repository.RouteRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +30,7 @@ public class RouteService {
 	private final PartyMemberRepository partyMemberRepository;
 	private final LocationRepository locationRepository;
 
+	@Transactional
 	public RouteRegisterResponse registerRoute(RouteRegisterRequest routeRegisterRequest) {
 		Party party = partyRepository.findById(routeRegisterRequest.partyId())
 			.orElseThrow(() -> new EntityNotFoundException("일치하는 모임이 없습니다."));
