@@ -12,6 +12,10 @@ public record LocationGetAllRequest(
 		@NotNull
 		@Positive(message = "page size는 0 또는 음수일 수 없습니다.")
 		@Schema(description = "페이지 사이즈", required = true, example = "5")
-		int pageSize
+		int pageSize,
+
+		@NotNull
+		@Schema(description = "후보 장소들이 속한 Party 식별자", required = true, example = "1")
+		Long partyId
 ) {
 }

@@ -50,7 +50,7 @@ public class LocationController {
 	@Operation(summary = "후보장소 목록 조회")
 	public ResponseEntity<LocationGetAllResponse> getAllLocation(
 			@Valid LocationGetAllRequest locationGetAllRequest) {
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(locationService.getAllLocations(locationGetAllRequest));
 	}
 
 	@PatchMapping
