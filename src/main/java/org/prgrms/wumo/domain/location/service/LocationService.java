@@ -35,8 +35,9 @@ public class LocationService {
 	// TODO queryDSL 이용, 커서 기반 페이지네이션으로 변경
 	@Transactional(readOnly = true)
 	public LocationGetAllResponse getAllLocations(LocationGetAllRequest locationGetAllRequest) {
-		List<Location> locations = locationRepository.findFirst5ByPartyId(locationGetAllRequest.partyId());
-		return toLocationGetAllResponse(locations, locationGetAllRequest.cursorId());
+		List<Location> locations = locationRepository.findAllByPartyIdAndCursorIdLimitPageSize(locationGetAllRequest.partyId(),
+				locationGetAllRequest.cursorId(), locationGetAllRequest.pageSize());
+		return toLocationGetAllResponse(locations, locationGetAllRequest.cursorId() + locationGetAllRequest.pageSize());
 	}
 
 	private Location getLocationEntity(Long locationId) {

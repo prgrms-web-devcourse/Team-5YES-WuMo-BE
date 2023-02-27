@@ -105,7 +105,7 @@ public class LocationControllerTest extends MysqlTestContainer {
 		// When
 		ResultActions resultActions = mockMvc.perform(
 				get("/api/v1/locations")
-						.param("cursorId", (String)null)
+						.param("cursorId", "0" )
 						.param("pageSize", "5")
 						.param("partyId", "1")
 		);

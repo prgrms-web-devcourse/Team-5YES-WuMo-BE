@@ -5,6 +5,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationGetResponse;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
@@ -40,11 +42,11 @@ public class LocationServiceTest {
 
 	@Nested
 	@DisplayName("registerLocation을 사용해서 ")
-	class RegisterLocation{
+	class RegisterLocation {
 		// Given
 		LocationRegisterRequest locationRegisterRequest
 				= new LocationRegisterRequest(
-						"프로그래머스 강남 교육장", "강남역 2번출구"
+				"프로그래머스 강남 교육장", "강남역 2번출구"
 				, locationTestUtils.getLatitude1(), locationTestUtils.getLongitude1(), "http://programmers_gangnam_image.com"
 				, Category.STUDY, "이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀...."
 				, locationTestUtils.getDayToVisit(), 4000, 1L
@@ -52,7 +54,7 @@ public class LocationServiceTest {
 
 		@Test
 		@DisplayName("후보 장소를 등록할 수 있다.")
-		void registerLocationTest(){
+		void registerLocationTest() {
 			// Given
 			given(locationRepository.save(any(Location.class))).willReturn(locationTestUtils.getLocation());
 
@@ -68,12 +70,12 @@ public class LocationServiceTest {
 
 	@Nested
 	@DisplayName("getLocation을 사용해서 ")
-	class GetLocation{
+	class GetLocation {
 		// Given
 
 		@Test
 		@DisplayName("후보 장소 하나를 상세 조회할 수 있다.")
-		void getOneLocationTest(){
+		void getOneLocationTest() {
 			// Given
 			given(locationRepository.findById(1L)).willReturn(Optional.of(locationTestUtils.getLocation()));
 
@@ -82,12 +84,13 @@ public class LocationServiceTest {
 					locationService.getLocation(1L);
 
 			// Then
-			assertThat(locationGetResponse).usingRecursiveComparison().isEqualTo(toLocationGetResponse(locationTestUtils.getLocation()));
+			assertThat(locationGetResponse).usingRecursiveComparison()
+					.isEqualTo(toLocationGetResponse(locationTestUtils.getLocation()));
 		}
 
 		@Test
 		@DisplayName(" 없는 후보 장소는 상세 조회할 수 없다.")
-		void getLocationFailTest(){
+		void getLocationFailTest() {
 			// Given
 			given(locationRepository.findById(1L)).willReturn(Optional.empty());
 
@@ -100,27 +103,40 @@ public class LocationServiceTest {
 
 	@Nested
 	@DisplayName("getAllLocation을 사용해서 ")
-	class getAllLocations{
+	class getAllLocations {
 		// Given
+		int pageSize = 5;
+		Long partyId = 1L;
 
 		LocationGetAllRequest locationGetAllRequest
-				= new LocationGetAllRequest(0L, 15, 1L);
+				= new LocationGetAllRequest(1L, pageSize, partyId);
+
+		List<Location> partyId1Locations = new ArrayList<>();
 
 		@Test
 		@DisplayName("해당 모임의 모든 후보 장소를 가져올 수 있다.")
-		void getAllLocationsTest(){
+		void getAllLocationsTest() {
 			// Given
-			given(locationRepository.findFirst5ByPartyId(1L)).willReturn(locationTestUtils.getLocations());
+			for (Location location : locationTestUtils.getLocations()){
+				if (partyId1Locations.size() >= 5) break;
+				if (location.getPartyId() == 1L)
+					partyId1Locations.add(location);
+			}
+
+			given(locationRepository.findAllByPartyIdAndCursorIdLimitPageSize(1L, 1L, 5))
+					.willReturn(partyId1Locations);
 
 			// When
 			LocationGetAllResponse locationGetAllResponse = locationService.getAllLocations(locationGetAllRequest);
 
 			// Then
-			assertThat(locationGetAllResponse.locations().size()).isEqualTo(3);
-			for (int i = 0; i < 3; i++) {
+			assertThat(locationGetAllResponse.locations().size()).isEqualTo(5);
+			for (int i = 0; i < 4; i++) {
 				assertThat(locationGetAllResponse.locations().get(i)).usingRecursiveComparison()
 						.isEqualTo(toLocationGetResponse(locationTestUtils.getLocations().get(i)));
 			}
+			assertThat(locationGetAllResponse.locations().get(4)).usingRecursiveComparison()
+					.isEqualTo(toLocationGetResponse(locationTestUtils.getLocations().get(5)));
 		}
 
 	}

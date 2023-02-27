@@ -48,9 +48,9 @@ public class LocationMapper {
 		);
 	}
 
-	public static LocationGetAllResponse toLocationGetAllResponse(List<Location> locations, Long cursorId){
+	public static LocationGetAllResponse toLocationGetAllResponse(List<Location> locations, Long lastId){
 		return new LocationGetAllResponse(
-				locations.stream().map(LocationMapper::toLocationGetResponse).toList(), cursorId
+				locations.stream().map(LocationMapper::toLocationGetResponse).toList(), lastId
 		);
 	}
 }
