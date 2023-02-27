@@ -6,6 +6,8 @@ import org.prgrms.wumo.domain.party.dto.request.PartyMemberGetRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyMemberRegisterRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyMemberUpdateRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetAllResponse;
+import org.prgrms.wumo.domain.party.service.PartyMemberService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/party")
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/parties")
 @Tag(name = "모임 구성원 API")
 public class PartyMemberController {
+
+	private final PartyMemberService partyMemberService;
 
 	@PostMapping("/{partyId}/members")
 	@Operation(summary = "모임 구성원 등록")
@@ -31,7 +37,8 @@ public class PartyMemberController {
 			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId,
 			@RequestBody @Valid PartyMemberRegisterRequest partyMemberRegisterRequest
 	) {
-		return ResponseEntity.ok(null);
+		partyMemberService.registerPartyMember(partyId, partyMemberRegisterRequest);
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
 	@GetMapping("/{partyId}/members")

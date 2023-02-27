@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/party")
+@RequestMapping("/api/v1/parties")
 @Tag(name = "모임 API")
 public class PartyController {
 

@@ -18,11 +18,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/v1/party")
+@RequestMapping("/api/v1/parties")
 @Tag(name = "모임 초대 API")
 public class InvitationController {
 
-	@PostMapping("/{partyId}/invitation")
+	@PostMapping("/{partyId}/invitations")
 	@Operation(summary = "모임 초대 코드 생성")
 	public ResponseEntity<InvitationRegisterResponse> registerInvitation(
 			@PathVariable @Parameter(description = "파티 식별자", required = true) Long partyId,
