@@ -15,6 +15,7 @@ import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.global.audit.BaseTimeEntity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,7 +37,15 @@ public class Route extends BaseTimeEntity {
 	@OneToOne
 	private Party party;
 
-	public void changeRoute(Location location) {
+	@Builder
+	public Route(Long id, boolean isPublic, List<Location> locations, Party party) {
+		this.id = id;
+		this.isPublic = isPublic;
+		this.locations = locations;
+		this.party = party;
+	}
+
+	public void updateLocation(Location location) {
 		if (location.getRoute() != null) {
 			location.getRoute().getLocations().remove(location);
 		}
