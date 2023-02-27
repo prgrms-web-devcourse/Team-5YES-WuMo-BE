@@ -2,6 +2,7 @@ package org.prgrms.wumo.domain.route.service;
 
 import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
 import static org.prgrms.wumo.global.mapper.RouteMapper.toRoute;
+import static org.prgrms.wumo.global.mapper.RouteMapper.toRouteGetResponse;
 import static org.prgrms.wumo.global.mapper.RouteMapper.toRouteRegisterResponse;
 
 import javax.persistence.EntityNotFoundException;
@@ -11,12 +12,15 @@ import org.prgrms.wumo.domain.location.repository.LocationRepository;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
+import org.prgrms.wumo.domain.route.dto.request.RouteGetRequest;
 import org.prgrms.wumo.domain.route.dto.request.RouteRegisterRequest;
+import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.prgrms.wumo.domain.route.repository.RouteRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,13 +33,14 @@ public class RouteService {
 	private final PartyMemberRepository partyMemberRepository;
 	private final LocationRepository locationRepository;
 
+	@Transactional
 	public RouteRegisterResponse registerRoute(RouteRegisterRequest routeRegisterRequest) {
 		Party party = partyRepository.findById(routeRegisterRequest.partyId())
 			.orElseThrow(() -> new EntityNotFoundException("일치하는 모임이 없습니다."));
 		Location location = locationRepository.findById(routeRegisterRequest.locationId())
 			.orElseThrow(() -> new EntityNotFoundException("일치하는 후보지가 없습니다."));
 
-		validateAccess(party);
+		validateAccess(party.getId());
 
 		if (routeRegisterRequest.routeId() == null) {
 			Route route = routeRepository.save(toRoute(location, party));
@@ -49,8 +54,20 @@ public class RouteService {
 		return toRouteRegisterResponse(route.getId());
 	}
 
-	private void validateAccess(Party party) {
-		if (isNotPartyMember(party.getId())) {
+	@Transactional(readOnly = true)
+	public RouteGetResponse getRoute(long routeId, RouteGetRequest routeGetRequest) {
+		Route route = routeRepository.findById(routeId)
+			.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
+
+		if (routeGetRequest.isPublic() == 0) {
+			validateAccess(route.getParty().getId());
+		}
+
+		return toRouteGetResponse(route);
+	}
+
+	private void validateAccess(long partyId) {
+		if (isNotPartyMember(partyId)) {
 			throw new AccessDeniedException("잘못된 접근입니다.");
 		}
 	}
