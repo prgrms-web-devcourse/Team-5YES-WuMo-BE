@@ -1,6 +1,9 @@
 package org.prgrms.wumo.domain.member.service;
 
+import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
+import static org.prgrms.wumo.global.jwt.JwtUtil.isValidAccess;
 import static org.prgrms.wumo.global.mapper.MemberMapper.toMember;
+import static org.prgrms.wumo.global.mapper.MemberMapper.toMemberGetResponse;
 import static org.prgrms.wumo.global.mapper.MemberMapper.toMemberLoginResponse;
 import static org.prgrms.wumo.global.mapper.MemberMapper.toMemberRegisterResponse;
 
@@ -8,6 +11,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.prgrms.wumo.domain.member.dto.request.MemberLoginRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
+import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
 import org.prgrms.wumo.domain.member.model.Email;
@@ -16,7 +20,9 @@ import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.WumoJwt;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,7 +58,7 @@ public class MemberService {
 	}
 
 	@Transactional
-	public MemberLoginResponse login(MemberLoginRequest memberLoginRequest) {
+	public MemberLoginResponse loginMember(MemberLoginRequest memberLoginRequest) {
 		Member member = memberRepository.findByEmail(new Email(memberLoginRequest.email()))
 			.orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
 
@@ -67,11 +73,26 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void logout(long memberId) {
-		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
+	public void logoutMember() {
+		getMemberEntity(getMemberId()).logout();
+		SecurityContextHolder.clearContext();
+	}
 
-		member.logout();
+	@Transactional(readOnly = true)
+	public MemberGetResponse getMember(long memberId) {
+		validateAccess(memberId);
+		return toMemberGetResponse(getMemberEntity(memberId));
+	}
+
+	private Member getMemberEntity(long memberId) {
+		return memberRepository.findById(memberId)
+			.orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
+	}
+
+	private void validateAccess(long memberId) {
+		if (!isValidAccess(memberId)) {
+			throw new AccessDeniedException("잘못된 접근입니다.");
+		}
 	}
 
 	private boolean checkEmailDuplicate(String email) {
