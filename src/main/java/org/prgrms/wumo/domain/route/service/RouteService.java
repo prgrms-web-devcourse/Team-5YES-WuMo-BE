@@ -12,7 +12,6 @@ import org.prgrms.wumo.domain.location.repository.LocationRepository;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
-import org.prgrms.wumo.domain.route.dto.request.RouteGetRequest;
 import org.prgrms.wumo.domain.route.dto.request.RouteRegisterRequest;
 import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
@@ -55,11 +54,11 @@ public class RouteService {
 	}
 
 	@Transactional(readOnly = true)
-	public RouteGetResponse getRoute(long routeId, RouteGetRequest routeGetRequest) {
+	public RouteGetResponse getRoute(long routeId, int fromPublic) {
 		Route route = routeRepository.findById(routeId)
 			.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
 
-		if (routeGetRequest.isPublic() == 0) {
+		if (fromPublic == 0) {
 			validateAccess(route.getParty().getId());
 		}
 

@@ -3,7 +3,6 @@ package org.prgrms.wumo.domain.route.api;
 import javax.validation.Valid;
 
 import org.prgrms.wumo.domain.route.dto.request.RouteGetAllRequest;
-import org.prgrms.wumo.domain.route.dto.request.RouteGetRequest;
 import org.prgrms.wumo.domain.route.dto.request.RouteRegisterRequest;
 import org.prgrms.wumo.domain.route.dto.request.RouteStatusUpdateRequest;
 import org.prgrms.wumo.domain.route.dto.response.RouteGetAllResponse;
@@ -47,9 +46,9 @@ public class RouteController {
 	@Operation(summary = "루트 상세 조회")
 	public ResponseEntity<RouteGetResponse> getRoute(
 		@PathVariable @Parameter(description = "조회할 루트 아이디") long routeId,
-		@Valid RouteGetRequest routeGetRequest) {
+		@RequestParam("path") @Parameter(description = "접근 경로(모임에서이면 0, 공개 목록에서이면 1)") int fromPublic) {
 
-		return ResponseEntity.ok(routeService.getRoute(routeId, routeGetRequest));
+		return ResponseEntity.ok(routeService.getRoute(routeId, fromPublic));
 	}
 
 	@GetMapping("/{routeId}/public")
