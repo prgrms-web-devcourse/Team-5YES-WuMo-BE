@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.prgrms.wumo.domain.location.model.Category;
 
 @Schema(name = "후보장소 등록 요청 정보")
 public record LocationRegisterRequest(
@@ -17,21 +18,21 @@ public record LocationRegisterRequest(
 		@Schema(description = "후보장소 주소", example = "부산광역시 수영구 ~~~ ", required = true)
 		String address,
 
-		@NotBlank(message = "위도는 필수 입력사항입니다.")
+		@NotNull(message = "위도는 필수 입력사항입니다.")
 		@Schema(description = "후보장소 위도", example = "34.567890", required = true)
-		String latitude,
+		Float latitude,
 
-		@NotBlank(message = "경도는 필수 입력사항입니다.")
+		@NotNull(message = "경도는 필수 입력사항입니다.")
 		@Schema(description = "후보장소 경도", example = "123.567890", required = true)
-		String longitude,
+		Float longitude,
 
 		@NotBlank(message = "이미지는 필수 입력사항입니다.")
 		@Schema(description = "후보장소 이미지", example = "https://~", required = true)
 		String image,
 
-		@NotBlank(message = "카테고리는 필수 입력사항입니다.")
+		@NotNull(message = "카테고리는 필수 입력사항입니다.")
 		@Schema(description = "후보장소 카테고리", example = "MEAL", required = true)
-		String category,
+		Category category,
 
 		@Schema(description = "후보장소 설명", example = "딸기맛이 맛있다고함!", required = false)
 		String description,
@@ -42,6 +43,10 @@ public record LocationRegisterRequest(
 
 		@NotNull(message = "예상 지출은 필수 입력사항입니다.")
 		@Schema(description = "후보장소 예상 지출", example = "50000", required = true)
-		int expectedCost
+		int expectedCost,
+
+		@NotNull
+		@Schema(description = "후보 장소가 등록된 모임 식별자", example = "1" , required = true)
+		Long party_id
 ) {
 }

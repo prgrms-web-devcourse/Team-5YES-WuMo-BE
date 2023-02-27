@@ -1,7 +1,6 @@
 package org.prgrms.wumo.domain.location.model;
 
 import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,13 +12,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.prgrms.wumo.domain.route.model.Route;
-import org.prgrms.wumo.global.audit.BaseTimeEntity;
-
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.prgrms.wumo.domain.route.model.Route;
+import org.prgrms.wumo.global.audit.BaseTimeEntity;
 
 @Getter
 @Entity
@@ -52,7 +50,7 @@ public class Location extends BaseTimeEntity {
 	@Column(name = "visit_date", nullable = false, updatable = true, unique = false)
 	private LocalDateTime visitDate;
 
-	@Column(name = "expectedCost", nullable = false, updatable = true, unique = false)
+	@Column(name = "expected_cost", nullable = false, updatable = true, unique = false)
 	private int expectedCost;
 
 	@Column(name = "spending", nullable = false, updatable = true, unique = false)
@@ -66,7 +64,31 @@ public class Location extends BaseTimeEntity {
 	@JoinColumn(name = "route_id", updatable = false, unique = false)
 	private Route route;
 
+	@Column(name = "party_id", updatable = false, unique = false)
+	private Long party_id;
+
+	@Builder
+	public Location(Long id, String name, String address, Float latitude, Float longitude, String image,
+			String description,
+			LocalDateTime visitDate, int expectedCost, int spending, Category category, Route route, Long party_id) {
+		this.id = id;
+		this.name = name;
+		this.address = address;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.image = image;
+		this.description = description;
+		this.visitDate = visitDate;
+		this.expectedCost = expectedCost;
+		this.spending = spending;
+		this.category = category;
+		this.route = route;
+		this.party_id = party_id;
+	}
+
+	// TODO 추후 Party 이용, Route 지정할 계획
 	public void addRoute(Route route) {
 		this.route = route;
 	}
+
 }
