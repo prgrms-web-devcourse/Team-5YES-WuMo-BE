@@ -1,5 +1,7 @@
 package org.prgrms.wumo.global.exception;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.exception.custom.ImageDeleteFailedException;
 import org.prgrms.wumo.global.exception.custom.ImageUploadFailedException;
@@ -34,7 +36,8 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler({
-		ImageUploadFailedException.class, IllegalArgumentException.class, ImageDeleteFailedException.class
+		ImageUploadFailedException.class, IllegalArgumentException.class, ImageDeleteFailedException.class,
+			EntityNotFoundException.class
 	})
 	public ResponseEntity<ExceptionResponse> handleException(RuntimeException runtimeException) {
 		log.info("exception : " + runtimeException);

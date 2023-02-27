@@ -2,12 +2,13 @@ package org.prgrms.wumo.global.mapper;
 
 import java.util.List;
 
+import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetAllResponse;
-import org.prgrms.wumo.domain.party.dto.response.PartyGetDetailResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.model.Party;
+import org.prgrms.wumo.domain.party.model.PartyMember;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -30,15 +31,21 @@ public class PartyMapper {
 		return new PartyRegisterResponse(party.getId());
 	}
 
-	public static PartyGetAllResponse toPartyGetAllResponse(List<Party> parties) {
+	public static PartyGetAllResponse toPartyGetAllResponse(List<Party> parties, Long lastId) {
 		List<PartyGetResponse> partyGetResponses = parties.stream()
-				.map(party -> new PartyGetResponse(party.getId(), party.getName(), party.getCoverImage()))
+				.map(party -> new PartyGetResponse(
+						party.getId(),
+						party.getName(),
+						party.getStartDate(),
+						party.getEndDate(),
+						party.getDescription(),
+						party.getCoverImage()))
 				.toList();
-		return new PartyGetAllResponse(partyGetResponses);
+		return new PartyGetAllResponse(partyGetResponses, lastId);
 	}
 
-	public static PartyGetDetailResponse toPartyGetDetailResponse(Party party) {
-		return new PartyGetDetailResponse(
+	public static PartyGetResponse toPartyGetDetailResponse(Party party) {
+		return new PartyGetResponse(
 				party.getId(),
 				party.getName(),
 				party.getStartDate(),
