@@ -88,10 +88,10 @@ public class RouteControllerTest extends MysqlTestContainer {
 
 	@AfterEach
 	void tearDown() {
-		partyMemberRepository.deleteAll();
-		locationRepository.deleteAll();
-		partyRepository.deleteAll();
-		memberRepository.deleteAll();
+		partyMemberRepository.deleteById(partyId);
+		locationRepository.deleteById(locationId);
+		partyRepository.deleteById(partyId);
+		memberRepository.deleteById(memberId);
 		SecurityContextHolder.clearContext();
 	}
 
