@@ -24,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
+import org.prgrms.wumo.domain.party.dto.request.PartyUpdateRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetAllResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetDetailResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
@@ -234,6 +235,82 @@ class PartyServiceTest {
 			//when
 			//then
 			Assertions.assertThrows(EntityNotFoundException.class, () -> partyService.getParty(party.getId()));
+		}
+
+	}
+
+	@Nested
+	@DisplayName("updateParty 메소드는 수정시")
+	class UpdateParty {
+		PartyUpdateRequest partyUpdateRequest = new PartyUpdateRequest(
+				"오예스 워크샵 (수정)",
+				LocalDateTime.now(),
+				LocalDateTime.now().plusDays(2),
+				"팀 설립 기념 워크샵 (수정)",
+				null,
+				"4321"
+		);
+
+		@Test
+		@DisplayName("NULL 아닌 필드를 업데이트 한다.")
+		void success() {
+			//mocking
+			given(partyRepository.findById(party.getId()))
+					.willReturn(Optional.of(party));
+			given(partyRepository.save(party))
+					.willReturn(party);
+
+			//when
+			PartyGetDetailResponse partyGetDetailResponse = partyService.updateParty(party.getId(), partyUpdateRequest);
+
+			//then
+			assertThat(partyGetDetailResponse.id()).isEqualTo(party.getId());
+			assertThat(partyGetDetailResponse.name()).isEqualTo(partyUpdateRequest.name());
+			assertThat(partyGetDetailResponse.startDate()).isEqualTo(partyUpdateRequest.startDate());
+			assertThat(partyGetDetailResponse.endDate()).isEqualTo(partyUpdateRequest.endDate());
+			assertThat(partyGetDetailResponse.description()).isEqualTo(partyUpdateRequest.description());
+			assertThat(partyGetDetailResponse.coverImage()).isEqualTo(party.getCoverImage());
+
+			then(partyRepository)
+					.should()
+					.findById(party.getId());
+			then(partyRepository)
+					.should()
+					.save(any(Party.class));
+		}
+
+		@Test
+		@DisplayName("종료일이 시작일보다 빠르면 예외가 발생한다.")
+		void invalidDate() {
+			//given
+			PartyUpdateRequest wrongRequest = new PartyUpdateRequest(
+					null,
+					LocalDateTime.now().plusDays(1),
+					LocalDateTime.now(),
+					null,
+					null,
+					null
+			);
+
+			//mocking
+			given(partyRepository.findById(party.getId()))
+					.willReturn(Optional.of(party));
+
+			//when
+			//then
+			Assertions.assertThrows(IllegalArgumentException.class, () -> partyService.updateParty(party.getId(), wrongRequest));
+		}
+
+		@Test
+		@DisplayName("존재하지 않는 모임이면 예외가 발생한다.")
+		void failed() {
+			//mocking
+			given(partyRepository.findById(party.getId()))
+					.willReturn(Optional.empty());
+
+			//when
+			//then
+			Assertions.assertThrows(EntityNotFoundException.class, () -> partyService.updateParty(party.getId(), partyUpdateRequest));
 		}
 
 	}

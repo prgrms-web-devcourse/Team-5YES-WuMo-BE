@@ -60,11 +60,11 @@ public class PartyController {
 
 	@PatchMapping("/{partyId}")
 	@Operation(summary = "모임 수정")
-	public ResponseEntity<Void> updateParty(
+	public ResponseEntity<PartyGetDetailResponse> updateParty(
 			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId,
 			@RequestBody @Valid PartyUpdateRequest partyUpdateRequest
 	) {
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(partyService.updateParty(partyId, partyUpdateRequest));
 	}
 
 	@DeleteMapping("/{partyId}")

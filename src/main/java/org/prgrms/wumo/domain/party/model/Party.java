@@ -47,8 +47,8 @@ public class Party extends BaseTimeEntity {
 
 	@Builder
 	public Party(Long id, String name, LocalDateTime startDate, LocalDateTime endDate, String description,
-		String coverImage,
-		String password) {
+			String coverImage,
+			String password) {
 		Assert.isTrue(startDate.isBefore(endDate), "종료일이 시작일보다 빠를 수 없습니다.");
 
 		this.id = id;
@@ -58,6 +58,22 @@ public class Party extends BaseTimeEntity {
 		this.description = description;
 		this.coverImage = coverImage;
 		this.password = password;
+	}
+
+	public void update(String name, LocalDateTime startDate, LocalDateTime endDate, String description, String coverImage,
+			String password) {
+		if (name != null) this.name = name;
+		if (startDate != null) {
+			Assert.isTrue(startDate.isBefore(endDate), "종료일이 시작일보다 빠를 수 없습니다.");
+			this.startDate = startDate;
+		}
+		if (endDate != null) {
+			Assert.isTrue(endDate.isAfter(this.startDate), "시작일이 종료일보다 느릴 수 없습니다.");
+			this.endDate = endDate;
+		}
+		if (description != null) this.description = description;
+		if (coverImage != null) this.coverImage = coverImage;
+		if (password != null) this.password = password;
 	}
 
 	// TODO : 입장 시 비밀번호 체크 로직
