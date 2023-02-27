@@ -5,13 +5,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.prgrms.wumo.MysqlTestContainer;
+import org.prgrms.wumo.domain.location.LocationTestUtils;
 import org.prgrms.wumo.domain.location.dto.request.LocationRegisterRequest;
 import org.prgrms.wumo.domain.location.model.Category;
-import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,7 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -37,18 +36,8 @@ public class LocationControllerTest extends MysqlTestContainer {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	float longitude = 127.028f;
-	float latitude = 37.497f;
-	LocalDateTime dayToVisit = LocalDateTime.now().plusDays(10);
-
-	Location location = Location.builder()
-				.id(1L).image("http://programmers_gangnam_image.com")
-				.description("이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀....")
-				.latitude(latitude).longitude(longitude)
-				.address("강남역 2번출구").visitDate(dayToVisit)
-				.category(Category.STUDY).name("프로그래머스 강남 교육장")
-				.spending(3000).expectedCost(4000).partyId(1L)
-				.build();
+	// GIVEN
+	LocationTestUtils locationTestUtils = new LocationTestUtils();
 
 	@Test
 	@DisplayName("후보 장소를 등록한다")
@@ -58,12 +47,12 @@ public class LocationControllerTest extends MysqlTestContainer {
 				= new LocationRegisterRequest(
 				"프로그래머스 강남 교육장",
 				"강남역 2번출구",
-				latitude,
-				longitude,
+				locationTestUtils.getLatitude1(),
+				locationTestUtils.getLongitude1(),
 				"http://programmers_gangnam_image.com",
 				Category.STUDY,
 				"이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀....",
-				dayToVisit
+				locationTestUtils.getDayToVisit()
 				, 4000,
 				1L
 		);
@@ -91,7 +80,7 @@ public class LocationControllerTest extends MysqlTestContainer {
 	@DisplayName("후보 장소 하나를 상세 조회할 수 있다.")
 	void getLocationTest() throws Exception {
 		// Given
-		locationRepository.save(location);
+		locationRepository.save(locationTestUtils.getLocation());
 
 		// When
 		ResultActions resultActions = mockMvc.perform(get("/api/v1/locations/{locationId}", 1));
@@ -101,8 +90,36 @@ public class LocationControllerTest extends MysqlTestContainer {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(1))
 				.andExpect(jsonPath("$.name").value("프로그래머스 강남 교육장"))
-				.andExpect(jsonPath("$.latitude").value(latitude))
-				.andExpect(jsonPath("$.longitude").value(longitude))
+				.andExpect(jsonPath("$.latitude").value(locationTestUtils.getLatitude1()))
+				.andExpect(jsonPath("$.longitude").value(locationTestUtils.getLongitude1()))
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName(" 특정 모임 내의 후보 장소 전체를 조회할 수 있다.")
+	void getAllLocationTest() throws Exception {
+		// Given
+		// List<Location> locations = List.of(location1, location2, location3);
+		locationRepository.saveAll(locationTestUtils.getLocations());
+
+		// When
+		ResultActions resultActions = mockMvc.perform(
+				get("/api/v1/locations")
+						.param("cursorId", "0" )
+						.param("pageSize", "5")
+						.param("partyId", "1")
+		);
+
+		// Then
+		resultActions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.locations").isArray())
+				.andExpect(jsonPath("$.locations").isNotEmpty())
+				.andExpect(jsonPath("$.locations[0].id").value(1))
+				.andExpect(jsonPath("$.locations[0].latitude").value(locationTestUtils.getLatitude1()))
+				.andExpect(jsonPath("$.locations[0].longitude").value(locationTestUtils.getLongitude1()))
+				.andExpect(jsonPath("$.locations[0].spending").value(3000))
+				.andExpect(jsonPath("$.locations[0].expectedCost").value(4000))
 				.andDo(print());
 	}
 }
