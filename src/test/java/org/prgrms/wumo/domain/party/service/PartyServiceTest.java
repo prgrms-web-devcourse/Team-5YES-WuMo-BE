@@ -238,4 +238,41 @@ class PartyServiceTest {
 
 	}
 
+	@Nested
+	@DisplayName("deleteParty 메소드는 삭제시")
+	class DeleteParty {
+
+		@Test
+		@DisplayName("식별자가 일치하는 모임을 삭제한다.")
+		void success() {
+			//mocking
+			given(partyRepository.findById(party.getId()))
+					.willReturn(Optional.of(party));
+
+			//when
+			partyService.deleteParty(party.getId());
+
+			//then
+			then(partyRepository)
+					.should()
+					.findById(party.getId());
+			then(partyRepository)
+					.should()
+					.delete(party);
+		}
+
+		@Test
+		@DisplayName("존재하지 않는 모임이면 예외가 발생한다.")
+		void failed() {
+			//mocking
+			given(partyRepository.findById(party.getId()))
+					.willReturn(Optional.empty());
+
+			//when
+			//then
+			Assertions.assertThrows(EntityNotFoundException.class, () -> partyService.deleteParty(party.getId()));
+		}
+
+	}
+
 }
