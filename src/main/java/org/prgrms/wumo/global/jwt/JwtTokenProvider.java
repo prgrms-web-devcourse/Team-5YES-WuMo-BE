@@ -69,7 +69,8 @@ public class JwtTokenProvider {
 
 	public Authentication getAuthentication(String accessToken) {
 		Claims claims = parseClaims(accessToken);
-		return new UsernamePasswordAuthenticationToken(claims.getSubject(), "", Collections.emptyList());
+		return new UsernamePasswordAuthenticationToken(
+			Long.parseLong(claims.getSubject()), "", Collections.emptyList());
 	}
 
 	public boolean validateToken(String accessToken) {

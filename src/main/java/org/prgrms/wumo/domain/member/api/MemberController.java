@@ -10,11 +10,9 @@ import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
-import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -70,27 +68,22 @@ public class MemberController {
 	public ResponseEntity<MemberLoginResponse> loginMember(
 		@RequestBody @Valid MemberLoginRequest memberLoginRequest) {
 
-		return ResponseEntity.ok(memberService.login(memberLoginRequest));
+		return ResponseEntity.ok(memberService.loginMember(memberLoginRequest));
 	}
 
 	@DeleteMapping("/logout")
 	@Operation(summary = "로그아웃")
-	public ResponseEntity<Void> logoutMember(
-		Authentication authentication) {
-
-		if (authentication != null) {
-			long memberId = ((Member)authentication.getPrincipal()).getId();
-			memberService.logout(memberId);
-		}
+	public ResponseEntity<Void> logoutMember() {
+		memberService.logoutMember();
 		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/{memberId}")
 	@Operation(summary = "내 정보 조회")
 	public ResponseEntity<MemberGetResponse> getMember(
-		@PathVariable @Parameter(description = "조회할 회원 아이디") Long memberId) {
+		@PathVariable @Parameter(description = "조회할 회원 아이디") long memberId) {
 
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(memberService.getMember(memberId));
 	}
 
 	@PatchMapping
