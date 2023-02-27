@@ -19,7 +19,6 @@ import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
-import org.prgrms.wumo.domain.party.service.PartyMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,9 +45,6 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 	private ObjectMapper objectMapper;
 
 	@Autowired
-	private PartyMemberService partyMemberService;
-
-	@Autowired
 	private MemberRepository memberRepository;
 
 	@Autowired
@@ -62,6 +58,8 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 	private Member participant;
 
 	private Party party;
+
+	private PartyMember partyLeader;
 
 	@BeforeEach
 	void setup() {
@@ -89,7 +87,7 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 						.password("1234")
 						.build()
 		);
-		partyMemberRepository.save(
+		partyLeader = partyMemberRepository.save(
 				PartyMember.builder()
 						.member(leader)
 						.party(party)
@@ -106,7 +104,7 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 
 	@AfterEach
 	void clean() {
-		partyMemberRepository.deleteAll();
+		partyMemberRepository.deleteById(partyLeader.getId());
 		partyRepository.deleteById(party.getId());
 		memberRepository.deleteById(leader.getId());
 		memberRepository.deleteById(participant.getId());
