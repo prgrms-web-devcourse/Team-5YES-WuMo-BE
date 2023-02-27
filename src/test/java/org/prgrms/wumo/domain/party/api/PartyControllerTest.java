@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,11 +21,16 @@ import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyUpdateRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
+import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
+import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.domain.party.service.PartyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -49,6 +55,12 @@ class PartyControllerTest extends MysqlTestContainer {
 	@Autowired
 	private MemberRepository memberRepository;
 
+	@Autowired
+	private PartyRepository partyRepository;
+
+	@Autowired
+	private PartyMemberRepository partyMemberRepository;
+
 	private Member member;
 
 	@BeforeEach
@@ -60,12 +72,20 @@ class PartyControllerTest extends MysqlTestContainer {
 						.nickname("테드창")
 						.build()
 		);
+
+		SecurityContext context = SecurityContextHolder.getContext();
+		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+				new UsernamePasswordAuthenticationToken(member.getId(), null, Collections.emptyList());
+		context.setAuthentication(usernamePasswordAuthenticationToken);
 	}
 
 	@AfterEach
 	void clean() {
-		memberRepository.deleteAll();
+		partyMemberRepository.deleteAll();
+		partyRepository.deleteAll();
+		memberRepository.deleteById(member.getId());
 		member = null;
+		SecurityContextHolder.clearContext();
 	}
 
 	@Test
@@ -94,7 +114,7 @@ class PartyControllerTest extends MysqlTestContainer {
 		PartyRegisterResponse partyRegisterResponse = partyService.registerParty(partyRegisterRequest);
 
 		//when
-		ResultActions resultActions = mockMvc.perform(get("/api/v1/party/members/{memberId}", partyRegisterRequest.memberId())
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/party/members/me")
 				.param("cursorId", (String)null)
 				.param("pageSize", "5"));
 
@@ -188,7 +208,6 @@ class PartyControllerTest extends MysqlTestContainer {
 				"팀 설립 기념 워크샵",
 				"https://~.jpeg",
 				"1234",
-				member.getId(),
 				"총무"
 		);
 	}

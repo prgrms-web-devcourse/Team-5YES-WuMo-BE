@@ -21,6 +21,8 @@ import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
+import org.prgrms.wumo.global.jwt.JwtUtil;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +45,7 @@ public class PartyService {
 		party = partyRepository.save(party);
 
 		// 모임장 저장
-		Member member = getMemberEntity(partyRegisterRequest.memberId());
+		Member member = getMemberEntity(JwtUtil.getMemberId());
 		PartyMember partyLeader = PartyMember.builder()
 				.member(member)
 				.party(party)
@@ -56,8 +58,8 @@ public class PartyService {
 	}
 
 	@Transactional(readOnly = true)
-	public PartyGetAllResponse getAllParty(Long memberId, PartyGetRequest partyGetRequest) {
-		List<PartyMember> partyMembers = partyMemberRepository.findAllByMemberId(memberId, partyGetRequest.cursorId(), partyGetRequest.pageSize());
+	public PartyGetAllResponse getAllParty(PartyGetRequest partyGetRequest) {
+		List<PartyMember> partyMembers = partyMemberRepository.findAllByMemberId(JwtUtil.getMemberId(), partyGetRequest.cursorId(), partyGetRequest.pageSize());
 
 		long lastId = (partyMembers.size() > 0) ? partyMembers.get(partyMembers.size()-1).getId() : -1L;
 
@@ -75,7 +77,10 @@ public class PartyService {
 
 	@Transactional
 	public PartyGetResponse updateParty(Long partyId, PartyUpdateRequest partyUpdateRequest) {
-		Party party = getPartyEntity(partyId);
+		PartyMember partyLeader = getPartyLeaderEntity(partyId);
+		checkAuthorization(partyLeader);
+
+		Party party = partyLeader.getParty();
 		party.update(
 				partyUpdateRequest.name(),
 				partyUpdateRequest.startDate(),
@@ -90,9 +95,11 @@ public class PartyService {
 
 	@Transactional
 	public void deleteParty(Long partyId) {
-		Party party = getPartyEntity(partyId);
-		partyMemberRepository.deleteAllByParty(party);
-		partyRepository.delete(party);
+		PartyMember partyLeader = getPartyLeaderEntity(partyId);
+		checkAuthorization(partyLeader);
+
+		partyMemberRepository.deleteAllByParty(partyLeader.getParty());
+		partyRepository.delete(partyLeader.getParty());
 	}
 
 	private Member getMemberEntity(Long memberId) {
@@ -103,6 +110,17 @@ public class PartyService {
 	private Party getPartyEntity(Long partyId) {
 		return partyRepository.findById(partyId)
 				.orElseThrow(() -> new EntityNotFoundException("일치하는 모임이 없습니다."));
+	}
+
+	private PartyMember getPartyLeaderEntity(Long partyId) {
+		return partyMemberRepository.findByPartyIdAndIsLeader(partyId)
+				.orElseThrow(() -> new EntityNotFoundException("일치하는 모임이 없습니다."));
+	}
+
+	private void checkAuthorization(PartyMember partyMember) {
+		if (!JwtUtil.isValidAccess(partyMember.getMember().getId())) {
+			throw new AccessDeniedException("모임을 생성한 사용자만 가능합니다.");
+		}
 	}
 
 }

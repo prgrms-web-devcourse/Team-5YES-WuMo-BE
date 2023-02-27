@@ -1,6 +1,7 @@
 package org.prgrms.wumo.domain.party.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.model.QPartyMember;
@@ -18,6 +19,19 @@ public class PartyMemberCustomRepositoryImpl implements PartyMemberCustomReposit
 	private final JPAQueryFactory jpaQueryFactory;
 
 	private final QPartyMember qPartyMember = QPartyMember.partyMember;
+
+	@Override
+	public Optional<PartyMember> findByPartyIdAndIsLeader(Long partyId) {
+		return Optional.ofNullable(
+				jpaQueryFactory
+						.selectFrom(qPartyMember)
+						.where(
+								eqPartyId(partyId),
+								isLeader()
+						)
+						.fetchOne()
+		);
+	}
 
 	@Override
 	public List<PartyMember> findAllByMemberId(Long memberId, Long cursorId, int pageSize) {
@@ -45,6 +59,14 @@ public class PartyMemberCustomRepositoryImpl implements PartyMemberCustomReposit
 
 	private BooleanExpression gtPartyMemberId(Long cursorId) {
 		return (cursorId != null) ? qPartyMember.id.gt(cursorId) : null;
+	}
+
+	private BooleanExpression eqPartyId(Long partyId) {
+		return qPartyMember.party.id.eq(partyId);
+	}
+
+	private BooleanExpression isLeader() {
+		return qPartyMember.isLeader.eq(true);
 	}
 
 	private BooleanExpression eqMemberId(Long memberId) {
