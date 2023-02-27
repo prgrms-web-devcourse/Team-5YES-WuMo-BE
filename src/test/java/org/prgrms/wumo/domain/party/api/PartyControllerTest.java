@@ -1,5 +1,6 @@
 package org.prgrms.wumo.domain.party.api;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -122,9 +123,25 @@ class PartyControllerTest extends MysqlTestContainer {
 				.andExpect(jsonPath("$.id").value(partyRegisterResponse.id()))
 				.andExpect(jsonPath("$.name").value(partyRegisterRequest.name()))
 				.andExpect(jsonPath("$.startDate").isNotEmpty())	// 소수점 표기 기준이 달라 값이 있는지만 검증
-				.andExpect(jsonPath("$.endDate").isNotEmpty())		// 이외 동일
+				.andExpect(jsonPath("$.endDate").isNotEmpty())		// 위와 동일
 				.andExpect(jsonPath("$.description").value(partyRegisterRequest.description()))
 				.andExpect(jsonPath("$.coverImage").value(partyRegisterRequest.coverImage()))
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("특정 모임을 삭제할 수 있다.")
+	void deleteParty() throws Exception {
+		//given
+		PartyRegisterRequest partyRegisterRequest = getPartyRegisterRequest();
+		PartyRegisterResponse partyRegisterResponse = partyService.registerParty(partyRegisterRequest);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(delete("/api/v1/party/{partyId}", partyRegisterResponse.id()));
+
+		//then
+		resultActions
+				.andExpect(status().isOk())
 				.andDo(print());
 	}
 

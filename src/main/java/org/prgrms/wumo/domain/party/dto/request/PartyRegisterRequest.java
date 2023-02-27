@@ -25,16 +25,17 @@ public record PartyRegisterRequest(
 		@Schema(description = "종료일", example = "2023-02-22", required = true)
 		LocalDateTime endDate,
 
+		@NotBlank(message = "모임 설명은 필수 입력사항입니다.")
 		@Length(max = 255, message = "모임 설명은 {max}자를 초과할 수 없습니다.")
 		@Schema(description = "모임 설명", example = "팀 설립 기념 워크샵", required = true)
 		String description,
 
 		@Length(max = 255, message = "이미지 경로는 {max}자를 초과할 수 없습니다.")
-		@Schema(description = "이미지 경로", example = "https://~.jpeg", required = true)
+		@Schema(description = "이미지 경로", example = "https://~.jpeg", required = false)
 		String coverImage,
 
 		@Length(min = 4, max = 4, message = "비밀번호는 {min}자리가 필요합니다.")
-		@Schema(description = "입장 비밀번호", example = "1234", required = true)
+		@Schema(description = "입장 비밀번호", example = "1234", required = false)
 		String password,
 
 		@NotNull(message = "모임 생성 사용자 식별자는 필수 입력사항입니다.")
