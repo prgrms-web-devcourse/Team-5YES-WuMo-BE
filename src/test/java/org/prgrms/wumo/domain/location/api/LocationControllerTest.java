@@ -37,6 +37,7 @@ public class LocationControllerTest extends MysqlTestContainer {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	// GIVEN
 	float longitude = 127.028f;
 	float latitude = 37.497f;
 	LocalDateTime dayToVisit = LocalDateTime.now().plusDays(10);

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.prgrms.wumo.domain.location.dto.request.LocationRegisterRequest;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationRegisterResponse;
+import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,10 @@ public class LocationService {
 
 	@Transactional(readOnly = true)
 	public LocationGetResponse getLocation(Long locationId){
-		return toLocationGetResponse(locationRepository.findById(locationId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 후보 장소입니다")));
+		return toLocationGetResponse(getLocationEntity(locationId));
+	}
+
+	private Location getLocationEntity(Long locationId){
+		return locationRepository.findById(locationId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 후보 장소입니다"));
 	}
 }
