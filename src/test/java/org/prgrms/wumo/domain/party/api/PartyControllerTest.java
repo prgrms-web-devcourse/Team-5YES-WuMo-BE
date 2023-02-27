@@ -16,6 +16,7 @@ import org.prgrms.wumo.MysqlTestContainer;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
+import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.service.PartyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -86,10 +87,11 @@ class PartyControllerTest extends MysqlTestContainer {
 	@DisplayName("사용자의 모임 목록을 조회할 수 있다.")
 	void getAllParty() throws Exception {
 		//given
-		partyService.registerParty(getPartyRegisterRequest());
+		PartyRegisterRequest partyRegisterRequest = getPartyRegisterRequest();
+		PartyRegisterResponse partyRegisterResponse = partyService.registerParty(partyRegisterRequest);
 
 		//when
-		ResultActions resultActions = mockMvc.perform(get("/api/v1/party/members/{memberId}", member.getId())
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/party/members/{memberId}", partyRegisterRequest.memberId())
 				.param("cursorId", (String)null)
 				.param("pageSize", "5"));
 
@@ -98,9 +100,31 @@ class PartyControllerTest extends MysqlTestContainer {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.party").isArray())
 				.andExpect(jsonPath("$.party").isNotEmpty())
-				.andExpect(jsonPath("$.party[0].id").isNotEmpty())
-				.andExpect(jsonPath("$.party[0].name").isNotEmpty())
-				.andExpect(jsonPath("$.party[0].coverImage").isNotEmpty())
+				.andExpect(jsonPath("$.party[0].id").value(partyRegisterResponse.id()))
+				.andExpect(jsonPath("$.party[0].name").value(partyRegisterRequest.name()))
+				.andExpect(jsonPath("$.party[0].coverImage").value(partyRegisterRequest.coverImage()))
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("모임의 상세 정보를 조회할 수 있다.")
+	void getParty() throws Exception {
+		//given
+		PartyRegisterRequest partyRegisterRequest = getPartyRegisterRequest();
+		PartyRegisterResponse partyRegisterResponse = partyService.registerParty(partyRegisterRequest);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/party/{partyId}", partyRegisterResponse.id()));
+
+		//then
+		resultActions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(partyRegisterResponse.id()))
+				.andExpect(jsonPath("$.name").value(partyRegisterRequest.name()))
+				.andExpect(jsonPath("$.startDate").isNotEmpty())	// 소수점 표기 기준이 달라 값이 있는지만 검증
+				.andExpect(jsonPath("$.endDate").isNotEmpty())		// 이외 동일
+				.andExpect(jsonPath("$.description").value(partyRegisterRequest.description()))
+				.andExpect(jsonPath("$.coverImage").value(partyRegisterRequest.coverImage()))
 				.andDo(print());
 	}
 

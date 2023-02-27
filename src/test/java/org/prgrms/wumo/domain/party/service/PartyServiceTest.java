@@ -25,6 +25,7 @@ import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetAllResponse;
+import org.prgrms.wumo.domain.party.dto.response.PartyGetDetailResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
@@ -195,4 +196,46 @@ class PartyServiceTest {
 		}
 
 	}
+
+	@Nested
+	@DisplayName("getParty 메소드는 조회시")
+	class GetParty {
+
+		@Test
+		@DisplayName("모임의 상세 정보를 반환한다.")
+		void success() {
+			//mocking
+			given(partyRepository.findById(party.getId()))
+					.willReturn(Optional.of(party));
+
+			//when
+			PartyGetDetailResponse myParty = partyService.getParty(party.getId());
+
+			//then
+			assertThat(myParty.id()).isEqualTo(party.getId());
+			assertThat(myParty.name()).isEqualTo(party.getName());
+			assertThat(myParty.startDate()).isEqualTo(party.getStartDate());
+			assertThat(myParty.endDate()).isEqualTo(party.getEndDate());
+			assertThat(myParty.description()).isEqualTo(party.getDescription());
+			assertThat(myParty.coverImage()).isEqualTo(party.getCoverImage());
+
+			then(partyRepository)
+					.should()
+					.findById(party.getId());
+		}
+
+		@Test
+		@DisplayName("존재하지 않는 모임이면 예외가 발생한다.")
+		void failed() {
+			//mocking
+			given(partyRepository.findById(party.getId()))
+					.willReturn(Optional.empty());
+
+			//when
+			//then
+			Assertions.assertThrows(EntityNotFoundException.class, () -> partyService.getParty(party.getId()));
+		}
+
+	}
+
 }
