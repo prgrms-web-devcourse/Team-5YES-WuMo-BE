@@ -15,7 +15,7 @@ public record LocationGetAllRequest(
 		int pageSize,
 
 		@NotNull
-		@Schema(description = "후보 장소들이 속한 Party 식별자", required = true, example = "1")
+		@Schema(description = "후보 장소들이 속한 모임 식별자", required = true, example = "1")
 		Long partyId
 ) {
 }

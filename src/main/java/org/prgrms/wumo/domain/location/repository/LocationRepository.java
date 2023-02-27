@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Long> {
 
-	List<Location> findAllByPartyId(Long partyId);
+	List<Location> findFirst5ByPartyId(Long partyId);
 }

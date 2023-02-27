@@ -1,8 +1,10 @@
 package org.prgrms.wumo.domain.location.service;
 
 import static org.prgrms.wumo.global.mapper.LocationMapper.toLocation;
+import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationGetAllResponse;
 import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationGetResponse;
 import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationRegisterResponse;
+import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.prgrms.wumo.domain.location.dto.request.LocationGetAllRequest;
@@ -12,7 +14,6 @@ import org.prgrms.wumo.domain.location.dto.response.LocationGetResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationRegisterResponse;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
-import org.prgrms.wumo.global.mapper.LocationMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,14 +35,8 @@ public class LocationService {
 	// TODO queryDSL 이용, 커서 기반 페이지네이션으로 변경
 	@Transactional(readOnly = true)
 	public LocationGetAllResponse getAllLocations(LocationGetAllRequest locationGetAllRequest) {
-		return new LocationGetAllResponse(
-				locationRepository
-						.findAllByPartyId(locationGetAllRequest.partyId())
-						.stream()
-						.map(LocationMapper::toLocationGetResponse)
-						.toList(),
-				10L
-		);
+		List<Location> locations = locationRepository.findFirst5ByPartyId(locationGetAllRequest.partyId());
+		return toLocationGetAllResponse(locations, locationGetAllRequest.cursorId());
 	}
 
 	private Location getLocationEntity(Long locationId) {
