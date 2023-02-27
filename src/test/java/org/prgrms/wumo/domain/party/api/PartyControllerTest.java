@@ -83,8 +83,9 @@ class PartyControllerTest extends MysqlTestContainer {
 	void clean() {
 		partyMemberRepository.deleteAll();
 		partyRepository.deleteAll();
-		memberRepository.deleteAll();
+		memberRepository.deleteById(member.getId());
 		member = null;
+		SecurityContextHolder.clearContext();
 	}
 
 	@Test
