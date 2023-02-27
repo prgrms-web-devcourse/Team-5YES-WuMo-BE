@@ -72,7 +72,8 @@ public class PartyController {
 	public ResponseEntity<Void> deleteParty(
 			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId
 	) {
-		return ResponseEntity.ok(null);
+		partyService.deleteParty(partyId);
+		return ResponseEntity.ok().build();
 	}
 
 }

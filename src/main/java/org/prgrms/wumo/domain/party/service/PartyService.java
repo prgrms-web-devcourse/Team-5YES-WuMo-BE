@@ -63,6 +63,13 @@ public class PartyService {
 		return toPartyGetAllResponse(parties);
 	}
 
+	@Transactional
+	public void deleteParty(Long partyId) {
+		Party party = getPartyEntity(partyId);
+		partyMemberRepository.deleteAllByParty(party);
+		partyRepository.delete(party);
+	}
+
 	@Transactional(readOnly = true)
 	public PartyGetDetailResponse getParty(Long partyId) {
 		return toPartyGetDetailResponse(getPartyEntity(partyId));
