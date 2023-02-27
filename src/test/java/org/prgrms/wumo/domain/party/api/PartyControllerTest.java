@@ -67,7 +67,7 @@ class PartyControllerTest extends MysqlTestContainer {
 	void setup() {
 		member = memberRepository.save(
 				Member.builder()
-						.email("ted-change@gmail.com")
+						.email("ted-chang@gmail.com")
 						.password("qwe12345")
 						.nickname("테드창")
 						.build()
@@ -95,7 +95,7 @@ class PartyControllerTest extends MysqlTestContainer {
 		PartyRegisterRequest partyRegisterRequest = getPartyRegisterRequest();
 
 		//when
-		ResultActions resultActions = mockMvc.perform(post("/api/v1/party")
+		ResultActions resultActions = mockMvc.perform(post("/api/v1/parties")
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.content(objectMapper.writeValueAsString(partyRegisterRequest)));
 
@@ -114,7 +114,7 @@ class PartyControllerTest extends MysqlTestContainer {
 		PartyRegisterResponse partyRegisterResponse = partyService.registerParty(partyRegisterRequest);
 
 		//when
-		ResultActions resultActions = mockMvc.perform(get("/api/v1/party/members/me")
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/parties/members/me")
 				.param("cursorId", (String)null)
 				.param("pageSize", "5"));
 
@@ -138,7 +138,7 @@ class PartyControllerTest extends MysqlTestContainer {
 		PartyRegisterResponse partyRegisterResponse = partyService.registerParty(partyRegisterRequest);
 
 		//when
-		ResultActions resultActions = mockMvc.perform(get("/api/v1/party/{partyId}", partyRegisterResponse.id()));
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/parties/{partyId}", partyRegisterResponse.id()));
 
 		//then
 		resultActions
@@ -168,7 +168,7 @@ class PartyControllerTest extends MysqlTestContainer {
 		);
 
 		//when
-		ResultActions resultActions = mockMvc.perform(patch("/api/v1/party/{partyId}", partyRegisterResponse.id())
+		ResultActions resultActions = mockMvc.perform(patch("/api/v1/parties/{partyId}", partyRegisterResponse.id())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(partyUpdateRequest)));
 
@@ -192,7 +192,7 @@ class PartyControllerTest extends MysqlTestContainer {
 		PartyRegisterResponse partyRegisterResponse = partyService.registerParty(partyRegisterRequest);
 
 		//when
-		ResultActions resultActions = mockMvc.perform(delete("/api/v1/party/{partyId}", partyRegisterResponse.id()));
+		ResultActions resultActions = mockMvc.perform(delete("/api/v1/parties/{partyId}", partyRegisterResponse.id()));
 
 		//then
 		resultActions
