@@ -2,6 +2,7 @@ package org.prgrms.wumo.domain.location.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
+import org.prgrms.wumo.domain.location.model.Category;
 
 @Schema(name = "후보장소 상세 조회 응답 정보")
 public record LocationGetResponse(
@@ -15,10 +16,10 @@ public record LocationGetResponse(
 		String address,
 
 		@Schema(description = "후보장소 위도", example = "34.567890", required = true)
-		String latitude,
+		Float latitude,
 
 		@Schema(description = "후보장소 경도", example = "123.567890", required = true)
-		String longitude,
+		Float longitude,
 
 		@Schema(description = "후보장소 이미지", example = "https://~", required = true)
 		String image,
@@ -36,7 +37,7 @@ public record LocationGetResponse(
 		int spending,
 
 		@Schema(description = "후보장소 카테고리", example = "MEAL", required = true)
-		String category,
+		Category category,
 
 		@Schema(description = "(후보장소가 루트라면) 루트번호", example = "1", required = false)
 		Long routeId

@@ -1,6 +1,7 @@
 package org.prgrms.wumo.global.mapper;
 
 import org.prgrms.wumo.domain.location.dto.request.LocationRegisterRequest;
+import org.prgrms.wumo.domain.location.dto.response.LocationGetResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationRegisterResponse;
 import org.prgrms.wumo.domain.location.model.Location;
 
@@ -23,7 +24,25 @@ public class LocationMapper {
 				.description(locationRegisterRequest.description())
 				.visitDate(locationRegisterRequest.visitDate())
 				.expectedCost(locationRegisterRequest.expectedCost())
-				.party_id(locationRegisterRequest.party_id())
+				.partyId(locationRegisterRequest.partyId())
 				.build();
+	}
+
+	public static LocationGetResponse toLocationGetResponse(Location location){
+		return new LocationGetResponse(
+				location.getId(),
+				location.getName(),
+				location.getAddress(),
+				location.getLatitude(),
+				location.getLongitude(),
+				location.getImage(),
+				location.getDescription(),
+				location.getVisitDate(),
+				location.getExpectedCost(),
+				location.getSpending(),
+				location.getCategory(),
+				// TODO Route 의 코드가 추가되면 route.getId()로 대체
+				1L
+		);
 	}
 }

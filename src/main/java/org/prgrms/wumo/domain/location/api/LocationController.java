@@ -43,7 +43,7 @@ public class LocationController {
 	public ResponseEntity<LocationGetResponse> getLocation(
 			@PathVariable @Parameter(description = "조회할 후보장소 아이디") Long locationId) {
 
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(locationService.getLocation(locationId));
 	}
 
 	@GetMapping
