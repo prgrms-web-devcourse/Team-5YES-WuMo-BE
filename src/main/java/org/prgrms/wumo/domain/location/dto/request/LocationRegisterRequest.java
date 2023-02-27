@@ -46,7 +46,7 @@ public record LocationRegisterRequest(
 		int expectedCost,
 
 		@NotNull
-		@Schema(description = "후보 장소가 등록된 모임 식별자", example = "1" , required = true)
-		Long party_id
+		@Schema(description = "후보 장소가 등록된 모임 식별자", example = "1", required = true)
+		Long partyId
 ) {
 }

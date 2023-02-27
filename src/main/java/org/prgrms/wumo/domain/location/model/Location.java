@@ -65,12 +65,12 @@ public class Location extends BaseTimeEntity {
 	private Route route;
 
 	@Column(name = "party_id", updatable = false, unique = false)
-	private Long party_id;
+	private Long partyId;
 
 	@Builder
 	public Location(Long id, String name, String address, Float latitude, Float longitude, String image,
 			String description,
-			LocalDateTime visitDate, int expectedCost, int spending, Category category, Route route, Long party_id) {
+			LocalDateTime visitDate, int expectedCost, int spending, Category category, Route route, Long partyId) {
 		this.id = id;
 		this.name = name;
 		this.address = address;
@@ -83,7 +83,7 @@ public class Location extends BaseTimeEntity {
 		this.spending = spending;
 		this.category = category;
 		this.route = route;
-		this.party_id = party_id;
+		this.partyId = partyId;
 	}
 
 	// TODO 추후 Party 이용, Route 지정할 계획
