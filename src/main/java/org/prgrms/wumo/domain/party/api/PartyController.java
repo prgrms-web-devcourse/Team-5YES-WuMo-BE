@@ -41,13 +41,12 @@ public class PartyController {
 		return new ResponseEntity<>(partyService.registerParty(partyRegisterRequest), HttpStatus.CREATED);
 	}
 
-	@GetMapping("/members/{memberId}")
+	@GetMapping("/members/me")
 	@Operation(summary = "사용자 기준 모임 목록 조회")
 	public ResponseEntity<PartyGetAllResponse> getAllParty(
-			@PathVariable @Parameter(description = "사용자 식별자", required = true) Long memberId,
 			@Valid PartyGetRequest partyGetRequest
 	) {
-		return ResponseEntity.ok(partyService.getAllParty(memberId, partyGetRequest));
+		return ResponseEntity.ok(partyService.getAllParty(partyGetRequest));
 	}
 
 	@GetMapping("/{partyId}")
