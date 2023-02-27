@@ -50,15 +50,7 @@ public class MemberControllerTest extends MysqlTestContainer {
 
 	@BeforeEach
 	void setup() {
-		String email = "taehee@gmail.com";
-		String nickname = "태희";
-		String password = "qwe12345";
-		Member member = Member.builder()
-			.email(email)
-			.nickname(nickname)
-			.password(password)
-			.build();
-		memberRepository.save(member);
+		Member member = memberRepository.save(getMemberData());
 		memberId = member.getId();
 
 		SecurityContext context = SecurityContextHolder.getContext();
@@ -167,5 +159,13 @@ public class MemberControllerTest extends MysqlTestContainer {
 			.andExpect(jsonPath("$.nickname").value("태희"))
 			.andExpect(jsonPath("$.profileImage").isEmpty())
 			.andDo(print());
+	}
+
+	private Member getMemberData() {
+		return Member.builder()
+			.email("taehee@gmail.com")
+			.nickname("태희")
+			.password("qwe12345")
+			.build();
 	}
 }

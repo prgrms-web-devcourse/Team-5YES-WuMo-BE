@@ -6,14 +6,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.then;
 
 import java.util.Collections;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -63,6 +63,11 @@ public class MemberServiceTest {
 		context.setAuthentication(usernamePasswordAuthenticationToken);
 	}
 
+	@AfterEach
+	void tearDown() {
+		SecurityContextHolder.clearContext();
+	}
+
 	@Nested
 	@DisplayName("registerMember 메소드는 회원가입 요청 시 ")
 	class RegisterMember {
@@ -93,7 +98,9 @@ public class MemberServiceTest {
 
 			//then
 			assertThat(result.id()).isEqualTo(1L);
-			verify(memberRepository, times(1)).save(any(Member.class));
+			then(memberRepository)
+				.should()
+				.save(any(Member.class));
 		}
 	}
 
@@ -145,7 +152,7 @@ public class MemberServiceTest {
 
 	@Nested
 	@DisplayName("login 메소드는 로그인 요청 시 ")
-	class Login {
+	class LoginMember {
 		//given
 		String email = "5yes@gmail.com";
 		String nickname = "오예스오리지널";
@@ -181,8 +188,12 @@ public class MemberServiceTest {
 
 			//then
 			assertThat(result).usingRecursiveComparison().isEqualTo(wumoJwt);
-			verify(memberRepository, times(1)).findByEmail(any(Email.class));
-			verify(jwtTokenProvider, times(1)).generateToken(anyString());
+			then(memberRepository)
+				.should()
+				.findByEmail(any(Email.class));
+			then(jwtTokenProvider)
+				.should()
+				.generateToken(anyString());
 		}
 
 		@Test
@@ -245,7 +256,9 @@ public class MemberServiceTest {
 
 			//then
 			assertThat(result.nickname()).isEqualTo(member.getNickname());
-			verify(memberRepository, times(1)).findById(anyLong());
+			then(memberRepository)
+				.should()
+				.findById(anyLong());
 		}
 
 		@Test
