@@ -45,6 +45,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 	private long memberId;
 	private long partyId;
 	private long locationId;
+	private long partyMemberId;
 
 	@Autowired
 	MockMvc mockMvc;
@@ -75,7 +76,8 @@ public class RouteControllerTest extends MysqlTestContainer {
 		Location location = locationRepository.save(getLocationData());
 		locationId = location.getId();
 
-		partyMemberRepository.save(getPartyMemberData(member, party));
+		PartyMember partyMember = partyMemberRepository.save(getPartyMemberData(member, party));
+		partyMemberId = partyMember.getId();
 
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
