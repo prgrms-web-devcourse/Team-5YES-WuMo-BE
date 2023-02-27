@@ -4,6 +4,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Collections;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -31,6 +36,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ActiveProfiles("test")
 @DisplayName("MemberController를 통해 ")
 public class MemberControllerTest extends MysqlTestContainer {
+
+	private long memberId;
 
 	@Autowired
 	MockMvc mockMvc;
@@ -52,11 +59,19 @@ public class MemberControllerTest extends MysqlTestContainer {
 			.password(password)
 			.build();
 		memberRepository.save(member);
+		memberId = member.getId();
+
+		SecurityContext context = SecurityContextHolder.getContext();
+		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+			new UsernamePasswordAuthenticationToken(memberId, null, Collections.EMPTY_LIST);
+
+		context.setAuthentication(usernamePasswordAuthenticationToken);
 	}
 
 	@AfterEach
 	void tearDown() {
 		memberRepository.deleteAll();
+		SecurityContextHolder.clearContext();
 	}
 
 	@Test
@@ -117,7 +132,7 @@ public class MemberControllerTest extends MysqlTestContainer {
 
 	@Test
 	@DisplayName("로그인을 한다")
-	void login() throws Exception {
+	void login_member() throws Exception {
 		//given
 		MemberLoginRequest memberLoginRequest
 			= new MemberLoginRequest("taehee@gmail.com", "qwe12345");
@@ -134,6 +149,23 @@ public class MemberControllerTest extends MysqlTestContainer {
 			.andExpect(jsonPath("$.grantType").isNotEmpty())
 			.andExpect(jsonPath("$.accessToken").isNotEmpty())
 			.andExpect(jsonPath("$.refreshToken").isNotEmpty())
+			.andDo(print());
+	}
+
+	@Test
+	@DisplayName("내 정보를 조회한다")
+	void get_member() throws Exception {
+		//when
+		ResultActions resultActions
+			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/members/{memberId}", memberId));
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").value(memberId))
+			.andExpect(jsonPath("$.email").value("taehee@gmail.com"))
+			.andExpect(jsonPath("$.nickname").value("태희"))
+			.andExpect(jsonPath("$.profileImage").isEmpty())
 			.andDo(print());
 	}
 }

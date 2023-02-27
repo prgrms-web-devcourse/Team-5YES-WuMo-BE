@@ -3,14 +3,18 @@ package org.prgrms.wumo.domain.member.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,6 +26,7 @@ import org.prgrms.wumo.domain.member.dto.request.MemberEmailCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberLoginRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberNicknameCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
+import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
 import org.prgrms.wumo.domain.member.model.Email;
@@ -30,7 +35,11 @@ import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.WumoJwt;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("MemberService의 ")
@@ -44,6 +53,15 @@ public class MemberServiceTest {
 
 	@Mock
 	JwtTokenProvider jwtTokenProvider;
+
+	@BeforeEach
+	void setUp() {
+		SecurityContext context = SecurityContextHolder.getContext();
+		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+			new UsernamePasswordAuthenticationToken(1L, null, Collections.EMPTY_LIST);
+
+		context.setAuthentication(usernamePasswordAuthenticationToken);
+	}
 
 	@Nested
 	@DisplayName("registerMember 메소드는 회원가입 요청 시 ")
@@ -115,7 +133,7 @@ public class MemberServiceTest {
 		@DisplayName("이미 사용중인 닉네임이라면 예외가 발생한다")
 		void fail_with_exist_emil() {
 			//mocking
-			given(memberRepository.existsByNickname(any(String.class)))
+			given(memberRepository.existsByNickname(anyString()))
 				.willReturn(true);
 
 			//when, then
@@ -155,16 +173,16 @@ public class MemberServiceTest {
 
 			given(memberRepository.findByEmail(any(Email.class)))
 				.willReturn(Optional.of(member));
-			given(jwtTokenProvider.generateToken(any(String.class)))
+			given(jwtTokenProvider.generateToken(anyString()))
 				.willReturn(wumoJwt);
 
 			//when
-			MemberLoginResponse result = memberService.login(memberLoginRequest);
+			MemberLoginResponse result = memberService.loginMember(memberLoginRequest);
 
 			//then
 			assertThat(result).usingRecursiveComparison().isEqualTo(wumoJwt);
 			verify(memberRepository, times(1)).findByEmail(any(Email.class));
-			verify(jwtTokenProvider, times(1)).generateToken(any(String.class));
+			verify(jwtTokenProvider, times(1)).generateToken(anyString());
 		}
 
 		@Test
@@ -175,7 +193,7 @@ public class MemberServiceTest {
 				.willReturn(Optional.ofNullable(null));
 
 			//when, then
-			assertThatThrownBy(() -> memberService.login(memberLoginRequest))
+			assertThatThrownBy(() -> memberService.loginMember(memberLoginRequest))
 				.isInstanceOf(EntityNotFoundException.class)
 				.hasMessage("일치하는 회원이 없습니다.");
 		}
@@ -192,9 +210,51 @@ public class MemberServiceTest {
 				.willReturn(Optional.of(member));
 
 			//when, then
-			assertThatThrownBy(() -> memberService.login(wrongMemberLoginRequest))
+			assertThatThrownBy(() -> memberService.loginMember(wrongMemberLoginRequest))
 				.isInstanceOf(BadCredentialsException.class)
 				.hasMessage("비밀번호가 일치하지 않습니다.");
+		}
+	}
+
+	@Nested
+	@DisplayName("getMember 메소드는 회원 정보 조회 요청 시 ")
+	class GetMember {
+		//given
+		String email = "5yes@gmail.com";
+		String nickname = "오예스오리지널";
+		String password = "qwe12345";
+
+		long memberId = 1L;
+
+		Member member = Member.builder()
+			.id(1L)
+			.email(email)
+			.nickname(nickname)
+			.password(password)
+			.build();
+
+		@Test
+		@DisplayName("내 정보 요청이면 응답한다")
+		void success() {
+			//mocking
+			given(memberRepository.findById(anyLong()))
+				.willReturn(Optional.of(member));
+
+			//when
+			MemberGetResponse result = memberService.getMember(memberId);
+
+			//then
+			assertThat(result.nickname()).isEqualTo(member.getNickname());
+			verify(memberRepository, times(1)).findById(anyLong());
+		}
+
+		@Test
+		@DisplayName("다른 유저의 정보 요청이면 예외가 발생한다")
+		void fail_not_me() {
+			//when, then
+			assertThatThrownBy(() -> memberService.getMember(2L))
+				.isInstanceOf(AccessDeniedException.class)
+				.hasMessage("잘못된 접근입니다.");
 		}
 	}
 }
