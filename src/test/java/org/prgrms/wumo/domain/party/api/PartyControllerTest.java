@@ -21,6 +21,8 @@ import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyUpdateRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
+import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
+import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.domain.party.service.PartyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -53,6 +55,12 @@ class PartyControllerTest extends MysqlTestContainer {
 	@Autowired
 	private MemberRepository memberRepository;
 
+	@Autowired
+	private PartyRepository partyRepository;
+
+	@Autowired
+	private PartyMemberRepository partyMemberRepository;
+
 	private Member member;
 
 	@BeforeEach
@@ -73,6 +81,8 @@ class PartyControllerTest extends MysqlTestContainer {
 
 	@AfterEach
 	void clean() {
+		partyMemberRepository.deleteAll();
+		partyRepository.deleteAll();
 		memberRepository.deleteAll();
 		member = null;
 	}
