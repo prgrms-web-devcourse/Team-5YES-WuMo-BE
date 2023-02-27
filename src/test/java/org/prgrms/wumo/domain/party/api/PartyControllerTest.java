@@ -2,6 +2,7 @@ package org.prgrms.wumo.domain.party.api;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -17,6 +18,7 @@ import org.prgrms.wumo.MysqlTestContainer;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
+import org.prgrms.wumo.domain.party.dto.request.PartyUpdateRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.service.PartyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,6 +128,38 @@ class PartyControllerTest extends MysqlTestContainer {
 				.andExpect(jsonPath("$.endDate").isNotEmpty())		// 위와 동일
 				.andExpect(jsonPath("$.description").value(partyRegisterRequest.description()))
 				.andExpect(jsonPath("$.coverImage").value(partyRegisterRequest.coverImage()))
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("특정 모임을 수정할 수 있다.")
+	void updateParty() throws Exception {
+		//given
+		PartyRegisterRequest partyRegisterRequest = getPartyRegisterRequest();
+		PartyRegisterResponse partyRegisterResponse = partyService.registerParty(partyRegisterRequest);
+		PartyUpdateRequest partyUpdateRequest = new PartyUpdateRequest(
+				"오예스 워크샵 (수정)",
+				LocalDateTime.now().plusDays(1),
+				LocalDateTime.now().plusDays(2),
+				"팀 설립 기념 워크샵 (수정)",
+				"https://~~~.jpeg",
+				"4321"
+		);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(patch("/api/v1/party/{partyId}", partyRegisterResponse.id())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(partyUpdateRequest)));
+
+		//then
+		resultActions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(partyRegisterResponse.id()))
+				.andExpect(jsonPath("$.name").value(partyUpdateRequest.name()))
+				.andExpect(jsonPath("$.startDate").isNotEmpty())
+				.andExpect(jsonPath("$.endDate").isNotEmpty())
+				.andExpect(jsonPath("$.description").value(partyUpdateRequest.description()))
+				.andExpect(jsonPath("$.coverImage").value(partyUpdateRequest.coverImage()))
 				.andDo(print());
 	}
 
