@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -60,6 +61,11 @@ public class MemberServiceTest {
 			new UsernamePasswordAuthenticationToken(1L, null, Collections.EMPTY_LIST);
 
 		context.setAuthentication(usernamePasswordAuthenticationToken);
+	}
+
+	@AfterEach
+	void tearDown() {
+		SecurityContextHolder.clearContext();
 	}
 
 	@Nested
@@ -146,7 +152,7 @@ public class MemberServiceTest {
 
 	@Nested
 	@DisplayName("login 메소드는 로그인 요청 시 ")
-	class Login {
+	class LoginMember {
 		//given
 		String email = "5yes@gmail.com";
 		String nickname = "오예스오리지널";

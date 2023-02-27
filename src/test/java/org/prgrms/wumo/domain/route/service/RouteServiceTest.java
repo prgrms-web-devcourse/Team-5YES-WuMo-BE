@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -65,6 +66,11 @@ public class RouteServiceTest {
 			new UsernamePasswordAuthenticationToken(1L, null, Collections.EMPTY_LIST);
 
 		context.setAuthentication(usernamePasswordAuthenticationToken);
+	}
+
+	@AfterEach
+	void tearDown() {
+		SecurityContextHolder.clearContext();
 	}
 
 	@Nested
