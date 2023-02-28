@@ -1,5 +1,6 @@
 package org.prgrms.wumo.domain.comment.api;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -7,12 +8,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.prgrms.wumo.MysqlTestContainer;
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.model.LocationComment;
+import org.prgrms.wumo.domain.comment.repository.LocationCommentRepository;
 import org.prgrms.wumo.domain.location.model.Category;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
@@ -62,6 +66,8 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 	Party party;
 	PartyMember partyMember;
 	Location location;
+	@Autowired
+	private LocationCommentRepository locationCommentRepository;
 
 	@BeforeEach
 	void beforeEach() {
@@ -136,10 +142,6 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 		LocationCommentRegisterRequest locationCommentRegisterRequest =
 				new LocationCommentRegisterRequest("댓글 댓글", "image.png", location.getId(), partyMember.getId());
 
-		System.out.println("-=-==-=-=-=-=-=-=-=--=-==-");
-		System.out.println(member.getId());
-		System.out.println(partyMember.getMember().getId());
-
 		// When
 		ResultActions resultActions =
 				mockMvc.perform(
@@ -155,6 +157,50 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 		resultActions
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.id").value(1))
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("특정 후보지의 모든 댓글을 검색할 수 있다.")
+	void getAllLocationCommentTest() throws Exception {
+		// Given
+		LocationComment locationComment1
+				= LocationComment.builder()
+				.image("image.png")
+				.content("첫 번째 댓글")
+				.locationId(1L)
+				.isEdited(false)
+				.partyMember(partyMember)
+				.member(member)
+				.build();
+
+		LocationComment locationComment2 = LocationComment.builder()
+				.image("image.png")
+				.content("두 번째 댓글")
+				.locationId(1L)
+				.isEdited(false)
+				.partyMember(partyMember)
+				.member(member)
+				.build();
+
+		locationCommentRepository.saveAll(List.of(locationComment1, locationComment2));
+
+		// When
+		ResultActions resultActions =
+				mockMvc.perform(
+						get("/api/v1/location-comments")
+								.param("cursorId", (String)null)
+								.param("pageSize", "2")
+								.param("locationId", "1")
+				);
+
+		// Then
+		resultActions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.locationComments").isArray())
+				.andExpect(jsonPath("$.locationComments").isNotEmpty())
+				.andExpect(jsonPath("$.locationComments[0].content").value(locationComment1.getContent()))
+				.andExpect(jsonPath("$.lastId").isNotEmpty())
 				.andDo(print());
 	}
 }

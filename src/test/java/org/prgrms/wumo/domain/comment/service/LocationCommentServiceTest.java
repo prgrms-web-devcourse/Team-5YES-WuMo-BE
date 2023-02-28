@@ -3,8 +3,10 @@ package org.prgrms.wumo.domain.comment.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.prgrms.wumo.global.mapper.CommentMapper.toLocationCommentGetAllResponse;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +17,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.prgrms.wumo.domain.comment.dto.request.LocationCommentGetAllRequest;
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.dto.response.LocationCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.model.LocationComment;
 import org.prgrms.wumo.domain.comment.repository.LocationCommentRepository;
@@ -94,6 +98,57 @@ public class LocationCommentServiceTest {
 			assertThat(locationCommentRegisterResponse.id()).isEqualTo(1L);
 
 		}
+	}
+
+	@Nested
+	@DisplayName("getAllComments를 통해")
+	class getAllLocationComment {
+
+		@Test
+		@DisplayName("후보지 댓글들을 조회한다.")
+		void getAllLocationComments() {
+			// Given
+			LocationComment locationComment2 = LocationComment.builder()
+					.id(2L)
+					.image("image.png")
+					.content("첫 번째 댓글")
+					.locationId(2L)
+					.isEdited(false)
+					.partyMember(partyMember)
+					.member(member)
+					.build();
+
+			LocationComment locationComment3 = LocationComment.builder()
+					.id(3L)
+					.image("image.png")
+					.content("두 번째 댓글")
+					.locationId(2L)
+					.isEdited(false)
+					.partyMember(partyMember)
+					.member(member)
+					.build();
+
+
+			List<LocationComment> locationComments = List.of(locationComment2, locationComment3);
+
+			LocationCommentGetAllRequest locationCommentGetAllRequest =
+					new LocationCommentGetAllRequest(null, 2, 2L);
+
+			LocationCommentGetAllResponse expected = toLocationCommentGetAllResponse(locationComments, 3L);
+
+
+			given(locationCommentRepository.findAllByLocationId(2L, null, 2))
+					.willReturn(locationComments);
+
+			// When
+			LocationCommentGetAllResponse locationCommentGetAllResponse =
+					locationCommentService.getAllLocationComments(locationCommentGetAllRequest);
+
+			// Then
+			assertThat(locationCommentGetAllResponse.locationComments().size()).isEqualTo(2);
+			assertThat(locationCommentGetAllResponse).usingRecursiveComparison().isEqualTo(expected);
+		}
+
 	}
 
 	private Member getMember() {
