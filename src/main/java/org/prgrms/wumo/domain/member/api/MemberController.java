@@ -88,9 +88,9 @@ public class MemberController {
 
 	@PatchMapping
 	@Operation(summary = "내 정보 수정")
-	public ResponseEntity<Void> updateMember(
+	public ResponseEntity<MemberGetResponse> updateMember(
 		@RequestBody @Valid MemberUpdateRequest memberUpdateRequest) {
 
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(memberService.updateMember(memberUpdateRequest));
 	}
 }
