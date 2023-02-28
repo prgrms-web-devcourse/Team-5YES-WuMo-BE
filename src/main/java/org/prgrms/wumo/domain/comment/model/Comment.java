@@ -12,7 +12,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.prgrms.wumo.domain.member.model.Member;
@@ -43,12 +42,15 @@ public class Comment extends BaseTimeEntity {
 	@Column(name = "is_edited", nullable = false, updatable = true, unique = false)
 	protected boolean isEdited;
 
-	@Builder
 	public Comment(Long id, Member member, String content, String image, boolean isEdited) {
 		this.id = id;
 		this.member = member;
 		this.content = content;
 		this.image = image;
 		this.isEdited = isEdited;
+	}
+
+	public void setMember(Member member) {
+		this.member = member;
 	}
 }
