@@ -27,11 +27,16 @@ public class MemberMapper {
 
 	public static MemberLoginResponse toMemberLoginResponse(WumoJwt wumoJwt) {
 		return new MemberLoginResponse(
-			wumoJwt.getGrantType(), wumoJwt.getAccessToken(), wumoJwt.getRefreshToken());
+			wumoJwt.getGrantType(),
+			wumoJwt.getAccessToken(),
+			wumoJwt.getRefreshToken());
 	}
 
 	public static MemberGetResponse toMemberGetResponse(Member member) {
 		return new MemberGetResponse(
-			member.getId(), member.getEmail().getEmail(), member.getNickname(), member.getProfileImage());
+			member.getId(),
+			member.getEmail().getEmail(),
+			member.getNickname(),
+			member.getProfileImage());
 	}
 }

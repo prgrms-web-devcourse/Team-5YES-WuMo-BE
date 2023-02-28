@@ -1,0 +1,1 @@
+CREATE INDEX `index_route` ON `route` (id DESC);

@@ -2,8 +2,11 @@ package org.prgrms.wumo.domain.route.service;
 
 import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
 import static org.prgrms.wumo.global.mapper.RouteMapper.toRoute;
+import static org.prgrms.wumo.global.mapper.RouteMapper.toRouteGetAllResponses;
 import static org.prgrms.wumo.global.mapper.RouteMapper.toRouteGetResponse;
 import static org.prgrms.wumo.global.mapper.RouteMapper.toRouteRegisterResponse;
+
+import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -12,8 +15,10 @@ import org.prgrms.wumo.domain.location.repository.LocationRepository;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
+import org.prgrms.wumo.domain.route.dto.request.RouteGetAllRequest;
 import org.prgrms.wumo.domain.route.dto.request.RouteRegisterRequest;
 import org.prgrms.wumo.domain.route.dto.request.RouteStatusUpdateRequest;
+import org.prgrms.wumo.domain.route.dto.response.RouteGetAllResponses;
 import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
 import org.prgrms.wumo.domain.route.model.Route;
@@ -62,6 +67,19 @@ public class RouteService {
 		}
 
 		return toRouteGetResponse(route);
+	}
+
+	@Transactional(readOnly = true)
+	public RouteGetAllResponses getAllRoute(RouteGetAllRequest routeGetAllRequest) {
+		List<Route> routes = routeRepository.findAllByCursor(
+			routeGetAllRequest.cursorId(), routeGetAllRequest.pageSize());
+
+		long lastId = -1L;
+		if (routes.size() != 0) {
+			lastId = routes.get(routes.size() - 1).getId();
+		}
+
+		return toRouteGetAllResponses(routes, lastId);
 	}
 
 	@Transactional

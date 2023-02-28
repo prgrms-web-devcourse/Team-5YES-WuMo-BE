@@ -5,7 +5,7 @@ import javax.validation.Valid;
 import org.prgrms.wumo.domain.route.dto.request.RouteGetAllRequest;
 import org.prgrms.wumo.domain.route.dto.request.RouteRegisterRequest;
 import org.prgrms.wumo.domain.route.dto.request.RouteStatusUpdateRequest;
-import org.prgrms.wumo.domain.route.dto.response.RouteGetAllResponse;
+import org.prgrms.wumo.domain.route.dto.response.RouteGetAllResponses;
 import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
 import org.prgrms.wumo.domain.route.service.RouteService;
@@ -52,11 +52,11 @@ public class RouteController {
 	}
 
 	@GetMapping
-	@Operation(summary = "루트 목록 조회")
-	public ResponseEntity<RouteGetAllResponse> getAllRoute(
+	@Operation(summary = "공개된 루트 목록 조회")
+	public ResponseEntity<RouteGetAllResponses> getAllRoute(
 		@Valid RouteGetAllRequest routeGetAllRequest) {
 
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(routeService.getAllRoute(routeGetAllRequest));
 	}
 
 	@DeleteMapping
