@@ -7,10 +7,12 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.prgrms.wumo.domain.location.dto.request.LocationGetAllRequest;
 import org.prgrms.wumo.domain.location.dto.request.LocationRegisterRequest;
+import org.prgrms.wumo.domain.location.dto.request.LocationSpendingUpdateRequest;
 import org.prgrms.wumo.domain.location.dto.request.LocationUpdateRequest;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetAllResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationRegisterResponse;
+import org.prgrms.wumo.domain.location.dto.response.LocationSpendingUpdateResponse;
 import org.prgrms.wumo.domain.location.service.LocationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +53,14 @@ public class LocationController {
 	public ResponseEntity<LocationGetAllResponse> getAllLocation(
 			@Valid LocationGetAllRequest locationGetAllRequest) {
 		return ResponseEntity.ok(locationService.getAllLocations(locationGetAllRequest));
+	}
+
+	@PatchMapping("/spending")
+	@Operation(summary = "후보장소 사용 금액 갱신")
+	public ResponseEntity<LocationSpendingUpdateResponse> updateSpending(
+			@RequestBody @Valid LocationSpendingUpdateRequest locationSpendingUpdateRequest
+	) {
+		return ResponseEntity.ok(null);
 	}
 
 	@PatchMapping
