@@ -104,7 +104,7 @@ public class PartyService {
 
 	private Member getMemberEntity(Long memberId) {
 		return memberRepository.findById(memberId)
-				.orElseThrow(() -> new EntityNotFoundException("사용자 아이디에 문제가 발생했습니다."));
+				.orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
 	}
 
 	private Party getPartyEntity(Long partyId) {
@@ -119,7 +119,7 @@ public class PartyService {
 
 	private void checkAuthorization(PartyMember partyMember) {
 		if (!JwtUtil.isValidAccess(partyMember.getMember().getId())) {
-			throw new AccessDeniedException("모임을 생성한 사용자만 가능합니다.");
+			throw new AccessDeniedException("모임을 생성한 회원만 가능합니다.");
 		}
 	}
 

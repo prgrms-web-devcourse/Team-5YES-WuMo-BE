@@ -55,4 +55,13 @@ public class PartyMapper {
 		);
 	}
 
+	public static PartyMember toPartyMember(Member member, Party party, String role, boolean isLeader) {
+		return PartyMember.builder()
+				.member(member)
+				.party(party)
+				.role(role)
+				.isLeader(false)
+				.build();
+	}
+
 }

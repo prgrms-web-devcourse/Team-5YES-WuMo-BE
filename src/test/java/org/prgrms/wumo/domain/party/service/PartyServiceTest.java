@@ -37,7 +37,6 @@ import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
 
 @DisplayName("PartyService 의")
 @ExtendWith(MockitoExtension.class)
@@ -109,7 +108,6 @@ class PartyServiceTest {
 	class RegisterParty {
 
 		@Test
-		@WithMockUser
 		@DisplayName("모임을 생성하고 생성을 요청한 사용자를 파티장으로 등록한다.")
 		void success() {
 			//mocking

@@ -21,8 +21,6 @@ import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyUpdateRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
-import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
-import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.domain.party.service.PartyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -55,19 +53,13 @@ class PartyControllerTest extends MysqlTestContainer {
 	@Autowired
 	private MemberRepository memberRepository;
 
-	@Autowired
-	private PartyRepository partyRepository;
-
-	@Autowired
-	private PartyMemberRepository partyMemberRepository;
-
 	private Member member;
 
 	@BeforeEach
 	void setup() {
 		member = memberRepository.save(
 				Member.builder()
-						.email("ted-change@gmail.com")
+						.email("ted-chang@gmail.com")
 						.password("qwe12345")
 						.nickname("테드창")
 						.build()
@@ -81,8 +73,6 @@ class PartyControllerTest extends MysqlTestContainer {
 
 	@AfterEach
 	void clean() {
-		partyMemberRepository.deleteAll();
-		partyRepository.deleteAll();
 		memberRepository.deleteById(member.getId());
 		member = null;
 		SecurityContextHolder.clearContext();
@@ -95,7 +85,7 @@ class PartyControllerTest extends MysqlTestContainer {
 		PartyRegisterRequest partyRegisterRequest = getPartyRegisterRequest();
 
 		//when
-		ResultActions resultActions = mockMvc.perform(post("/api/v1/party")
+		ResultActions resultActions = mockMvc.perform(post("/api/v1/parties")
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.content(objectMapper.writeValueAsString(partyRegisterRequest)));
 
@@ -114,7 +104,7 @@ class PartyControllerTest extends MysqlTestContainer {
 		PartyRegisterResponse partyRegisterResponse = partyService.registerParty(partyRegisterRequest);
 
 		//when
-		ResultActions resultActions = mockMvc.perform(get("/api/v1/party/members/me")
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/parties/members/me")
 				.param("cursorId", (String)null)
 				.param("pageSize", "5"));
 
@@ -138,7 +128,7 @@ class PartyControllerTest extends MysqlTestContainer {
 		PartyRegisterResponse partyRegisterResponse = partyService.registerParty(partyRegisterRequest);
 
 		//when
-		ResultActions resultActions = mockMvc.perform(get("/api/v1/party/{partyId}", partyRegisterResponse.id()));
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/parties/{partyId}", partyRegisterResponse.id()));
 
 		//then
 		resultActions
@@ -168,7 +158,7 @@ class PartyControllerTest extends MysqlTestContainer {
 		);
 
 		//when
-		ResultActions resultActions = mockMvc.perform(patch("/api/v1/party/{partyId}", partyRegisterResponse.id())
+		ResultActions resultActions = mockMvc.perform(patch("/api/v1/parties/{partyId}", partyRegisterResponse.id())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(partyUpdateRequest)));
 
@@ -192,7 +182,7 @@ class PartyControllerTest extends MysqlTestContainer {
 		PartyRegisterResponse partyRegisterResponse = partyService.registerParty(partyRegisterRequest);
 
 		//when
-		ResultActions resultActions = mockMvc.perform(delete("/api/v1/party/{partyId}", partyRegisterResponse.id()));
+		ResultActions resultActions = mockMvc.perform(delete("/api/v1/parties/{partyId}", partyRegisterResponse.id()));
 
 		//then
 		resultActions

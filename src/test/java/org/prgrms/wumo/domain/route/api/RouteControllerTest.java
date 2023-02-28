@@ -48,6 +48,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 	private long memberId;
 	private long partyId;
 	private long locationId;
+	private long partyMemberId;
 	private long routeId;
 
 	@Autowired
@@ -85,7 +86,8 @@ public class RouteControllerTest extends MysqlTestContainer {
 		Route route = routeRepository.save(getRouteData(location, party));
 		routeId = route.getId();
 
-		partyMemberRepository.save(getPartyMemberData(member, party));
+		PartyMember partyMember = partyMemberRepository.save(getPartyMemberData(member, party));
+		partyMemberId = partyMember.getId();
 
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
@@ -97,7 +99,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 	@AfterEach
 	void tearDown() {
 		routeRepository.deleteById(routeId);
-		partyMemberRepository.deleteById(partyId);
+		partyMemberRepository.deleteById(partyMemberId);
 		locationRepository.deleteById(locationId);
 		partyRepository.deleteById(partyId);
 		memberRepository.deleteById(memberId);
