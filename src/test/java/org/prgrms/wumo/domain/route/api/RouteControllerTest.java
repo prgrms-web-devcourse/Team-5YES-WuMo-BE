@@ -97,7 +97,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 	@AfterEach
 	void tearDown() {
 		routeRepository.deleteById(routeId);
-		partyMemberRepository.deleteById(partyMemberId);
+		partyMemberRepository.deleteById(partyId);
 		locationRepository.deleteById(locationId);
 		partyRepository.deleteById(partyId);
 		memberRepository.deleteById(memberId);
