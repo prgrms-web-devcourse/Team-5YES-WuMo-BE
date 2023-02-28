@@ -9,6 +9,8 @@ public interface PartyMemberCustomRepository {
 
 	Optional<PartyMember> findByPartyIdAndIsLeader(Long partyId);
 
+	List<PartyMember> findAllByPartyId(Long partyId, Long cursorId, int pageSize);
+
 	List<PartyMember> findAllByMemberId(Long memberId, Long cursorId, int pageSize);
 
 	boolean existsByPartyIdAndMemberId(Long partyId, Long memberId);

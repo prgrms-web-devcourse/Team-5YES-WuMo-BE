@@ -1,12 +1,17 @@
 package org.prgrms.wumo.domain.party.service;
 
 import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyMember;
+import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyMemberGetAllResponse;
+
+import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
+import org.prgrms.wumo.domain.party.dto.request.PartyMemberGetRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyMemberRegisterRequest;
+import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetAllResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
@@ -46,6 +51,16 @@ public class PartyMemberService {
 		);
 
 		partyMemberRepository.save(partyMember);
+	}
+
+	@Transactional(readOnly = true)
+	public PartyMemberGetAllResponse getAllPartyMembers(Long partyId, PartyMemberGetRequest partyMemberGetRequest) {
+		List<PartyMember> partyMembers =
+				partyMemberRepository.findAllByPartyId(partyId, partyMemberGetRequest.cursorId(), partyMemberGetRequest.pageSize());
+
+		long lastId = (partyMembers.size() > 0) ? partyMembers.get(partyMembers.size()-1).getId() : -1L;
+
+		return toPartyMemberGetAllResponse(partyMembers, lastId);
 	}
 
 	private Party getPartyEntity(Long partyId) {
