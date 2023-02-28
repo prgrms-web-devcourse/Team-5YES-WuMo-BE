@@ -41,9 +41,9 @@ public class LocationCommentController {
 	@GetMapping
 	@Operation(summary = "후보지 댓글 조회")
 	public ResponseEntity<LocationCommentGetAllResponse> getAllLocationComment(
-			@RequestBody @Valid LocationCommentGetAllRequest locationCommentGetAllRequest
+			@Valid LocationCommentGetAllRequest locationCommentGetAllRequest
 	) {
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(locationCommentService.getAllLocationComments(locationCommentGetAllRequest));
 	}
 
 	@PatchMapping

@@ -1,17 +1,20 @@
 package org.prgrms.wumo.global.mapper;
 
+import java.util.List;
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.dto.response.LocationCommentGetAllResponse;
+import org.prgrms.wumo.domain.comment.dto.response.LocationCommentGetResponse;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.model.LocationComment;
 
 public class CommentMapper {
-	public static LocationCommentRegisterResponse toLocationCommentRegisterResponse(LocationComment locationcomment){
+	public static LocationCommentRegisterResponse toLocationCommentRegisterResponse(LocationComment locationcomment) {
 		return new LocationCommentRegisterResponse(
 				locationcomment.getId()
 		);
 	}
 
-	public static LocationComment toLocationComment(LocationCommentRegisterRequest locationCommentRegisterRequest){
+	public static LocationComment toLocationComment(LocationCommentRegisterRequest locationCommentRegisterRequest) {
 		return LocationComment.builder()
 				.locationId(locationCommentRegisterRequest.locationId())
 				.content(locationCommentRegisterRequest.content())
@@ -19,4 +22,26 @@ public class CommentMapper {
 				.locationId(locationCommentRegisterRequest.locationId())
 				.build();
 	}
+
+	public static LocationCommentGetResponse toLocationCommentGetResponse(LocationComment locationComment) {
+		return new LocationCommentGetResponse(
+				locationComment.getId(),
+				locationComment.getMember().getNickname(),
+				locationComment.getMember().getProfileImage(),
+				locationComment.getPartyMember().getRole(),
+				locationComment.getContent(),
+				locationComment.getImage(),
+				locationComment.getCreatedAt()
+		);
+	}
+
+	public static LocationCommentGetAllResponse toLocationCommentGetAllResponse(
+			List<LocationComment> locationComments, Long lastId
+	) {
+		return new LocationCommentGetAllResponse(
+				locationComments.stream().map(CommentMapper::toLocationCommentGetResponse).toList(),
+				lastId
+		);
+	}
+
 }
