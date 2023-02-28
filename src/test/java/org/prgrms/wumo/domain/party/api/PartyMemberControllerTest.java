@@ -1,7 +1,9 @@
 package org.prgrms.wumo.domain.party.api;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
@@ -115,18 +117,39 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 
 	@Test
 	@DisplayName("특정 사용자가 모임에 참여할 수 있다.")
-	void registerParty() throws Exception {
+	void registerPartyMember() throws Exception {
 		//given
 		PartyMemberRegisterRequest partyMemberRegisterRequest = getPartyMemberRegisterRequest();
 
 		//when
-		ResultActions resultActions = mockMvc.perform(post("/api/v1/parties/" + party.getId() + "/members")
+		ResultActions resultActions = mockMvc.perform(post("/api/v1/parties/{partyId}/members", party.getId())
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.content(objectMapper.writeValueAsString(partyMemberRegisterRequest)));
 
 		//then
 		resultActions
 				.andExpect(status().isCreated())
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("특정 모임의 구성원을 조회할 수 있다.")
+	void getAllPartyMembers() throws Exception {
+		//when
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/parties/{partyId}/members", party.getId())
+						.param("cursorId", (String)null)
+						.param("pageSize", "5"));
+
+		//then
+		resultActions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.members").isArray())
+				.andExpect(jsonPath("$.members").isNotEmpty())
+				.andExpect(jsonPath("$.members[0].memberId").value(leader.getId()))
+				.andExpect(jsonPath("$.members[0].nickname").value(leader.getNickname()))
+				.andExpect(jsonPath("$.members[0].role").value(partyLeader.getRole()))
+				.andExpect(jsonPath("$.members[0].profileImage").value(leader.getProfileImage()))
+				.andExpect(jsonPath("$.lastId").isNotEmpty())
 				.andDo(print());
 	}
 

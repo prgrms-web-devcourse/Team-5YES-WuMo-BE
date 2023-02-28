@@ -6,6 +6,8 @@ import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetAllResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetResponse;
+import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetAllResponse;
+import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
@@ -62,6 +64,17 @@ public class PartyMapper {
 				.role(role)
 				.isLeader(false)
 				.build();
+	}
+
+	public static PartyMemberGetAllResponse toPartyMemberGetAllResponse(List<PartyMember> partyMembers, Long lastId) {
+		List<PartyMemberGetResponse> partyMemberGetResponses = partyMembers.stream()
+				.map(partyMember -> new PartyMemberGetResponse(
+						partyMember.getMember().getId(),
+						partyMember.getMember().getNickname(),
+						partyMember.getRole(),
+						partyMember.getMember().getProfileImage()))
+				.toList();
+		return new PartyMemberGetAllResponse(partyMemberGetResponses, lastId);
 	}
 
 }

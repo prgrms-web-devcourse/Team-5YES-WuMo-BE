@@ -1,11 +1,13 @@
 package org.prgrms.wumo.domain.party.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
@@ -19,7 +21,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
+import org.prgrms.wumo.domain.party.dto.request.PartyMemberGetRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyMemberRegisterRequest;
+import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetAllResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
@@ -50,7 +54,8 @@ class PartyMemberServiceTest {
 	Member participant;
 	PartyMemberRegisterRequest partyMemberRegisterRequest;
 	Party party;
-	PartyMember partyMember;
+	PartyMember partyLeader;
+	PartyMember partyParticipant;
 
 	@BeforeEach
 	void setUp() {
@@ -75,12 +80,19 @@ class PartyMemberServiceTest {
 				.coverImage("https://~.jpeg")
 				.password("1234")
 				.build();
-		partyMember = PartyMember.builder()
+		partyLeader = PartyMember.builder()
 				.id(1L)
 				.member(leader)
 				.party(party)
 				.role("총무")
 				.isLeader(true)
+				.build();
+		partyParticipant = PartyMember.builder()
+				.id(2L)
+				.member(participant)
+				.party(party)
+				.role("운전기사")
+				.isLeader(false)
 				.build();
 		partyMemberRegisterRequest = new PartyMemberRegisterRequest("운전기사");
 
@@ -137,4 +149,34 @@ class PartyMemberServiceTest {
 		}
 
 	}
+
+	@Nested
+	@DisplayName("getAllPartyMembers 메소드는 조회시")
+	class GetAllPartyMembers {
+		//given
+		PartyMemberGetRequest partyMemberGetRequest = new PartyMemberGetRequest(null, 1);
+
+		@Test
+		@DisplayName("현재 파티의 구성원 목록을 반환한다.")
+		void success() {
+
+			//mocking
+			given(partyMemberRepository.findAllByPartyId(party.getId(), null, 1))
+					.willReturn(List.of(partyLeader, partyParticipant));
+
+			//when
+			PartyMemberGetAllResponse partyMemberGetAllResponse
+					= partyMemberService.getAllPartyMembers(party.getId(), partyMemberGetRequest);
+
+			//then
+			assertThat(partyMemberGetAllResponse.members().size()).isEqualTo(2);
+			assertThat(partyMemberGetAllResponse.lastId()).isEqualTo(partyParticipant.getId());
+
+			then(partyMemberRepository)
+					.should()
+					.findAllByPartyId(party.getId(), null, 1);
+		}
+
+	}
+
 }

@@ -47,7 +47,7 @@ public class PartyMemberController {
 			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId,
 			@Valid PartyMemberGetRequest partyMemberGetRequest
 	) {
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(partyMemberService.getAllPartyMembers(partyId, partyMemberGetRequest));
 	}
 
 	@PatchMapping("/{partyId}/members/{memberId}")
@@ -56,7 +56,6 @@ public class PartyMemberController {
 			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId,
 			@PathVariable @Parameter(description = "사용자 식별자", required = true) Long memberId,
 			@RequestBody @Valid PartyMemberUpdateRequest partyMemberUpdateRequest
-
 	) {
 		return ResponseEntity.ok(null);
 	}
