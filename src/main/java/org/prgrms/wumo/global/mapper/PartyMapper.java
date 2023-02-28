@@ -1,5 +1,8 @@
 package org.prgrms.wumo.global.mapper;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.prgrms.wumo.domain.member.model.Member;
@@ -21,8 +24,8 @@ public class PartyMapper {
 	public static Party toParty(PartyRegisterRequest partyRegisterRequest) {
 		return Party.builder()
 				.name(partyRegisterRequest.name())
-				.startDate(partyRegisterRequest.startDate())
-				.endDate(partyRegisterRequest.endDate())
+				.startDate(LocalDateTime.of(partyRegisterRequest.startDate(), LocalTime.MIN))
+				.endDate(LocalDateTime.of(partyRegisterRequest.endDate(), LocalTime.MIN))
 				.description(partyRegisterRequest.description())
 				.coverImage(partyRegisterRequest.coverImage())
 				.password(partyRegisterRequest.password())
@@ -38,8 +41,8 @@ public class PartyMapper {
 				.map(party -> new PartyGetResponse(
 						party.getId(),
 						party.getName(),
-						party.getStartDate(),
-						party.getEndDate(),
+						LocalDate.from(party.getStartDate()),
+						LocalDate.from(party.getEndDate()),
 						party.getDescription(),
 						party.getCoverImage()))
 				.toList();
@@ -50,8 +53,8 @@ public class PartyMapper {
 		return new PartyGetResponse(
 				party.getId(),
 				party.getName(),
-				party.getStartDate(),
-				party.getEndDate(),
+				LocalDate.from(party.getStartDate()),
+				LocalDate.from(party.getEndDate()),
 				party.getDescription(),
 				party.getCoverImage()
 		);

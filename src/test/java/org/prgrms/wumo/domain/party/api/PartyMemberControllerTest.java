@@ -1,5 +1,6 @@
 package org.prgrms.wumo.domain.party.api;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -64,6 +65,8 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 	private Party party;
 
 	private PartyMember partyLeader;
+
+	private PartyMember partyParticipant;
 
 	@BeforeEach
 	void setup() {
@@ -134,6 +137,9 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 	@Test
 	@DisplayName("특정 모임의 구성원을 조회할 수 있다.")
 	void getAllPartyMembers() throws Exception {
+		//given
+		setAuthentication(leader.getId());
+
 		//when
 		ResultActions resultActions = mockMvc.perform(get("/api/v1/parties/{partyId}/members", party.getId())
 						.param("cursorId", (String)null)
@@ -171,6 +177,49 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 				.andExpect(jsonPath("$.nickname").value(leader.getNickname()))
 				.andExpect(jsonPath("$.role").value(getPartyMemberUpdateRequest().role()))
 				.andExpect(jsonPath("$.profileImage").value(leader.getProfileImage()))
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("모임 생성자는 구성원을 추방할 수 있다.")
+	void deletePartyMemberWithLeader() throws Exception {
+		//given
+		partyParticipant = partyMemberRepository.save(
+				PartyMember.builder()
+						.member(participant)
+						.party(party)
+						.role("요리사")
+						.build()
+		);
+		setAuthentication(leader.getId());
+
+		//when
+		ResultActions resultActions = mockMvc.perform(delete("/api/v1/parties/{partyId}/members/{memberId}", party.getId(), participant.getId()));
+
+		//then
+		resultActions
+				.andExpect(status().isOk())
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("모임에서 탈퇴할 수 있다.")
+	void deletePartyMember() throws Exception {
+		//given
+		partyParticipant = partyMemberRepository.save(
+				PartyMember.builder()
+						.member(participant)
+						.party(party)
+						.role("요리사")
+						.build()
+		);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(delete("/api/v1/parties/{partyId}/members", party.getId()));
+
+		//then
+		resultActions
+				.andExpect(status().isOk())
 				.andDo(print());
 	}
 

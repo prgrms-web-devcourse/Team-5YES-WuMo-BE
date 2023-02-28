@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Collections;
 
 import org.junit.jupiter.api.AfterEach;
@@ -150,8 +150,8 @@ class PartyControllerTest extends MysqlTestContainer {
 		PartyRegisterResponse partyRegisterResponse = partyService.registerParty(partyRegisterRequest);
 		PartyUpdateRequest partyUpdateRequest = new PartyUpdateRequest(
 				"오예스 워크샵 (수정)",
-				LocalDateTime.now().plusDays(1),
-				LocalDateTime.now().plusDays(2),
+				LocalDate.now().plusDays(1),
+				LocalDate.now().plusDays(2),
 				"팀 설립 기념 워크샵 (수정)",
 				"https://~~~.jpeg",
 				"4321"
@@ -193,8 +193,8 @@ class PartyControllerTest extends MysqlTestContainer {
 	private PartyRegisterRequest getPartyRegisterRequest() {
 		return new PartyRegisterRequest(
 				"오예스 워크샵",
-				LocalDateTime.now(),
-				LocalDateTime.now().plusDays(1),
+				LocalDate.now(),
+				LocalDate.now().plusDays(1),
 				"팀 설립 기념 워크샵",
 				"https://~.jpeg",
 				"1234",

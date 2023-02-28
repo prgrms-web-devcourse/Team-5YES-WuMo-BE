@@ -5,6 +5,8 @@ import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyGetAllResponse;
 import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyGetDetailResponse;
 import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyRegisterResponse;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
@@ -83,8 +85,8 @@ public class PartyService {
 		Party party = partyLeader.getParty();
 		party.update(
 				partyUpdateRequest.name(),
-				partyUpdateRequest.startDate(),
-				partyUpdateRequest.endDate(),
+				LocalDateTime.of(partyUpdateRequest.startDate(), LocalTime.MIN),
+				LocalDateTime.of(partyUpdateRequest.endDate(), LocalTime.MAX),
 				partyUpdateRequest.description(),
 				partyUpdateRequest.coverImage(),
 				partyUpdateRequest.password()

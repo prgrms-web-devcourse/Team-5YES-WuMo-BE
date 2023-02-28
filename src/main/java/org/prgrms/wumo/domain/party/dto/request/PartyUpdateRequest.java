@@ -1,6 +1,6 @@
 package org.prgrms.wumo.domain.party.dto.request;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -14,10 +14,10 @@ public record PartyUpdateRequest(
 		String name,
 
 		@Schema(description = "시작일", example = "2023-02-21", required = false)
-		LocalDateTime startDate,
+		LocalDate startDate,
 
 		@Schema(description = "종료일", example = "2023-02-22", required = false)
-		LocalDateTime endDate,
+		LocalDate endDate,
 
 		@Length(max = 255, message = "모임 설명은 {max}자를 초과할 수 없습니다.")
 		@Schema(description = "종료일", example = "팀 설립 기념 워크샵", required = false)

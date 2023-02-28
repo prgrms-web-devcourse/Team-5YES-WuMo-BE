@@ -60,13 +60,23 @@ public class PartyMemberController {
 		return ResponseEntity.ok(partyMemberService.updatePartyMember(partyId, partyMemberUpdateRequest));
 	}
 
-	@DeleteMapping("/{partyId}/members/{memberId}")
-	@Operation(summary = "모임 구성원 삭제(추방)")
+	@DeleteMapping("/{partyId}/members")
+	@Operation(summary = "모임 구성원 삭제 (모임 탈퇴)")
 	public ResponseEntity<Void> deletePartyMember(
-			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId,
-			@PathVariable @Parameter(description = "사용자 식별자", required = true) Long memberId
+			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId
 	) {
-		return ResponseEntity.ok(null);
+		partyMemberService.deletePartyMember(partyId);
+		return ResponseEntity.ok().build();
+	}
+
+	@DeleteMapping("/{partyId}/members/{memberId}")
+	@Operation(summary = "모임 구성원 삭제 (모임 추방)")
+	public ResponseEntity<Long> deletePartyMember(
+			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId,
+			@PathVariable @Parameter(description = "추방할 사용자 식별자", required = true) Long memberId
+	) {
+		partyMemberService.deletePartyMember(partyId, memberId);
+		return ResponseEntity.ok(memberId);
 	}
 
 }
