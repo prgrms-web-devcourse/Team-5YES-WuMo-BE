@@ -49,4 +49,9 @@ public class PartyMember extends BaseTimeEntity {
 		this.role = role;
 		this.isLeader = isLeader;
 	}
+
+	public void updateRole(String role) {
+		this.role = role;
+	}
+
 }
