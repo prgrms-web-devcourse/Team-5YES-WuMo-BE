@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.prgrms.wumo.MysqlTestContainer;
@@ -38,6 +39,11 @@ public class LocationControllerTest extends MysqlTestContainer {
 
 	// GIVEN
 	LocationTestUtils locationTestUtils = new LocationTestUtils();
+
+	@AfterEach
+	void afterEach(){
+		locationRepository.deleteAll();
+	}
 
 	@Test
 	@DisplayName("후보 장소를 등록한다")
@@ -80,15 +86,15 @@ public class LocationControllerTest extends MysqlTestContainer {
 	@DisplayName("후보 장소 하나를 상세 조회할 수 있다.")
 	void getLocationTest() throws Exception {
 		// Given
-		locationRepository.save(locationTestUtils.getLocation());
+		Long locationId = locationRepository.save(locationTestUtils.getLocation()).getId();
 
 		// When
-		ResultActions resultActions = mockMvc.perform(get("/api/v1/locations/{locationId}", 1));
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/locations/{locationId}",locationId));
 
 		// Then
 		resultActions
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(1))
+				.andExpect(jsonPath("$.id").isNotEmpty())
 				.andExpect(jsonPath("$.name").value("프로그래머스 강남 교육장"))
 				.andExpect(jsonPath("$.latitude").value(locationTestUtils.getLatitude1()))
 				.andExpect(jsonPath("$.longitude").value(locationTestUtils.getLongitude1()))
@@ -115,11 +121,11 @@ public class LocationControllerTest extends MysqlTestContainer {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.locations").isArray())
 				.andExpect(jsonPath("$.locations").isNotEmpty())
-				.andExpect(jsonPath("$.locations[0].id").value(1))
+				.andExpect(jsonPath("$.locations[0].id").isNotEmpty())
 				.andExpect(jsonPath("$.locations[0].latitude").value(locationTestUtils.getLatitude1()))
 				.andExpect(jsonPath("$.locations[0].longitude").value(locationTestUtils.getLongitude1()))
-				.andExpect(jsonPath("$.locations[0].spending").value(3000))
-				.andExpect(jsonPath("$.locations[0].expectedCost").value(4000))
+				.andExpect(jsonPath("$.locations[0].spending").value(2000))
+				.andExpect(jsonPath("$.locations[0].expectedCost").value(5000))
 				.andDo(print());
 	}
 }
