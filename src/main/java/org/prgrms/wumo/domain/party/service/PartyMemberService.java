@@ -21,6 +21,7 @@ import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
+import org.prgrms.wumo.global.exception.custom.PartyNotEmptyException;
 import org.prgrms.wumo.global.jwt.JwtUtil;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -60,6 +61,8 @@ public class PartyMemberService {
 
 	@Transactional(readOnly = true)
 	public PartyMemberGetAllResponse getAllPartyMembers(Long partyId, PartyMemberGetRequest partyMemberGetRequest) {
+		getPartyMemberEntity(partyId, JwtUtil.getMemberId());
+
 		List<PartyMember> partyMembers =
 				partyMemberRepository.findAllByPartyId(partyId, partyMemberGetRequest.cursorId(), partyMemberGetRequest.pageSize());
 
@@ -88,7 +91,7 @@ public class PartyMemberService {
 				partyRepository.deleteById(partyId);
 				return;
 			} else {
-				throw new IllegalStateException("본인을 제외하고 모임에 가입된 회원이 없어야 합니다.");
+				throw new PartyNotEmptyException("본인을 제외하고 모임에 가입된 회원이 없어야 합니다.");
 			}
 		}
 

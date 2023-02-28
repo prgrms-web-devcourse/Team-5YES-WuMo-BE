@@ -33,6 +33,7 @@ import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
+import org.prgrms.wumo.global.exception.custom.PartyNotEmptyException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -156,13 +157,15 @@ class PartyMemberServiceTest {
 	@DisplayName("getAllPartyMembers 메소드는 조회시")
 	class GetAllPartyMembers {
 		//given
-		PartyMemberGetRequest partyMemberGetRequest = new PartyMemberGetRequest(null, 1);
+		PartyMemberGetRequest partyMemberGetRequest = new PartyMemberGetRequest(null, 2);
 
 		@Test
-		@DisplayName("현재 파티의 구성원 목록을 반환한다.")
+		@DisplayName("현재 모임의 구성원 목록을 반환한다.")
 		void success() {
 			//mocking
-			given(partyMemberRepository.findAllByPartyId(party.getId(), null, 1))
+			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), participant.getId()))
+					.willReturn(Optional.of(partyParticipant));
+			given(partyMemberRepository.findAllByPartyId(party.getId(), null, 2))
 					.willReturn(List.of(partyLeader, partyParticipant));
 
 			//when
@@ -175,7 +178,23 @@ class PartyMemberServiceTest {
 
 			then(partyMemberRepository)
 					.should()
-					.findAllByPartyId(party.getId(), null, 1);
+					.findByPartyIdAndMemberId(party.getId(), participant.getId());
+			then(partyMemberRepository)
+					.should()
+					.findAllByPartyId(party.getId(), null, 2);
+		}
+
+		@Test
+		@DisplayName("모임의 구성원이 아니라면 예외가 발생한다.")
+		void failed() {
+			//mocking
+			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), participant.getId()))
+					.willReturn(Optional.empty());
+
+			//when
+			//then
+			Assertions.assertThrows(EntityNotFoundException.class,
+					() -> partyMemberService.getAllPartyMembers(party.getId(), partyMemberGetRequest));
 		}
 
 	}
@@ -296,7 +315,7 @@ class PartyMemberServiceTest {
 
 			//when
 			//then
-			Assertions.assertThrows(IllegalStateException.class,
+			Assertions.assertThrows(PartyNotEmptyException.class,
 					() -> partyMemberService.deletePartyMember(party.getId()));
 		}
 

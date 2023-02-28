@@ -5,6 +5,7 @@ import javax.persistence.EntityNotFoundException;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.exception.custom.ImageDeleteFailedException;
 import org.prgrms.wumo.global.exception.custom.ImageUploadFailedException;
+import org.prgrms.wumo.global.exception.custom.PartyNotEmptyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -37,7 +38,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler({
 		ImageUploadFailedException.class, IllegalArgumentException.class, ImageDeleteFailedException.class,
-			EntityNotFoundException.class, IllegalStateException.class
+			EntityNotFoundException.class, PartyNotEmptyException.class
 	})
 	public ResponseEntity<ExceptionResponse> handleException(RuntimeException runtimeException) {
 		log.info("exception : " + runtimeException);

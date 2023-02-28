@@ -137,6 +137,9 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 	@Test
 	@DisplayName("특정 모임의 구성원을 조회할 수 있다.")
 	void getAllPartyMembers() throws Exception {
+		//given
+		setAuthentication(leader.getId());
+
 		//when
 		ResultActions resultActions = mockMvc.perform(get("/api/v1/parties/{partyId}/members", party.getId())
 						.param("cursorId", (String)null)
