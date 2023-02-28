@@ -28,6 +28,7 @@ import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.domain.route.dto.request.RouteRegisterRequest;
+import org.prgrms.wumo.domain.route.dto.request.RouteStatusUpdateRequest;
 import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
 import org.prgrms.wumo.domain.route.model.Route;
@@ -197,6 +198,34 @@ public class RouteServiceTest {
 			//then
 			assertThat(result.partyId()).isEqualTo(partyId);
 			assertThat(result.locations()).hasSize(1);
+			then(routeRepository)
+				.should()
+				.findById(anyLong());
+		}
+	}
+
+	@Nested
+	@DisplayName("updateRoutePublicStatus 메소드는 루트 공개여부 변경 요청 시 ")
+	class UpdateRoutePublicStatus {
+		//given
+		RouteStatusUpdateRequest routeStatusUpdateRequest
+			= new RouteStatusUpdateRequest(routeId, true);
+
+		Route route = getRouteData();
+
+		@Test
+		@DisplayName("요청한 회원이 해당 모임멤버인지 확인 후 변경한다")
+		void success_from_public() {
+			//mocking
+			given(routeRepository.findById(anyLong()))
+				.willReturn(Optional.of(route));
+			given(partyMemberRepository.existsByPartyIdAndMemberId(anyLong(), anyLong()))
+				.willReturn(true);
+
+			//when
+			routeService.updateRoutePublicStatus(routeStatusUpdateRequest);
+
+			//then
 			then(routeRepository)
 				.should()
 				.findById(anyLong());
