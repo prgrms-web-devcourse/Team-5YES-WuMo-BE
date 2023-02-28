@@ -73,7 +73,6 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 	void beforeEach() {
 		member = memberRepository.save(
 				Member.builder()
-						//.id(1L)
 						.password("qwe12345")
 						.email("member@email.com")
 						.nickname("nickname")
@@ -93,7 +92,6 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 
 		partyMember = partyMemberRepository.save(
 				PartyMember.builder()
-						//.id(1L)
 						.member(member)
 						.party(party)
 						.role("총무")
@@ -103,7 +101,6 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 
 		location = locationRepository.save(
 				Location.builder()
-						//.id(1L)
 						.category(Category.COFFEE)
 						.visitDate(LocalDateTime.now().plusDays(4))
 						.description("아인슈페너가 맛있는 곳!")
@@ -127,6 +124,7 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 
 	@AfterEach
 	void afterEach() {
+		locationCommentRepository.deleteAll();
 		locationRepository.deleteById(location.getId());
 		partyMemberRepository.deleteById(partyMember.getId());
 		partyRepository.deleteById(party.getId());
@@ -156,7 +154,7 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 		// Then
 		resultActions
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.id").value(1))
+				.andExpect(jsonPath("$.id").isNotEmpty())
 				.andDo(print());
 	}
 
