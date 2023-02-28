@@ -2,10 +2,14 @@ package org.prgrms.wumo.domain.comment.service;
 
 import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
 import static org.prgrms.wumo.global.mapper.CommentMapper.toLocationComment;
+import static org.prgrms.wumo.global.mapper.CommentMapper.toLocationCommentGetAllResponse;
 import static org.prgrms.wumo.global.mapper.CommentMapper.toLocationCommentRegisterResponse;
+import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.prgrms.wumo.domain.comment.dto.request.LocationCommentGetAllRequest;
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.dto.response.LocationCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.model.LocationComment;
 import org.prgrms.wumo.domain.comment.repository.LocationCommentRepository;
@@ -38,5 +42,18 @@ public class LocationCommentService {
 		return toLocationCommentRegisterResponse(
 				locationCommentRepository.save(locationComment)
 		);
+	}
+
+	@Transactional(readOnly = true)
+	public LocationCommentGetAllResponse getAllLocationComments(
+			LocationCommentGetAllRequest locationCommentGetAllRequest) {
+		List<LocationComment> locationComments =
+				locationCommentRepository.findAllByLocationId(locationCommentGetAllRequest.locationId(),
+						locationCommentGetAllRequest.cursorId(), locationCommentGetAllRequest.pageSize());
+
+		long lastId = (locationComments.size()) > 0 ?
+				locationComments.get(locationComments.size() - 1).getId() : 1L;
+
+		return toLocationCommentGetAllResponse(locationComments, lastId);
 	}
 }
