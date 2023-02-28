@@ -51,14 +51,6 @@ public class RouteController {
 		return ResponseEntity.ok(routeService.getRoute(routeId, fromPublic));
 	}
 
-	@GetMapping("/{routeId}/public")
-	@Operation(summary = "공개된 루트 상세 조회")
-	public ResponseEntity<RouteGetResponse> getPublicRoute(
-		@PathVariable @Parameter(description = "조회할 루트 아이디") long routeId) {
-
-		return ResponseEntity.ok(null);
-	}
-
 	@GetMapping
 	@Operation(summary = "루트 목록 조회")
 	public ResponseEntity<RouteGetAllResponse> getAllRoute(
@@ -80,6 +72,7 @@ public class RouteController {
 	public ResponseEntity<Void> updateRoutePublicStatus(
 		@RequestBody @Valid RouteStatusUpdateRequest routeStatusUpdateRequest) {
 
+		routeService.updateRoutePublicStatus(routeStatusUpdateRequest);
 		return ResponseEntity.ok().build();
 	}
 

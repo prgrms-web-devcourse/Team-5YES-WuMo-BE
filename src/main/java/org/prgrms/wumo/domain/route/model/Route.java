@@ -52,4 +52,8 @@ public class Route extends BaseTimeEntity {
 		location.addRoute(this);
 		this.locations.add(location);
 	}
+
+	public void updatePublicStatus(boolean isPublic) {
+		this.isPublic = isPublic;
+	}
 }
