@@ -108,7 +108,10 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 
 	@AfterEach
 	void clean() {
-		partyMemberRepository.deleteById(partyParticipant.getId());
+		if (partyParticipant != null) {
+			partyMemberRepository.deleteById(partyParticipant.getId());
+		}
+		partyParticipant = null;
 		partyMemberRepository.deleteById(partyLeader.getId());
 		partyRepository.deleteById(party.getId());
 		memberRepository.deleteById(leader.getId());
