@@ -5,6 +5,7 @@ import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyMemberGetAllRespo
 import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyMemberGetResponse;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -21,6 +22,7 @@ import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.jwt.JwtUtil;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,6 +74,40 @@ public class PartyMemberService {
 		partyMember.updateRole(partyMemberUpdateRequest.role());
 
 		return toPartyMemberGetResponse(partyMemberRepository.save(partyMember));
+	}
+
+	@Transactional
+	public void deletePartyMember(Long partyId) {
+		PartyMember partyMember = getPartyMemberEntity(partyId, JwtUtil.getMemberId());
+
+		if (partyMember.isLeader()) {
+			// 모임장인 경우 모임에 멤버가 본인을 제외하고 없어야만 삭제 가능
+			List<PartyMember> partyMembers = partyMemberRepository.findAllByPartyId(partyId, null, 2);
+			if (partyMembers.size() == 1 && Objects.equals(partyMembers.get(0).getId(), partyMember.getId())) {
+				partyMemberRepository.delete(partyMember);
+				partyRepository.deleteById(partyId);
+				return;
+			} else {
+				throw new IllegalStateException("본인을 제외하고 모임에 가입된 회원이 없어야 합니다.");
+			}
+		}
+
+		partyMemberRepository.delete(partyMember);
+	}
+
+	@Transactional
+	public void deletePartyMember(Long partyId, Long memberId) {
+		if (Objects.equals(JwtUtil.getMemberId(), memberId)) {
+			deletePartyMember(partyId);
+			return;
+		}
+
+		PartyMember partyMember = getPartyMemberEntity(partyId, JwtUtil.getMemberId());
+		if (partyMember.isLeader()) {
+			partyMemberRepository.delete(getPartyMemberEntity(partyId, memberId));
+		} else {
+			throw new AccessDeniedException("모임을 생성한 회원만 구성원 추방이 가능합니다.");
+		}
 	}
 
 	private Party getPartyEntity(Long partyId) {

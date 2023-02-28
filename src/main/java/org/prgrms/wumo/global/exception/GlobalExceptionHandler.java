@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler({
 		ImageUploadFailedException.class, IllegalArgumentException.class, ImageDeleteFailedException.class,
-			EntityNotFoundException.class
+			EntityNotFoundException.class, IllegalStateException.class
 	})
 	public ResponseEntity<ExceptionResponse> handleException(RuntimeException runtimeException) {
 		log.info("exception : " + runtimeException);
