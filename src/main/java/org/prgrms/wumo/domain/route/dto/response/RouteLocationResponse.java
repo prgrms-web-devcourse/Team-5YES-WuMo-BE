@@ -16,10 +16,10 @@ public record RouteLocationResponse(
 	String address,
 
 	@Schema(description = "후보장소 위도", example = "34.567890", required = true)
-	String latitude,
+	Float latitude,
 
 	@Schema(description = "후보장소 경도", example = "123.567890", required = true)
-	String longitude,
+	Float longitude,
 
 	@Schema(description = "후보장소 이미지", example = "https://~", required = true)
 	String image,
@@ -29,6 +29,9 @@ public record RouteLocationResponse(
 
 	@Schema(description = "후보장소 방문예정일", example = "2023-02-21T10:00:00", required = true)
 	LocalDateTime visitDate,
+
+	@Schema(description = "후보장소 예상 지출", example = "55000", required = true)
+	int expectedCost,
 
 	@Schema(description = "후보장소 실제 지출", example = "55000", required = false)
 	int spending,

@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,8 @@ import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.domain.route.dto.request.RouteRegisterRequest;
+import org.prgrms.wumo.domain.route.model.Route;
+import org.prgrms.wumo.domain.route.repository.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,7 +48,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 	private long memberId;
 	private long partyId;
 	private long locationId;
-	private long partyMemberId;
+	private long routeId;
 
 	@Autowired
 	MockMvc mockMvc;
@@ -65,6 +68,9 @@ public class RouteControllerTest extends MysqlTestContainer {
 	@Autowired
 	PartyMemberRepository partyMemberRepository;
 
+	@Autowired
+	RouteRepository routeRepository;
+
 	@BeforeEach
 	void setup() {
 		Member member = memberRepository.save(getMemberData());
@@ -76,8 +82,10 @@ public class RouteControllerTest extends MysqlTestContainer {
 		Location location = locationRepository.save(getLocationData());
 		locationId = location.getId();
 
-		PartyMember partyMember = partyMemberRepository.save(getPartyMemberData(member, party));
-		partyMemberId = partyMember.getId();
+		Route route = routeRepository.save(getRouteData(location, party));
+		routeId = route.getId();
+
+		partyMemberRepository.save(getPartyMemberData(member, party));
 
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
@@ -88,6 +96,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 
 	@AfterEach
 	void tearDown() {
+		routeRepository.deleteById(routeId);
 		partyMemberRepository.deleteById(partyMemberId);
 		locationRepository.deleteById(locationId);
 		partyRepository.deleteById(partyId);
@@ -112,6 +121,40 @@ public class RouteControllerTest extends MysqlTestContainer {
 		resultActions
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.id").isNotEmpty())
+			.andDo(print());
+	}
+
+	@Test
+	@DisplayName("모임 안에서 루트를 상세 조회 한다")
+	void get_route_in_party() throws Exception {
+		//when
+		ResultActions resultActions
+			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/{routeId}?path=0", routeId));
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").value(routeId))
+			.andExpect(jsonPath("$.isPublic").value(false))
+			.andExpect(jsonPath("$.locations").isArray())
+			.andExpect(jsonPath("$.partyId").value(partyId))
+			.andDo(print());
+	}
+
+	@Test
+	@DisplayName("공개된 루트 목록에서 루트를 상세 조회 한다")
+	void get_route_from_public_list() throws Exception {
+		//when
+		ResultActions resultActions
+			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/{routeId}?path=1", routeId));
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").value(routeId))
+			.andExpect(jsonPath("$.isPublic").isNotEmpty())
+			.andExpect(jsonPath("$.locations").isArray())
+			.andExpect(jsonPath("$.partyId").value(partyId))
 			.andDo(print());
 	}
 
@@ -152,6 +195,13 @@ public class RouteControllerTest extends MysqlTestContainer {
 			.party(party)
 			.role("총무")
 			.isLeader(true)
+			.build();
+	}
+
+	private Route getRouteData(Location location, Party party) {
+		return Route.builder()
+			.locations(List.of(location))
+			.party(party)
 			.build();
 	}
 }
