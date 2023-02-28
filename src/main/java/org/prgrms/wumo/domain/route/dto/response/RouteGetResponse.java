@@ -12,9 +12,6 @@ public record RouteGetResponse(
 	@Schema(description = "루트의 현재 공개 여부", example = "false", required = true)
 	boolean isPublic,
 
-	@Schema(description = "(공개된 루트라면)루트의 좋아요 수", example = "false", required = false)
-	long likeCount,
-
 	@Schema(description = "루트의 장소들", required = true)
 	List<RouteLocationResponse> locations,
 
