@@ -1,6 +1,7 @@
 package org.prgrms.wumo.domain.party.api;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -17,6 +18,7 @@ import org.prgrms.wumo.MysqlTestContainer;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyMemberRegisterRequest;
+import org.prgrms.wumo.domain.party.dto.request.PartyMemberUpdateRequest;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
@@ -98,10 +100,7 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 						.build()
 		);
 
-		SecurityContext context = SecurityContextHolder.getContext();
-		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-				new UsernamePasswordAuthenticationToken(participant.getId(), null, Collections.emptyList());
-		context.setAuthentication(usernamePasswordAuthenticationToken);
+		setAuthentication(participant.getId());
 	}
 
 	@AfterEach
@@ -153,8 +152,40 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 				.andDo(print());
 	}
 
+	@Test
+	@DisplayName("모임 내에서 자신의 정보를 수정할 수 있다.")
+	void updatePartyMember() throws Exception {
+		//given
+		setAuthentication(leader.getId());
+		PartyMemberUpdateRequest partyMemberUpdateRequest = getPartyMemberUpdateRequest();
+
+		//when
+		ResultActions resultActions = mockMvc.perform(patch("/api/v1/parties/{partyId}/members", party.getId())
+				.contentType(MediaType.APPLICATION_JSON_VALUE)
+				.content(objectMapper.writeValueAsString(partyMemberUpdateRequest)));
+
+		//then
+		resultActions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.memberId").value(leader.getId()))
+				.andExpect(jsonPath("$.nickname").value(leader.getNickname()))
+				.andExpect(jsonPath("$.role").value(getPartyMemberUpdateRequest().role()))
+				.andExpect(jsonPath("$.profileImage").value(leader.getProfileImage()))
+				.andDo(print());
+	}
+
+	private void setAuthentication(Long memberId) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+				new UsernamePasswordAuthenticationToken(memberId, null, Collections.emptyList());
+		context.setAuthentication(usernamePasswordAuthenticationToken);
+	}
+
 	private PartyMemberRegisterRequest getPartyMemberRegisterRequest() {
 		return new PartyMemberRegisterRequest("운전기사");
+	}
+	private PartyMemberUpdateRequest getPartyMemberUpdateRequest() {
+		return new PartyMemberUpdateRequest("드라이버");
 	}
 
 }

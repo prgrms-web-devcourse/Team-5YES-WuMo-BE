@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +25,9 @@ import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyMemberGetRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyMemberRegisterRequest;
+import org.prgrms.wumo.domain.party.dto.request.PartyMemberUpdateRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetAllResponse;
+import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
@@ -159,7 +163,6 @@ class PartyMemberServiceTest {
 		@Test
 		@DisplayName("현재 파티의 구성원 목록을 반환한다.")
 		void success() {
-
 			//mocking
 			given(partyMemberRepository.findAllByPartyId(party.getId(), null, 1))
 					.willReturn(List.of(partyLeader, partyParticipant));
@@ -175,6 +178,58 @@ class PartyMemberServiceTest {
 			then(partyMemberRepository)
 					.should()
 					.findAllByPartyId(party.getId(), null, 1);
+		}
+
+	}
+
+	@Nested
+	@DisplayName("updatePartyMember 메소드는 수정시")
+	class UpdatePartyMember {
+		//given
+		PartyMemberUpdateRequest partyMemberUpdateRequest = new PartyMemberUpdateRequest("드라이버");
+
+		@Test
+		@DisplayName("현재 로그인한 사용자의 모임에서 정보를 수정한다.")
+		void success() {
+			//mocking
+			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), participant.getId()))
+					.willReturn(Optional.of(partyParticipant));
+			given(partyMemberRepository.save(partyParticipant))
+					.willReturn(partyParticipant);
+
+			//when
+			PartyMemberGetResponse partyMemberGetResponse
+					= partyMemberService.updatePartyMember(party.getId(), partyMemberUpdateRequest);
+
+			//then
+			assertThat(partyMemberGetResponse.memberId()).isEqualTo(participant.getId());
+			assertThat(partyMemberGetResponse.nickname()).isEqualTo(participant.getNickname());
+			assertThat(partyMemberGetResponse.role()).isEqualTo(partyMemberUpdateRequest.role());
+			assertThat(partyMemberGetResponse.profileImage()).isEqualTo(participant.getProfileImage());
+
+			then(partyMemberRepository)
+					.should()
+					.findByPartyIdAndMemberId(party.getId(), participant.getId());
+			then(partyMemberRepository)
+					.should()
+					.save(any(PartyMember.class));
+		}
+
+		@Test
+		@DisplayName("모임에 가입된 회원이 아니면 예외가 발생한다.")
+		void failed() {
+			//mocking
+			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), participant.getId()))
+					.willReturn(Optional.empty());
+
+			//when
+			//then
+			Assertions.assertThrows(EntityNotFoundException.class,
+					() -> partyMemberService.updatePartyMember(party.getId(), partyMemberUpdateRequest));
+
+			then(partyMemberRepository)
+					.should()
+					.findByPartyIdAndMemberId(party.getId(), participant.getId());
 		}
 
 	}
