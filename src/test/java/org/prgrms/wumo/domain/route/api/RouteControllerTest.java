@@ -23,6 +23,7 @@ import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.domain.route.dto.request.RouteRegisterRequest;
+import org.prgrms.wumo.domain.route.dto.request.RouteStatusUpdateRequest;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.prgrms.wumo.domain.route.repository.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,11 +84,11 @@ public class RouteControllerTest extends MysqlTestContainer {
 		Location location = locationRepository.save(getLocationData());
 		locationId = location.getId();
 
-		Route route = routeRepository.save(getRouteData(location, party));
-		routeId = route.getId();
-
 		PartyMember partyMember = partyMemberRepository.save(getPartyMemberData(member, party));
 		partyMemberId = partyMember.getId();
+
+		Route route = routeRepository.save(getRouteData(location, party));
+		routeId = route.getId();
 
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
@@ -158,6 +159,24 @@ public class RouteControllerTest extends MysqlTestContainer {
 			.andExpect(jsonPath("$.locations").isArray())
 			.andExpect(jsonPath("$.partyId").value(partyId))
 			.andDo(print());
+	}
+
+	@Test
+	@DisplayName("루트의 공개여부를 공개로 변경한다")
+	void update_route_public_status() throws Exception {
+		//given
+		RouteStatusUpdateRequest routeStatusUpdateRequest
+			= new RouteStatusUpdateRequest(routeId, true);
+
+		//when
+		ResultActions resultActions
+			= mockMvc.perform(MockMvcRequestBuilders.patch("/api/v1/routes")
+			.contentType(MediaType.APPLICATION_JSON_VALUE)
+			.content(objectMapper.writeValueAsString(routeStatusUpdateRequest)));
+
+		//then
+		resultActions
+			.andExpect(status().isOk());
 	}
 
 	private Member getMemberData() {

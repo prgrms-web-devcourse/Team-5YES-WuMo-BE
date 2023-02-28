@@ -13,6 +13,7 @@ import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.domain.route.dto.request.RouteRegisterRequest;
+import org.prgrms.wumo.domain.route.dto.request.RouteStatusUpdateRequest;
 import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
 import org.prgrms.wumo.domain.route.model.Route;
@@ -46,8 +47,7 @@ public class RouteService {
 			return toRouteRegisterResponse(route.getId());
 		}
 
-		Route route = routeRepository.findById(routeRegisterRequest.routeId())
-			.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
+		Route route = getRouteEntity(routeRegisterRequest.routeId());
 		route.updateLocation(location);
 
 		return toRouteRegisterResponse(route.getId());
@@ -55,14 +55,25 @@ public class RouteService {
 
 	@Transactional(readOnly = true)
 	public RouteGetResponse getRoute(long routeId, int fromPublic) {
-		Route route = routeRepository.findById(routeId)
-			.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
+		Route route = getRouteEntity(routeId);
 
 		if (fromPublic == 0) {
 			validateAccess(route.getParty().getId());
 		}
 
 		return toRouteGetResponse(route);
+	}
+
+	@Transactional
+	public void updateRoutePublicStatus(RouteStatusUpdateRequest routeStatusUpdateRequest) {
+		Route route = getRouteEntity(routeStatusUpdateRequest.routeId());
+		validateAccess(route.getParty().getId());
+		route.updatePublicStatus(routeStatusUpdateRequest.isPublic());
+	}
+
+	private Route getRouteEntity(long routeId) {
+		return routeRepository.findById(routeId)
+			.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
 	}
 
 	private void validateAccess(long partyId) {
