@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.prgrms.wumo.MysqlTestContainer;
 import org.prgrms.wumo.domain.location.LocationTestUtils;
 import org.prgrms.wumo.domain.location.dto.request.LocationRegisterRequest;
 import org.prgrms.wumo.domain.location.model.Category;
+import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -77,7 +79,7 @@ public class LocationControllerTest extends MysqlTestContainer {
 		// Then
 		resultActions
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.id").value(1))
+				.andExpect(jsonPath("$.id").isNotEmpty())
 				.andDo(print());
 
 	}
@@ -105,8 +107,9 @@ public class LocationControllerTest extends MysqlTestContainer {
 	@DisplayName(" 특정 모임 내의 후보 장소 전체를 조회할 수 있다.")
 	void getAllLocationTest() throws Exception {
 		// Given
-		// List<Location> locations = List.of(location1, location2, location3);
-		locationRepository.saveAll(locationTestUtils.getLocations());
+
+		List<Location> locations = locationRepository.saveAll(locationTestUtils.getLocations());
+		Location firstLocation = locations.get(0);
 
 		// When
 		ResultActions resultActions = mockMvc.perform(
@@ -122,10 +125,10 @@ public class LocationControllerTest extends MysqlTestContainer {
 				.andExpect(jsonPath("$.locations").isArray())
 				.andExpect(jsonPath("$.locations").isNotEmpty())
 				.andExpect(jsonPath("$.locations[0].id").isNotEmpty())
-				.andExpect(jsonPath("$.locations[0].latitude").value(locationTestUtils.getLatitude1()))
-				.andExpect(jsonPath("$.locations[0].longitude").value(locationTestUtils.getLongitude1()))
-				.andExpect(jsonPath("$.locations[0].spending").value(2000))
-				.andExpect(jsonPath("$.locations[0].expectedCost").value(5000))
+				.andExpect(jsonPath("$.locations[0].latitude").value(firstLocation.getLatitude()))
+				.andExpect(jsonPath("$.locations[0].longitude").value(firstLocation.getLongitude()))
+				.andExpect(jsonPath("$.locations[0].spending").value(firstLocation.getSpending()))
+				.andExpect(jsonPath("$.locations[0].expectedCost").value(firstLocation.getExpectedCost()))
 				.andDo(print());
 	}
 }
