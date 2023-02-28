@@ -52,7 +52,7 @@ public class LocationCommentService {
 						locationCommentGetAllRequest.cursorId(), locationCommentGetAllRequest.pageSize());
 
 		long lastId = (locationComments.size()) > 0 ?
-				locationComments.get(locationComments.size() - 1).getId() : 1L;
+				locationComments.get(locationComments.size() - 1).getId() : -1L;
 
 		return toLocationCommentGetAllResponse(locationComments, lastId);
 	}
