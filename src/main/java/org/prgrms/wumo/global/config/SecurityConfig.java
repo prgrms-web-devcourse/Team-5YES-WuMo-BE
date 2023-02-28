@@ -51,8 +51,7 @@ public class SecurityConfig {
 			.antMatchers(
 				"/api/v1/members/signup",
 				"/api/v1/members/login",
-				"/swagger-ui.html",
-				"/api/v1/routes")
+				"/swagger-ui.html")
 			.permitAll()
 			.and()
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider()),

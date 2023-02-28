@@ -3,6 +3,7 @@ package org.prgrms.wumo.domain.route.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -27,8 +28,10 @@ import org.prgrms.wumo.domain.location.repository.LocationRepository;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
+import org.prgrms.wumo.domain.route.dto.request.RouteGetAllRequest;
 import org.prgrms.wumo.domain.route.dto.request.RouteRegisterRequest;
 import org.prgrms.wumo.domain.route.dto.request.RouteStatusUpdateRequest;
+import org.prgrms.wumo.domain.route.dto.response.RouteGetAllResponses;
 import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
 import org.prgrms.wumo.domain.route.model.Route;
@@ -205,6 +208,29 @@ public class RouteServiceTest {
 	}
 
 	@Nested
+	@DisplayName("getAllRoute 메소드는 공개 루트 목록 조회 요청 시 ")
+	class GetAllRoute {
+		//given
+		RouteGetAllRequest routeGetAllRequest
+			= new RouteGetAllRequest(null, 5);
+
+		@Test
+		@DisplayName("최신순으로 공개 루트 목록을 반환한다")
+		void success() {
+			//mocking
+			given(routeRepository.findAllByCursor(any(), anyInt()))
+				.willReturn(Collections.emptyList());
+
+			//when
+			RouteGetAllResponses result = routeService.getAllRoute(routeGetAllRequest);
+
+			//then
+			assertThat(result.routes()).hasSize(0);
+			assertThat(result.lastId()).isEqualTo(-1);
+		}
+	}
+
+	@Nested
 	@DisplayName("updateRoutePublicStatus 메소드는 루트 공개여부 변경 요청 시 ")
 	class UpdateRoutePublicStatus {
 		//given
@@ -215,7 +241,7 @@ public class RouteServiceTest {
 
 		@Test
 		@DisplayName("요청한 회원이 해당 모임멤버인지 확인 후 변경한다")
-		void success_from_public() {
+		void success() {
 			//mocking
 			given(routeRepository.findById(anyLong()))
 				.willReturn(Optional.of(route));

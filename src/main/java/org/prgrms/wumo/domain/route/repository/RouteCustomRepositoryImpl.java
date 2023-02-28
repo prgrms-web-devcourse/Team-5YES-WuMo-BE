@@ -24,7 +24,8 @@ public class RouteCustomRepositoryImpl implements RouteCustomRepository {
 
 		return jpaQueryFactory.selectFrom(qRoute)
 			.where(
-				ltRouteId(cursorId)
+				ltRouteId(cursorId),
+				isPublic()
 			)
 			.orderBy(qRoute.id.desc())
 			.limit(pageSize)
@@ -37,5 +38,9 @@ public class RouteCustomRepositoryImpl implements RouteCustomRepository {
 		}
 
 		return qRoute.id.lt(cursorId);
+	}
+
+	private BooleanExpression isPublic() {
+		return qRoute.isPublic.eq(true);
 	}
 }

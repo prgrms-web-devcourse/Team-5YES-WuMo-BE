@@ -132,7 +132,8 @@ public class RouteControllerTest extends MysqlTestContainer {
 	void get_route_in_party() throws Exception {
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/{routeId}?path=0", routeId));
+			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/{routeId}", routeId)
+			.param("path", "0"));
 
 		//then
 		resultActions
@@ -149,7 +150,8 @@ public class RouteControllerTest extends MysqlTestContainer {
 	void get_route_from_public_list() throws Exception {
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/{routeId}?path=1", routeId));
+			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/{routeId}", routeId)
+			.param("path", "1"));
 
 		//then
 		resultActions
@@ -158,6 +160,27 @@ public class RouteControllerTest extends MysqlTestContainer {
 			.andExpect(jsonPath("$.isPublic").isNotEmpty())
 			.andExpect(jsonPath("$.locations").isArray())
 			.andExpect(jsonPath("$.partyId").value(partyId))
+			.andDo(print());
+	}
+
+	@Test
+	@DisplayName("공개된 루트 목록을 조회 한다")
+	void get_all_route() throws Exception {
+		//given
+		Long cursorId = null;
+		int pageSize = 5;
+
+		//when
+		ResultActions resultActions
+			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes")
+			.param("cursorId", (String)null)
+			.param("pageSize", String.valueOf(pageSize)));
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.lastId").isNotEmpty())
+			.andExpect(jsonPath("$.routes").isArray())
 			.andDo(print());
 	}
 
