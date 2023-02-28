@@ -48,7 +48,10 @@ public class SecurityConfig {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.authorizeHttpRequests()
-			.antMatchers("/api/v1/members/signup", "/api/v1/members/login", "/swagger-ui.html")
+			.antMatchers(
+				"/api/v1/members/signup",
+				"/api/v1/members/login",
+				"/swagger-ui.html")
 			.permitAll()
 			.and()
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider()),
