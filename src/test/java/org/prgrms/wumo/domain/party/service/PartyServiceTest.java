@@ -6,7 +6,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -71,8 +73,8 @@ class PartyServiceTest {
 
 		partyRegisterRequest = new PartyRegisterRequest(
 				"오예스 워크샵",
-				LocalDateTime.now(),
-				LocalDateTime.now().plusDays(1),
+				LocalDate.now(),
+				LocalDate.now().plusDays(1),
 				"팀 설립 기념 워크샵",
 				"https://~.jpeg",
 				"1234",
@@ -82,8 +84,8 @@ class PartyServiceTest {
 		party = Party.builder()
 				.id(1L)
 				.name(partyRegisterRequest.name())
-				.startDate(partyRegisterRequest.startDate())
-				.endDate(partyRegisterRequest.endDate())
+				.startDate(LocalDateTime.of(partyRegisterRequest.startDate(), LocalTime.MIN))
+				.endDate(LocalDateTime.of(partyRegisterRequest.endDate(), LocalTime.MAX))
 				.description(partyRegisterRequest.description())
 				.coverImage(partyRegisterRequest.coverImage())
 				.password(partyRegisterRequest.password())
@@ -215,8 +217,8 @@ class PartyServiceTest {
 			//then
 			assertThat(myParty.id()).isEqualTo(party.getId());
 			assertThat(myParty.name()).isEqualTo(party.getName());
-			assertThat(myParty.startDate()).isEqualTo(party.getStartDate());
-			assertThat(myParty.endDate()).isEqualTo(party.getEndDate());
+			assertThat(myParty.startDate()).isEqualTo(LocalDate.from(party.getStartDate()));
+			assertThat(myParty.endDate()).isEqualTo(LocalDate.from(party.getEndDate()));
 			assertThat(myParty.description()).isEqualTo(party.getDescription());
 			assertThat(myParty.coverImage()).isEqualTo(party.getCoverImage());
 
@@ -244,8 +246,8 @@ class PartyServiceTest {
 	class UpdateParty {
 		PartyUpdateRequest partyUpdateRequest = new PartyUpdateRequest(
 				"오예스 워크샵 (수정)",
-				LocalDateTime.now(),
-				LocalDateTime.now().plusDays(2),
+				LocalDate.now(),
+				LocalDate.now().plusDays(2),
 				"팀 설립 기념 워크샵 (수정)",
 				null,
 				"4321"
@@ -285,8 +287,8 @@ class PartyServiceTest {
 			//given
 			PartyUpdateRequest wrongRequest = new PartyUpdateRequest(
 					null,
-					LocalDateTime.now().plusDays(1),
-					LocalDateTime.now(),
+					LocalDate.now().plusDays(1),
+					LocalDate.now(),
 					null,
 					null,
 					null
