@@ -6,6 +6,7 @@ import org.prgrms.wumo.domain.party.dto.request.PartyMemberGetRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyMemberRegisterRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyMemberUpdateRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetAllResponse;
+import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetResponse;
 import org.prgrms.wumo.domain.party.service.PartyMemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,14 +51,13 @@ public class PartyMemberController {
 		return ResponseEntity.ok(partyMemberService.getAllPartyMembers(partyId, partyMemberGetRequest));
 	}
 
-	@PatchMapping("/{partyId}/members/{memberId}")
+	@PatchMapping("/{partyId}/members")
 	@Operation(summary = "모임 구성원 정보 수정")
-	public ResponseEntity<Void> updatePartyMember(
+	public ResponseEntity<PartyMemberGetResponse> updatePartyMember(
 			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId,
-			@PathVariable @Parameter(description = "사용자 식별자", required = true) Long memberId,
 			@RequestBody @Valid PartyMemberUpdateRequest partyMemberUpdateRequest
 	) {
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(partyMemberService.updatePartyMember(partyId, partyMemberUpdateRequest));
 	}
 
 	@DeleteMapping("/{partyId}/members/{memberId}")

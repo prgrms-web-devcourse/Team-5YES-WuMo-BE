@@ -34,6 +34,19 @@ public class PartyMemberCustomRepositoryImpl implements PartyMemberCustomReposit
 	}
 
 	@Override
+	public Optional<PartyMember> findByPartyIdAndMemberId(Long partyId, Long memberId) {
+		return Optional.ofNullable(
+				jpaQueryFactory
+						.selectFrom(qPartyMember)
+						.where(
+								eqPartyId(partyId),
+								eqMemberId(memberId)
+						)
+						.fetchOne()
+		);
+	}
+
+	@Override
 	public List<PartyMember> findAllByPartyId(Long partyId, Long cursorId, int pageSize) {
 		return findAllByColumnId("party", partyId, cursorId, pageSize);
 	}

@@ -68,13 +68,18 @@ public class PartyMapper {
 
 	public static PartyMemberGetAllResponse toPartyMemberGetAllResponse(List<PartyMember> partyMembers, Long lastId) {
 		List<PartyMemberGetResponse> partyMemberGetResponses = partyMembers.stream()
-				.map(partyMember -> new PartyMemberGetResponse(
-						partyMember.getMember().getId(),
-						partyMember.getMember().getNickname(),
-						partyMember.getRole(),
-						partyMember.getMember().getProfileImage()))
+				.map(PartyMapper::toPartyMemberGetResponse)
 				.toList();
 		return new PartyMemberGetAllResponse(partyMemberGetResponses, lastId);
+	}
+
+	public static PartyMemberGetResponse toPartyMemberGetResponse(PartyMember partyMember) {
+		return new PartyMemberGetResponse(
+				partyMember.getMember().getId(),
+				partyMember.getMember().getNickname(),
+				partyMember.getRole(),
+				partyMember.getMember().getProfileImage()
+		);
 	}
 
 }
