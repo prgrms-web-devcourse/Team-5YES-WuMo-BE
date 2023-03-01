@@ -1,5 +1,6 @@
 package org.prgrms.wumo.global.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.prgrms.wumo.domain.location.model.Location;
@@ -23,8 +24,10 @@ public class RouteMapper {
 	}
 
 	public static Route toRoute(Location location, Party party) {
+		ArrayList<Location> list = new ArrayList<>();
+		list.add(location);
 		return Route.builder()
-			.locations(List.of(location))
+			.locations(list)
 			.party(party)
 			.build();
 	}
