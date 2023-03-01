@@ -25,6 +25,9 @@ public record PartyRouteCommentGetResponse(
 		String image,
 
 		@Schema(description = "댓글 등록 시간")
-		LocalDateTime createdAt
+		LocalDateTime createdAt,
+
+		@Schema(description = "댓글 수정 시간")
+		LocalDateTime updatedAt
 ) {
 }

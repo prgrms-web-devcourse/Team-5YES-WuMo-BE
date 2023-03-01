@@ -36,7 +36,8 @@ public class CommentMapper {
 				locationComment.getPartyMember().getRole(),
 				locationComment.getContent(),
 				locationComment.getImage(),
-				locationComment.getCreatedAt()
+				locationComment.getCreatedAt(),
+				locationComment.getUpdatedAt()
 		);
 	}
 
@@ -74,7 +75,8 @@ public class CommentMapper {
 				partyRouteComment.getPartyMember().getRole(),
 				partyRouteComment.getContent(),
 				partyRouteComment.getImage(),
-				partyRouteComment.getCreatedAt()
+				partyRouteComment.getCreatedAt(),
+				partyRouteComment.getUpdatedAt()
 		);
 	}
 
