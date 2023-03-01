@@ -15,6 +15,7 @@ import org.prgrms.wumo.domain.member.dto.request.MemberEmailCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberLoginRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberNicknameCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
+import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,7 @@ public class MemberControllerTest extends MysqlTestContainer {
 
 	@AfterEach
 	void tearDown() {
-		memberRepository.deleteAll();
+		memberRepository.deleteById(memberId);
 		SecurityContextHolder.clearContext();
 	}
 
@@ -157,6 +158,28 @@ public class MemberControllerTest extends MysqlTestContainer {
 			.andExpect(jsonPath("$.id").value(memberId))
 			.andExpect(jsonPath("$.email").value("taehee@gmail.com"))
 			.andExpect(jsonPath("$.nickname").value("태희"))
+			.andExpect(jsonPath("$.profileImage").isEmpty())
+			.andDo(print());
+	}
+
+	@Test
+	@DisplayName("내 정보를 수정한다")
+	void update_member() throws Exception {
+		//given
+		MemberUpdateRequest memberUpdateRequest
+			= new MemberUpdateRequest(memberId, "태희수정", "asd67890", null);
+
+		//when
+		ResultActions resultActions
+			= mockMvc.perform(MockMvcRequestBuilders.patch("/api/v1/members")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(memberUpdateRequest)));
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").value(memberId))
+			.andExpect(jsonPath("$.nickname").value("태희수정"))
 			.andExpect(jsonPath("$.profileImage").isEmpty())
 			.andDo(print());
 	}

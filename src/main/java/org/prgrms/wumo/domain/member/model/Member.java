@@ -57,6 +57,12 @@ public class Member extends BaseTimeEntity {
 		this.refreshToken = refreshToken;
 	}
 
+	public void update(String nickname, String password, String profileImage) {
+		this.nickname = nickname;
+		this.password = new Password(password);
+		this.profileImage = profileImage;
+	}
+
 	public void logout() {
 		this.refreshToken = "";
 	}
