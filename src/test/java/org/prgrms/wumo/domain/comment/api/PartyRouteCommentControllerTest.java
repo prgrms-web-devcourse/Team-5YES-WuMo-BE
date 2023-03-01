@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -69,6 +70,8 @@ public class PartyRouteCommentControllerTest {
 	Location location;
 	Route route;
 
+	List<Location> locations = new ArrayList<>();
+
 	@BeforeEach
 	void beforeEach() {
 		member = memberRepository.save(
@@ -115,10 +118,12 @@ public class PartyRouteCommentControllerTest {
 						.build()
 		);
 
+		locations.add(location);
+
 		route = routeRepository.save(
 				Route.builder()
 						.party(party)
-						.locations(List.of())
+						.locations(locations)
 						.build()
 		);
 
@@ -131,9 +136,9 @@ public class PartyRouteCommentControllerTest {
 
 	@AfterEach
 	void afterEach() {
+		routeRepository.deleteById(route.getId());
 		locationRepository.deleteById(location.getId());
 		partyMemberRepository.deleteById(partyMember.getId());
-		routeRepository.deleteById(route.getId());
 		partyRepository.deleteById(party.getId());
 		memberRepository.deleteById(member.getId());
 
