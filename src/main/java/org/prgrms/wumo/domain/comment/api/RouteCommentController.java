@@ -32,18 +32,18 @@ public class RouteCommentController {
 
 	@PostMapping
 	@Operation(summary = "모임 내 루트 댓글 생성")
-	public ResponseEntity<PartyRouteCommentRegisterResponse> registerPrivateRouteComment(
+	public ResponseEntity<PartyRouteCommentRegisterResponse> registerPartyRouteComment(
 			@RequestBody @Valid PartyRouteCommentRegisterRequest request
 	) {
 		return new ResponseEntity<>(partyRouteCommentService.registerPartyRouteComment(request), HttpStatus.CREATED);
 	}
 
 	@GetMapping
-	@Operation(summary = "모임 내 루트 댓글 전체 조회")
-	public ResponseEntity<PartyRouteCommentGetAllResponse> getAllPrivateRouteComment(
-			@RequestBody @Valid PartyRouteCommentGetAllRequest request
+	@Operation(summary = "모임 내 루트 댓글 목록 조회")
+	public ResponseEntity<PartyRouteCommentGetAllResponse> getAllPartyRouteComment(
+			@Valid PartyRouteCommentGetAllRequest request
 	) {
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(partyRouteCommentService.getAllPartyRouteComment(request));
 	}
 
 	@PatchMapping
