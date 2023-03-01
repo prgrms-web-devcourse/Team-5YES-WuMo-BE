@@ -29,7 +29,7 @@ public record PartyRouteCommentRegisterRequest(
 			Long memberId, String content, String image, Long routeId, Long locationId
 	) {
 		if (content.isEmpty() && image.isEmpty()) {
-			throw new ValidationException("");
+			throw new ValidationException("댓글에 이미지나 내용 둘 중 하나는 있어야 합니다.");
 		}
 
 		this.memberId = memberId;
