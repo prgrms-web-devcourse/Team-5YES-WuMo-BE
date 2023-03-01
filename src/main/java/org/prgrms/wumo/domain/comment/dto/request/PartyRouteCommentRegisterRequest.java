@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
 
-@Schema(name = "모임 내 루트 댓글 생성 요청")
+@Schema(name = "모임 내 일정 댓글 생성 요청")
 public record PartyRouteCommentRegisterRequest(
 
 		@NotNull(message = "댓글 성성 요청자의 id는 필수 입력값입니다")
@@ -17,12 +17,16 @@ public record PartyRouteCommentRegisterRequest(
 		@Schema(description = "댓글 사진 링크", example = "http://", required = true)
 		String image,
 
-		@NotNull(message = "댓글이 쓰여지는 경로의 id는 필수 입력값입니다.")
+		@NotNull(message = "댓글이 쓰여지는 일정의 id는 필수 입력값입니다.")
 		@Schema(description = "루트 id", example = "1", required = true)
-		Long routeId
+		Long routeId,
+
+		@NotNull(message = "댓글이 쓰여지는 일정에서의 장소 id는 필수 입력값입니다. ")
+		@Schema(description = "", example = "1", required = true)
+		Long locationId
 ) {
 	public PartyRouteCommentRegisterRequest(
-			Long memberId, String content, String image, Long routeId
+			Long memberId, String content, String image, Long routeId, Long locationId
 	) {
 		if (content.isEmpty() && image.isEmpty()) {
 			throw new ValidationException("");
@@ -32,5 +36,6 @@ public record PartyRouteCommentRegisterRequest(
 		this.content = content;
 		this.image = image;
 		this.routeId = routeId;
+		this.locationId = locationId;
 	}
 }
