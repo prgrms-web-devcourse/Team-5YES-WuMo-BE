@@ -1,12 +1,14 @@
 package org.prgrms.wumo.domain.location.api;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -43,7 +47,7 @@ public class LocationControllerTest extends MysqlTestContainer {
 	LocationTestUtils locationTestUtils = new LocationTestUtils();
 
 	@AfterEach
-	void afterEach(){
+	void afterEach() {
 		locationRepository.deleteAll();
 	}
 
@@ -52,35 +56,35 @@ public class LocationControllerTest extends MysqlTestContainer {
 	void registerLocationTest() throws Exception {
 		// Given
 		LocationRegisterRequest locationRegisterRequest
-				= new LocationRegisterRequest(
-				"프로그래머스 강남 교육장",
-				"강남역 2번출구",
-				locationTestUtils.getLatitude1(),
-				locationTestUtils.getLongitude1(),
-				"http://programmers_gangnam_image.com",
-				Category.STUDY,
-				"이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀....",
-				locationTestUtils.getDayToVisit()
-				, 4000,
-				1L
+			= new LocationRegisterRequest(
+			"프로그래머스 강남 교육장",
+			"강남역 2번출구",
+			locationTestUtils.getLatitude1(),
+			locationTestUtils.getLongitude1(),
+			"http://programmers_gangnam_image.com",
+			Category.STUDY,
+			"이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀....",
+			locationTestUtils.getDayToVisit()
+			, 4000,
+			1L
 		);
 
 		// When
 		ResultActions resultActions =
-				mockMvc.perform(
-						post("/api/v1/locations")
-								.contentType(MediaType.APPLICATION_JSON_VALUE)
-								.characterEncoding("UTF-8")
-								.content(
-										objectMapper.writeValueAsString(locationRegisterRequest)
-								)
-				);
+			mockMvc.perform(
+				post("/api/v1/locations")
+					.contentType(MediaType.APPLICATION_JSON_VALUE)
+					.characterEncoding("UTF-8")
+					.content(
+						objectMapper.writeValueAsString(locationRegisterRequest)
+					)
+			);
 
 		// Then
 		resultActions
-				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.id").isNotEmpty())
-				.andDo(print());
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.id").isNotEmpty())
+			.andDo(print());
 
 	}
 
@@ -91,16 +95,16 @@ public class LocationControllerTest extends MysqlTestContainer {
 		Long locationId = locationRepository.save(locationTestUtils.getLocation()).getId();
 
 		// When
-		ResultActions resultActions = mockMvc.perform(get("/api/v1/locations/{locationId}",locationId));
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/locations/{locationId}", locationId));
 
 		// Then
 		resultActions
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").isNotEmpty())
-				.andExpect(jsonPath("$.name").value("프로그래머스 강남 교육장"))
-				.andExpect(jsonPath("$.latitude").value(locationTestUtils.getLatitude1()))
-				.andExpect(jsonPath("$.longitude").value(locationTestUtils.getLongitude1()))
-				.andDo(print());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").isNotEmpty())
+			.andExpect(jsonPath("$.name").value("프로그래머스 강남 교육장"))
+			.andExpect(jsonPath("$.latitude").value(locationTestUtils.getLatitude1()))
+			.andExpect(jsonPath("$.longitude").value(locationTestUtils.getLongitude1()))
+			.andDo(print());
 	}
 
 	@Test
@@ -113,22 +117,40 @@ public class LocationControllerTest extends MysqlTestContainer {
 
 		// When
 		ResultActions resultActions = mockMvc.perform(
-				get("/api/v1/locations")
-						.param("cursorId", "0" )
-						.param("pageSize", "5")
-						.param("partyId", "1")
+			get("/api/v1/locations")
+				.param("cursorId", "0")
+				.param("pageSize", "5")
+				.param("partyId", "1")
 		);
 
 		// Then
 		resultActions
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.locations").isArray())
-				.andExpect(jsonPath("$.locations").isNotEmpty())
-				.andExpect(jsonPath("$.locations[0].id").isNotEmpty())
-				.andExpect(jsonPath("$.locations[0].latitude").value(firstLocation.getLatitude()))
-				.andExpect(jsonPath("$.locations[0].longitude").value(firstLocation.getLongitude()))
-				.andExpect(jsonPath("$.locations[0].spending").value(firstLocation.getSpending()))
-				.andExpect(jsonPath("$.locations[0].expectedCost").value(firstLocation.getExpectedCost()))
-				.andDo(print());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.locations").isArray())
+			.andExpect(jsonPath("$.locations").isNotEmpty())
+			.andExpect(jsonPath("$.locations[0].id").isNotEmpty())
+			.andExpect(jsonPath("$.locations[0].latitude").value(firstLocation.getLatitude()))
+			.andExpect(jsonPath("$.locations[0].longitude").value(firstLocation.getLongitude()))
+			.andExpect(jsonPath("$.locations[0].spending").value(firstLocation.getSpending()))
+			.andExpect(jsonPath("$.locations[0].expectedCost").value(firstLocation.getExpectedCost()))
+			.andDo(print());
+	}
+
+	@Test
+	@DisplayName(" 루트에서 후보지를 삭제한다")
+	void deleteRouteLocationTest() throws Exception {
+		// Given
+		Long locationId = locationRepository.save(locationTestUtils.getLocation()).getId();
+
+		// When
+		ResultActions resultActions = mockMvc.perform(
+			delete("/api/v1/locations")
+				.param("locationId", String.valueOf(locationId))
+		);
+
+		// Then
+		resultActions
+			.andExpect(status().isOk())
+			.andDo(print());
 	}
 }
