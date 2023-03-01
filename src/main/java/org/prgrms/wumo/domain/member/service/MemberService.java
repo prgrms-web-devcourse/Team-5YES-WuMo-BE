@@ -11,6 +11,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.prgrms.wumo.domain.member.dto.request.MemberLoginRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
+import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
@@ -82,6 +83,19 @@ public class MemberService {
 	public MemberGetResponse getMember(long memberId) {
 		validateAccess(memberId);
 		return toMemberGetResponse(getMemberEntity(memberId));
+	}
+
+	@Transactional
+	public MemberGetResponse updateMember(MemberUpdateRequest memberUpdateRequest) {
+		long memberId = memberUpdateRequest.id();
+		validateAccess(memberId);
+
+		Member member = getMemberEntity(memberId);
+		member.update(
+			memberUpdateRequest.nickname(),
+			memberUpdateRequest.password(),
+			memberUpdateRequest.profileImage());
+		return toMemberGetResponse(memberRepository.save(member));
 	}
 
 	private Member getMemberEntity(long memberId) {

@@ -26,6 +26,7 @@ import org.prgrms.wumo.domain.member.dto.request.MemberEmailCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberLoginRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberNicknameCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
+import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
@@ -79,12 +80,7 @@ public class MemberServiceTest {
 		MemberRegisterRequest memberRegisterRequest
 			= new MemberRegisterRequest(email, nickname, password);
 
-		Member member = Member.builder()
-			.id(1L)
-			.email(email)
-			.nickname(nickname)
-			.password(password)
-			.build();
+		Member member = getMemberData(email, nickname, password);
 
 		@Test
 		@DisplayName("이메일과 닉네임이 중복되지 않으면 성공한다")
@@ -161,23 +157,18 @@ public class MemberServiceTest {
 		MemberLoginRequest memberLoginRequest
 			= new MemberLoginRequest(email, password);
 
-		Member member = Member.builder()
-			.id(1L)
-			.email(email)
-			.nickname(nickname)
-			.password(password)
+		Member member = getMemberData(email, nickname, password);
+
+		WumoJwt wumoJwt = WumoJwt.builder()
+			.grantType("grant type")
+			.accessToken("access token")
+			.refreshToken("refresh token")
 			.build();
 
 		@Test
 		@DisplayName("성공하면 jwt token을 반환한다")
 		void success() {
 			//mocking
-			WumoJwt wumoJwt = WumoJwt.builder()
-				.grantType("grant type")
-				.accessToken("access token")
-				.refreshToken("refresh token")
-				.build();
-
 			given(memberRepository.findByEmail(any(Email.class)))
 				.willReturn(Optional.of(member));
 			given(jwtTokenProvider.generateToken(anyString()))
@@ -231,18 +222,12 @@ public class MemberServiceTest {
 	@DisplayName("getMember 메소드는 회원 정보 조회 요청 시 ")
 	class GetMember {
 		//given
+		long memberId = 1L;
 		String email = "5yes@gmail.com";
 		String nickname = "오예스오리지널";
 		String password = "qwe12345";
 
-		long memberId = 1L;
-
-		Member member = Member.builder()
-			.id(1L)
-			.email(email)
-			.nickname(nickname)
-			.password(password)
-			.build();
+		Member member = getMemberData(email, nickname, password);
 
 		@Test
 		@DisplayName("내 정보 요청이면 응답한다")
@@ -269,5 +254,54 @@ public class MemberServiceTest {
 				.isInstanceOf(AccessDeniedException.class)
 				.hasMessage("잘못된 접근입니다.");
 		}
+	}
+
+	@Nested
+	@DisplayName("updateMember 메소드는 회원 정보 수정 요청 시 ")
+	class UpdateMember {
+		//given
+		String email = "5yes@gmail.com";
+		String nicknameBefore = "오예스오리지널";
+		String passwordBefore = "qwe12345";
+
+		String nicknameAfter = "오예스딸기";
+		String passwordAfter = "asd56789";
+
+		MemberUpdateRequest memberUpdateRequest
+			= new MemberUpdateRequest(1L, nicknameAfter, passwordAfter, null);
+
+		Member memberBefore = getMemberData(email, nicknameBefore, passwordBefore);
+		Member memberAfter = getMemberData(email, nicknameAfter, passwordAfter);
+
+		@Test
+		@DisplayName("수정 후 수정된 회원 정보를 반환한다")
+		void success() {
+			//mocking
+			given(memberRepository.findById(anyLong()))
+				.willReturn(Optional.of(memberBefore));
+			given(memberRepository.save(any(Member.class)))
+				.willReturn(memberAfter);
+
+			//when
+			MemberGetResponse result = memberService.updateMember(memberUpdateRequest);
+
+			//then
+			assertThat(result.nickname()).isEqualTo(nicknameAfter);
+			then(memberRepository)
+				.should()
+				.findById(anyLong());
+			then(memberRepository)
+				.should()
+				.save(any(Member.class));
+		}
+	}
+
+	private Member getMemberData(String email, String nickname, String password) {
+		return Member.builder()
+			.id(1L)
+			.email(email)
+			.nickname(nickname)
+			.password(password)
+			.build();
 	}
 }
