@@ -2,10 +2,13 @@ package org.prgrms.wumo.global.mapper;
 
 import java.util.List;
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentGetResponse;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentRegisterResponse;
+import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.model.LocationComment;
+import org.prgrms.wumo.domain.comment.model.PartyRouteComment;
 
 public class CommentMapper {
 	public static LocationCommentRegisterResponse toLocationCommentRegisterResponse(LocationComment locationcomment) {
@@ -42,6 +45,22 @@ public class CommentMapper {
 				locationComments.stream().map(CommentMapper::toLocationCommentGetResponse).toList(),
 				lastId
 		);
+	}
+
+	public static PartyRouteCommentRegisterResponse toPartyRouteCommentRegisterResponse(PartyRouteComment partyRouteComment){
+		return new PartyRouteCommentRegisterResponse(
+				partyRouteComment.getId()
+		);
+	}
+
+
+	public static PartyRouteComment toPartyRouteComment(PartyRouteCommentRegisterRequest partyRouteCommentRegisterRequest){
+		return PartyRouteComment.builder()
+				.locationId(partyRouteCommentRegisterRequest.locationId())
+				.routeId(partyRouteCommentRegisterRequest.routeId())
+				.content(partyRouteCommentRegisterRequest.content())
+				.image(partyRouteCommentRegisterRequest.image())
+				.build();
 	}
 
 }
