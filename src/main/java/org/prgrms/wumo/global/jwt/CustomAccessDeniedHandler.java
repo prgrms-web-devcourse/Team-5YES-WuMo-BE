@@ -1,4 +1,4 @@
-package org.prgrms.wumo.global.exception.custom;
+package org.prgrms.wumo.global.jwt;
 
 import java.io.IOException;
 
@@ -30,8 +30,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 		ExceptionResponse exceptionResponse = new ExceptionResponse("없는 리소스입니다.");
 
 		String responseBody = objectMapper.writeValueAsString(exceptionResponse);
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(responseBody);
 	}

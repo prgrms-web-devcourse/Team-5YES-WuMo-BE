@@ -5,17 +5,17 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
+import org.prgrms.wumo.global.exception.custom.ExpiredTokenException;
+import org.prgrms.wumo.global.exception.custom.InvalidTokenException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -73,23 +73,19 @@ public class JwtTokenProvider {
 			Long.parseLong(claims.getSubject()), "", Collections.emptyList());
 	}
 
-	public boolean validateToken(String accessToken) {
+	public void validateToken(String accessToken) {
 		try {
 			Jwts.parserBuilder()
 				.setSigningKey(secretKey)
 				.build()
 				.parseClaimsJws(accessToken);
-			return true;
-		} catch (SecurityException | MalformedJwtException exception) {
-			log.info("Invalid JWT Token", exception);
 		} catch (ExpiredJwtException exception) {
 			log.info("Expired JWT Token", exception);
-		} catch (UnsupportedJwtException exception) {
-			log.info("Unsupported JWT Token", exception);
-		} catch (IllegalArgumentException exception) {
-			log.info("JWT claims string is empty.", exception);
+			throw new ExpiredTokenException("만료된 토큰입니다.");
+		} catch (JwtException | IllegalArgumentException exception) {
+			log.info("Invalid JWT Token.", exception);
+			throw new InvalidTokenException("올바르지 않은 토큰입니다.");
 		}
-		return false;
 	}
 
 	private Claims parseClaims(String accessToken) {
