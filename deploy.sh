@@ -20,3 +20,13 @@ else
 fi
 echo "> $JAR_PATH Deploy"
 nohup java -jar $JAR_PATH >> /home/ec2-user/nohup.log 2>&1 &
+
+sudo cp $REPOSITORY/nginx/nginx.conf /etc/nginx/nginx.conf
+
+sudo mkdir -p /etc/nginx/sites-available
+sudo cp $REPOSITORY/nginx/wumo.conf /etc/nginx/sites-available/wumo.conf
+
+sudo mkdir -p /etc/nginx/sites-enabled
+sudo ln -s /etc/nginx/sites-available/wumo.conf /etc/nginx/sites-enabled
+
+sudo service nginx restart
