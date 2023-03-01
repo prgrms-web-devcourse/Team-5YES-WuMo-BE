@@ -150,14 +150,14 @@ public class PartyRouteCommentControllerTest {
 	void registerPartyRouteCommentTest() throws Exception {
 		// Given
 		PartyRouteCommentRegisterRequest request = new PartyRouteCommentRegisterRequest(
-				1L, "모임 내 댓글", "image.png", 1L, 1L
+				member.getId(), "모임 내 댓글", "image.png", route.getId(), location.getId()
 		);
 
 		// When
 		ResultActions resultActions =
 				mockMvc.perform(
 						post("/api/v1/party-route-comments")
-								.contentType(MediaType.APPLICATION_JSON)
+								.contentType(MediaType.APPLICATION_JSON_VALUE)
 								.characterEncoding("UTF-8")
 								.content(
 										objectMapper.writeValueAsString(request)
