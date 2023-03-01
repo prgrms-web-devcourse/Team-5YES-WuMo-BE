@@ -11,7 +11,6 @@ import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
 import org.prgrms.wumo.domain.route.service.RouteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,14 +56,6 @@ public class RouteController {
 		@Valid RouteGetAllRequest routeGetAllRequest) {
 
 		return ResponseEntity.ok(routeService.getAllRoute(routeGetAllRequest));
-	}
-
-	@DeleteMapping
-	@Operation(summary = "루트에서 후보지 삭제")
-	public ResponseEntity<Void> deleteRouteLocation(
-		@RequestParam @Parameter(description = "루트에서 삭제할 후보장소 아이디") long locationId) {
-
-		return ResponseEntity.ok().build();
 	}
 
 	@PatchMapping

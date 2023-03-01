@@ -49,6 +49,7 @@ public class RouteService {
 
 		if (routeRegisterRequest.routeId() == null) {
 			Route route = routeRepository.save(toRoute(location, party));
+			route.updateLocation(location);
 			return toRouteRegisterResponse(route.getId());
 		}
 
