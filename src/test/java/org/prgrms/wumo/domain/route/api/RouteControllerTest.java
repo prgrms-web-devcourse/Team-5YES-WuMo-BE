@@ -189,7 +189,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 	void update_route_public_status() throws Exception {
 		//given
 		RouteStatusUpdateRequest routeStatusUpdateRequest
-			= new RouteStatusUpdateRequest(routeId, true);
+			= new RouteStatusUpdateRequest(routeId, true, "퇴사 기념 여행");
 
 		//when
 		ResultActions resultActions

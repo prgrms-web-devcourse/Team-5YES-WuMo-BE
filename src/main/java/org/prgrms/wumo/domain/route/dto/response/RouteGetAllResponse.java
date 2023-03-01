@@ -20,6 +20,9 @@ public record RouteGetAllResponse(
 	LocalDateTime startDate,
 
 	@Schema(description = "루트가 속한 모임 마지막일", example = "2023-02-25T10:00:00", required = true)
-	LocalDateTime endDate
+	LocalDateTime endDate,
+
+	@Schema(description = "루트의 썸네일 이미지", example = "https://~", required = true)
+	String image
 ) {
 }
