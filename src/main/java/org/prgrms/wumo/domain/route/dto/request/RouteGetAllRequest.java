@@ -15,7 +15,7 @@ public record RouteGetAllRequest(
 	@Schema(description = "페이지 사이즈", required = true, example = "5")
 	int pageSize
 
-	//기본 : 최신순 ///좋아요순인지, 지난달 베스트 일정인지
+	//기본 : 최신순, 좋아요순인지, 지난달 베스트 일정인지
 	// @Schema(description = "정렬 기준", required = false, example = "기본 : 최신순// 좋아요순인지, 지난달 베스트 일정인지 등등 어떻게 받을지 상의필요")
 	// String sortType,
 
