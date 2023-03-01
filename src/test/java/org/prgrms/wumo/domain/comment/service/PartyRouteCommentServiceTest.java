@@ -3,6 +3,7 @@ package org.prgrms.wumo.domain.comment.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteCommentGetAllResponse;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +17,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentGetAllRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.model.PartyRouteComment;
 import org.prgrms.wumo.domain.comment.repository.PartyRouteCommentRepository;
@@ -108,6 +111,53 @@ public class PartyRouteCommentServiceTest {
 
 			// Then
 			assertThat(response.id()).isEqualTo(1L);
+		}
+	}
+
+	@Nested
+	@DisplayName("getAllPartyRouteComment를 통해 ")
+	class getAllPartyRouteComment{
+
+		@Test
+		@DisplayName("모임 내 댓글들 중 특정 후보지의 댓글 목록을 조회할 수 있다.")
+		void success(){
+			// Given
+			PartyRouteComment partyRouteComment2 = PartyRouteComment.builder()
+					.id(2L)
+					.routeId(route.getId())
+					.partyMember(partyMember)
+					.image("image.png")
+					.isEdited(false)
+					.content("댓글 댓글 댓글")
+					.locationId(2L)
+					.member(member)
+					.build();
+
+			PartyRouteComment partyRouteComment3 = PartyRouteComment.builder()
+					.id(3L)
+					.routeId(route.getId())
+					.partyMember(partyMember)
+					.image("image.png")
+					.isEdited(false)
+					.content("댓글 댓글 댓글")
+					.locationId(2L)
+					.member(member)
+					.build();
+
+			List<PartyRouteComment> partyRouteComments = List.of(partyRouteComment2, partyRouteComment3);
+			PartyRouteCommentGetAllRequest request = new PartyRouteCommentGetAllRequest(null, 2, 2L);
+			PartyRouteCommentGetAllResponse expected = toPartyRouteCommentGetAllResponse(partyRouteComments, 3L);
+
+			// When
+			given(partyRouteCommentRepository.findAllByLocationId(null, 2, 2L))
+					.willReturn(partyRouteComments);
+
+			// Then
+			PartyRouteCommentGetAllResponse partyRouteCommentGetAllResponse =
+					partyRouteCommentService.getAllPartyRouteComment(request);
+
+			assertThat(partyRouteCommentGetAllResponse.partyRouteComments().size()).isEqualTo(2);
+			assertThat(partyRouteCommentGetAllResponse).usingRecursiveComparison().isEqualTo(expected);
 		}
 	}
 
