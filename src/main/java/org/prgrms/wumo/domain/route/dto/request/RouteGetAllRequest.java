@@ -7,12 +7,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "루트 목록 조회 요청 정보")
 public record RouteGetAllRequest(
-	@Schema(description = "커서 식별자", required = false, example = "9")
+	@Schema(description = "커서 식별자", example = "9", required = false)
 	Long cursorId,
 
 	@NotNull
 	@Positive(message = "page size는 0 또는 음수일 수 없습니다.")
-	@Schema(description = "페이지 사이즈", required = true, example = "5")
+	@Schema(description = "페이지 사이즈", example = "5", required = true)
 	int pageSize
 
 	//기본 : 최신순, 좋아요순인지, 지난달 베스트 일정인지
