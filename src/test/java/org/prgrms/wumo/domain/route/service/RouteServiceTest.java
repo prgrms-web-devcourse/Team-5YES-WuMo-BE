@@ -235,7 +235,7 @@ public class RouteServiceTest {
 	class UpdateRoutePublicStatus {
 		//given
 		RouteStatusUpdateRequest routeStatusUpdateRequest
-			= new RouteStatusUpdateRequest(routeId, true);
+			= new RouteStatusUpdateRequest(routeId, true, "퇴사 기념 여행");
 
 		Route route = getRouteData();
 

@@ -56,7 +56,8 @@ public class RouteMapper {
 				toRouteLocationSimpleResponse(route.getLocations()),
 				route.getParty().getName(),
 				route.getParty().getStartDate(),
-				route.getParty().getEndDate())
+				route.getParty().getEndDate(),
+				route.getParty().getCoverImage())
 			)
 			.toList();
 		return new RouteGetAllResponses(routesResponses, lastId);
