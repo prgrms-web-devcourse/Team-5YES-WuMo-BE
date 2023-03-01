@@ -23,15 +23,23 @@ public class PartyRouteComment extends Comment {
 	@Column(name = "route_id", nullable = false, updatable = true, unique = false)
 	private Long routeId;
 
+	@Column(name = "location_id", nullable = false, updatable = false, unique = false)
+	private Long locationId;
+
 	@OneToOne
 	@JoinColumn(name = "party_member_id")
 	private PartyMember partyMember;
 
 	@Builder
 	public PartyRouteComment(Long id, Member member, String content, String image, Long routeId,
-			PartyMember partyMember, boolean isEdited) {
+			PartyMember partyMember, boolean isEdited, Long locationId) {
 		super(id, member, content, image, isEdited);
 		this.routeId = routeId;
+		this.partyMember = partyMember;
+		this.locationId = locationId;
+	}
+
+	public void setPartyMember(PartyMember partyMember) {
 		this.partyMember = partyMember;
 	}
 }

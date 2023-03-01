@@ -4,11 +4,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentGetAllRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentUpdateRequest;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResponse;
+import org.prgrms.wumo.domain.comment.service.PartyRouteCommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,15 +24,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/party-route-comments")
+@RequiredArgsConstructor
 @Tag(name = "루트 댓글 api")
 public class RouteCommentController {
+
+	private final PartyRouteCommentService partyRouteCommentService;
 
 	@PostMapping
 	@Operation(summary = "모임 내 루트 댓글 생성")
 	public ResponseEntity<PartyRouteCommentRegisterResponse> registerPrivateRouteComment(
 			@RequestBody @Valid PartyRouteCommentRegisterRequest request
 	) {
-		return new ResponseEntity<>(null, HttpStatus.CREATED);
+		return new ResponseEntity<>(partyRouteCommentService.registerPartyRouteComment(request), HttpStatus.CREATED);
 	}
 
 	@GetMapping
