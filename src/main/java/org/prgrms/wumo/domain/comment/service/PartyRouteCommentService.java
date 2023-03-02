@@ -2,10 +2,14 @@ package org.prgrms.wumo.domain.comment.service;
 
 import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
 import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteComment;
+import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteCommentGetAllResponse;
 import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteCommentRegisterResponse;
+import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentGetAllRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.model.PartyRouteComment;
 import org.prgrms.wumo.domain.comment.repository.PartyRouteCommentRepository;
@@ -52,6 +56,19 @@ public class PartyRouteCommentService {
 		);
 	}
 
+	@Transactional(readOnly = true)
+	public PartyRouteCommentGetAllResponse getAllPartyRouteComment(
+			PartyRouteCommentGetAllRequest partyRouteCommentGetAllRequest) {
+		List<PartyRouteComment> partyRouteComments =
+				partyRouteCommentRepository.findAllByLocationId(partyRouteCommentGetAllRequest.cursorId(),
+						partyRouteCommentGetAllRequest.pageSize(), partyRouteCommentGetAllRequest.locationId());
+
+		long lastId = (partyRouteComments.size()) > 0 ?
+				partyRouteComments.get(partyRouteComments.size() - 1).getId() : -1L;
+
+		return toPartyRouteCommentGetAllResponse(partyRouteComments, lastId);
+	}
+
 	private Member getMemberEntity(Long memberId) {
 		return memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("존재 하지 않는 회원입니다"));
 	}
@@ -65,8 +82,9 @@ public class PartyRouteCommentService {
 				.orElseThrow(() -> new EntityNotFoundException("모임 내 존재하지 않는 회원입니다"));
 	}
 
-	private void validateLocation(Long locationId){
-		if (!locationRepository.existsById(locationId))
+	private void validateLocation(Long locationId) {
+		if (!locationRepository.existsById(locationId)) {
 			throw new EntityNotFoundException("댓글을 작성하고자 하는 후보지가 존재하지 않습니다");
+		}
 	}
 }

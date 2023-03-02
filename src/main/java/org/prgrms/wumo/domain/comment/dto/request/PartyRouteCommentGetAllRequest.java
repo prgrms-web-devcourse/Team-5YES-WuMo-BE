@@ -15,8 +15,8 @@ public record PartyRouteCommentGetAllRequest(
 		@Schema(description = "페이지 사이즈", example = "5", required = true)
 		int pageSize,
 
-		@NotNull(message = "조회할 비공개 루트 id는 필수 입력값입니다.")
-		@Schema(description = "댓글을 조회할 비공개 루트", example = "1", required = true)
-		Long routeId
+		@NotNull(message = "모임 내 일정에서 댓글을 조회할 후보지의 식별자는 필수 입력값입니다.")
+		@Schema(description = "댓글을 조회할 모임 내 루트에서의 후보지 식별자", example = "1", required = true)
+		Long locationId
 ) {
 }

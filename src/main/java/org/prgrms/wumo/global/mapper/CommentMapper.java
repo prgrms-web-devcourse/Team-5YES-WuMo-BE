@@ -6,6 +6,8 @@ import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterReque
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentGetResponse;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentRegisterResponse;
+import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetAllResponse;
+import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.model.LocationComment;
 import org.prgrms.wumo.domain.comment.model.PartyRouteComment;
@@ -34,7 +36,8 @@ public class CommentMapper {
 				locationComment.getPartyMember().getRole(),
 				locationComment.getContent(),
 				locationComment.getImage(),
-				locationComment.getCreatedAt()
+				locationComment.getCreatedAt(),
+				locationComment.getUpdatedAt()
 		);
 	}
 
@@ -47,14 +50,15 @@ public class CommentMapper {
 		);
 	}
 
-	public static PartyRouteCommentRegisterResponse toPartyRouteCommentRegisterResponse(PartyRouteComment partyRouteComment){
+	public static PartyRouteCommentRegisterResponse toPartyRouteCommentRegisterResponse(
+			PartyRouteComment partyRouteComment) {
 		return new PartyRouteCommentRegisterResponse(
 				partyRouteComment.getId()
 		);
 	}
 
-
-	public static PartyRouteComment toPartyRouteComment(PartyRouteCommentRegisterRequest partyRouteCommentRegisterRequest){
+	public static PartyRouteComment toPartyRouteComment(
+			PartyRouteCommentRegisterRequest partyRouteCommentRegisterRequest) {
 		return PartyRouteComment.builder()
 				.locationId(partyRouteCommentRegisterRequest.locationId())
 				.routeId(partyRouteCommentRegisterRequest.routeId())
@@ -63,4 +67,24 @@ public class CommentMapper {
 				.build();
 	}
 
+	public static PartyRouteCommentGetResponse toPartyRouteCommentGetResponse(PartyRouteComment partyRouteComment) {
+		return new PartyRouteCommentGetResponse(
+				partyRouteComment.getId(),
+				partyRouteComment.getMember().getNickname(),
+				partyRouteComment.getMember().getProfileImage(),
+				partyRouteComment.getPartyMember().getRole(),
+				partyRouteComment.getContent(),
+				partyRouteComment.getImage(),
+				partyRouteComment.getCreatedAt(),
+				partyRouteComment.getUpdatedAt()
+		);
+	}
+
+	public static PartyRouteCommentGetAllResponse toPartyRouteCommentGetAllResponse(
+			List<PartyRouteComment> partyRouteComments, long lastId) {
+		return new PartyRouteCommentGetAllResponse(
+				partyRouteComments.stream().map(CommentMapper::toPartyRouteCommentGetResponse).toList(),
+				lastId
+		);
+	}
 }

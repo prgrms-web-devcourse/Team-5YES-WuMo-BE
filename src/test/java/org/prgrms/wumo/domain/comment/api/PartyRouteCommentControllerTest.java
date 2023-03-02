@@ -1,5 +1,6 @@
 package org.prgrms.wumo.domain.comment.api;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.model.PartyRouteComment;
+import org.prgrms.wumo.domain.comment.repository.PartyRouteCommentRepository;
 import org.prgrms.wumo.domain.location.model.Category;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
@@ -71,6 +74,8 @@ public class PartyRouteCommentControllerTest {
 	Route route;
 
 	List<Location> locations = new ArrayList<>();
+	@Autowired
+	private PartyRouteCommentRepository partyRouteCommentRepository;
 
 	@BeforeEach
 	void beforeEach() {
@@ -168,6 +173,51 @@ public class PartyRouteCommentControllerTest {
 		resultActions
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.id").isNotEmpty())
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("모임 내 루트에서 특정 후보지의 댓글을 목록 조회할 수 있다.")
+	void getAllPartyRouteCommentTest() throws Exception {
+		// Given
+		PartyRouteComment partyRouteComment2 = PartyRouteComment.builder()
+				.routeId(route.getId())
+				.partyMember(partyMember)
+				.image("image.png")
+				.isEdited(false)
+				.content("댓글 댓글 댓글")
+				.locationId(1L)
+				.member(member)
+				.build();
+
+		PartyRouteComment partyRouteComment3 = PartyRouteComment.builder()
+				.routeId(route.getId())
+				.partyMember(partyMember)
+				.image("image.png")
+				.isEdited(false)
+				.content("댓글 댓글 댓글")
+				.locationId(1L)
+				.member(member)
+				.build();
+
+		partyRouteCommentRepository.saveAll(List.of(partyRouteComment2, partyRouteComment3));
+
+		// When
+		ResultActions resultActions =
+				mockMvc.perform(
+						get("/api/v1/party-route-comments")
+								.param("cursorId", (String)null)
+								.param("pageSize", "2")
+								.param("locationId", "1")
+				);
+
+		// Then
+		resultActions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.partyRouteComments").isNotEmpty())
+				.andExpect(jsonPath("$.partyRouteComments").isArray())
+				.andExpect(jsonPath("$.partyRouteComments[0].content").value(partyRouteComment2.getContent()))
+				.andExpect(jsonPath("$.lastId").isNotEmpty())
 				.andDo(print());
 	}
 }
