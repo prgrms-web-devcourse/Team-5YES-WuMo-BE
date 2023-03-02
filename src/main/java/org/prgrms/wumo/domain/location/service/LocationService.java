@@ -38,12 +38,21 @@ public class LocationService {
 	}
 
 	// TODO queryDSL 이용, 커서 기반 페이지네이션으로 변경
+	// @Transactional(readOnly = true)
+	// public LocationGetAllResponse getAllLocations(LocationGetAllRequest locationGetAllRequest) {
+	// 	List<Location> locations = locationRepository.findAllByPartyIdAndCursorIdLimitPageSize(
+	// 		locationGetAllRequest.partyId(),
+	// 		locationGetAllRequest.cursorId(), locationGetAllRequest.pageSize());
+	// 	return toLocationGetAllResponse(locations, locationGetAllRequest.cursorId() + locationGetAllRequest.pageSize());
+	// }
 	@Transactional(readOnly = true)
-	public LocationGetAllResponse getAllLocations(LocationGetAllRequest locationGetAllRequest) {
-		List<Location> locations = locationRepository.findAllByPartyIdAndCursorIdLimitPageSize(
-			locationGetAllRequest.partyId(),
-			locationGetAllRequest.cursorId(), locationGetAllRequest.pageSize());
-		return toLocationGetAllResponse(locations, locationGetAllRequest.cursorId() + locationGetAllRequest.pageSize());
+	public LocationGetAllResponse getAllLocation(LocationGetAllRequest locationGetAllRequest){
+		List<Location> locations = locationRepository.findByPartyId(locationGetAllRequest.cursorId(),
+				locationGetAllRequest.pageSize(), locationGetAllRequest.partyId());
+
+		long lastId = locations.size() > 0 ? locations.get(locations.size() - 1).getId() : -1L;
+
+		return toLocationGetAllResponse(locations, lastId);
 	}
 
 	@Transactional

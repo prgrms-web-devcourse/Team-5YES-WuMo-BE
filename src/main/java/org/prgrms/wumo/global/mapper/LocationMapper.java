@@ -43,8 +43,7 @@ public class LocationMapper {
 				location.getExpectedCost(),
 				location.getSpending(),
 				location.getCategory(),
-				// TODO Route 의 코드가 추가되면 route.getId()로 대체
-				1L
+				location.getRoute() == null ? null : location.getRoute().getId()
 		);
 	}
 
