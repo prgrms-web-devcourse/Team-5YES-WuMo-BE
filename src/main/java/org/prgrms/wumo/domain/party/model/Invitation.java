@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.prgrms.wumo.global.audit.BaseTimeEntity;
+import org.prgrms.wumo.global.base62.Base62Util;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,6 +41,10 @@ public class Invitation extends BaseTimeEntity {
 		this.id = id;
 		this.party = party;
 		this.expiredDate = expiredDate;
+	}
+
+	public String getCode() {
+		return Base62Util.encode(this.id);
 	}
 
 }

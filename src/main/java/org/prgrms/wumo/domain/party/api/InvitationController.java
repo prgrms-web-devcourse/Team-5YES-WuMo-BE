@@ -3,7 +3,6 @@ package org.prgrms.wumo.domain.party.api;
 import javax.validation.Valid;
 
 import org.prgrms.wumo.domain.party.dto.request.InvitationRegisterRequest;
-import org.prgrms.wumo.domain.party.dto.request.PartyJoinRequest;
 import org.prgrms.wumo.domain.party.dto.response.InvitationRegisterResponse;
 import org.prgrms.wumo.domain.party.service.InvitationService;
 import org.springframework.http.HttpStatus;
@@ -28,9 +27,9 @@ public class InvitationController {
 	private final InvitationService invitationService;
 
 	@PostMapping("/{partyId}/invitations")
-	@Operation(summary = "모임 초대 코드 생성")
+	@Operation(summary = "모임 초대코드 생성")
 	public ResponseEntity<InvitationRegisterResponse> registerInvitation(
-			@PathVariable @Parameter(description = "파티 식별자", required = true) Long partyId,
+			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId,
 			@RequestBody @Valid InvitationRegisterRequest invitationRegisterRequest
 	) {
 		return new ResponseEntity<>(

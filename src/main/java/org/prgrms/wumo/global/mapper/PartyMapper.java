@@ -16,7 +16,6 @@ import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.model.Invitation;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
-import org.prgrms.wumo.global.base62.Base62Util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -89,7 +88,7 @@ public class PartyMapper {
 	}
 
 	public static InvitationRegisterResponse toInvitationRegisterResponse(Invitation invitation) {
-		return new InvitationRegisterResponse(Base62Util.encode(invitation.getId()));
+		return new InvitationRegisterResponse(invitation.getCode());
 	}
 
 }

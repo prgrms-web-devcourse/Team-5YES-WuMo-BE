@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
@@ -125,7 +126,7 @@ class InvitationControllerTest extends MysqlTestContainer {
 	}
 
 	private InvitationRegisterRequest getInvitationRegisterRequest() {
-		return new InvitationRegisterRequest(null);
+		return new InvitationRegisterRequest(LocalDate.now().plusDays(7));
 	}
 
 }

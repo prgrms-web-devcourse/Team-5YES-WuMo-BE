@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
@@ -29,7 +30,6 @@ import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.InvitationRepository;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
-import org.prgrms.wumo.global.base62.Base62Util;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -94,7 +94,7 @@ class InvitationServiceTest {
 		@DisplayName("모임 구성원이고 생성한 코드가 없다면 초대코드를 생성한다.")
 		void successIfNotExists() {
 			//given
-			InvitationRegisterRequest invitationRegisterRequest = new InvitationRegisterRequest(null);
+			InvitationRegisterRequest invitationRegisterRequest = new InvitationRegisterRequest(LocalDate.now().plusDays(7));
 
 			//mocking
 			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), member.getId()))
@@ -109,7 +109,7 @@ class InvitationServiceTest {
 					= invitationService.registerInvitation(party.getId(), invitationRegisterRequest);
 
 			//then
-			assertThat(invitationRegisterResponse.code()).isEqualTo(Base62Util.encode(invitation.getId()));
+			assertThat(invitationRegisterResponse.code()).isEqualTo(invitation.getCode());
 
 			then(partyMemberRepository)
 					.should()
@@ -131,7 +131,7 @@ class InvitationServiceTest {
 					.party(party)
 					.expiredDate(LocalDateTime.now().minusDays(7))
 					.build();
-			InvitationRegisterRequest invitationRegisterRequest = new InvitationRegisterRequest(null);
+			InvitationRegisterRequest invitationRegisterRequest = new InvitationRegisterRequest(LocalDate.now().plusDays(7));
 
 			//mocking
 			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), member.getId()))
@@ -146,7 +146,7 @@ class InvitationServiceTest {
 					= invitationService.registerInvitation(party.getId(), invitationRegisterRequest);
 
 			//then
-			assertThat(invitationRegisterResponse.code()).isEqualTo(Base62Util.encode(invitation.getId()));
+			assertThat(invitationRegisterResponse.code()).isEqualTo(invitation.getCode());
 
 			then(partyMemberRepository)
 					.should()
@@ -163,7 +163,7 @@ class InvitationServiceTest {
 		@DisplayName("모임 구성원이고 만료되지 않은 초대장이 있다면 기존 초대코드를 반환한다.")
 		void successIfAlreadyExistsButNotExpired() {
 			//given
-			InvitationRegisterRequest invitationRegisterRequest = new InvitationRegisterRequest(null);
+			InvitationRegisterRequest invitationRegisterRequest = new InvitationRegisterRequest(LocalDate.now().plusDays(7));
 
 			//mocking
 			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), member.getId()))
@@ -176,7 +176,7 @@ class InvitationServiceTest {
 					= invitationService.registerInvitation(party.getId(), invitationRegisterRequest);
 
 			//then
-			assertThat(invitationRegisterResponse.code()).isEqualTo(Base62Util.encode(invitation.getId()));
+			assertThat(invitationRegisterResponse.code()).isEqualTo(invitation.getCode());
 
 			then(partyMemberRepository)
 					.should()
@@ -193,7 +193,7 @@ class InvitationServiceTest {
 		@DisplayName("모임 구성원이 아니라면 예외가 발생한다.")
 		void failed() {
 			//given
-			InvitationRegisterRequest invitationRegisterRequest = new InvitationRegisterRequest(null);
+			InvitationRegisterRequest invitationRegisterRequest = new InvitationRegisterRequest(LocalDate.now().plusDays(7));
 
 			//mocking
 			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), member.getId()))
