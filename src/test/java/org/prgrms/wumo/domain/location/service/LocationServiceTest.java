@@ -6,13 +6,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationGetResponse;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import javax.persistence.EntityNotFoundException;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -49,12 +46,12 @@ public class LocationServiceTest {
 	class RegisterLocation {
 		// Given
 		LocationRegisterRequest locationRegisterRequest
-			= new LocationRegisterRequest(
-			"프로그래머스 강남 교육장", "강남역 2번출구"
-			, locationTestUtils.getLatitude1(), locationTestUtils.getLongitude1(),
-			"http://programmers_gangnam_image.com"
-			, Category.STUDY, "이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀...."
-			, locationTestUtils.getDayToVisit(), 4000, 1L
+				= new LocationRegisterRequest(
+				"프로그래머스 강남 교육장", "강남역 2번출구"
+				, locationTestUtils.getLatitude1(), locationTestUtils.getLongitude1(),
+				"http://programmers_gangnam_image.com"
+				, Category.STUDY, "이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀...."
+				, locationTestUtils.getDayToVisit(), 4000, 1L
 		);
 
 		@Test
@@ -65,7 +62,7 @@ public class LocationServiceTest {
 
 			// When
 			LocationRegisterResponse locationRegisterResponse =
-				locationService.registerLocation(locationRegisterRequest);
+					locationService.registerLocation(locationRegisterRequest);
 
 			// Then
 			assertThat(locationRegisterResponse.id()).isEqualTo(1L);
@@ -86,11 +83,11 @@ public class LocationServiceTest {
 
 			// When
 			LocationGetResponse locationGetResponse =
-				locationService.getLocation(1L);
+					locationService.getLocation(1L);
 
 			// Then
 			assertThat(locationGetResponse).usingRecursiveComparison()
-				.isEqualTo(toLocationGetResponse(locationTestUtils.getLocation()));
+					.isEqualTo(toLocationGetResponse(locationTestUtils.getLocation()));
 		}
 
 		@Test
@@ -101,7 +98,7 @@ public class LocationServiceTest {
 
 			// When // Then
 			assertThatThrownBy(
-				() -> locationService.getLocation(1L)
+					() -> locationService.getLocation(1L)
 			).isInstanceOf(EntityNotFoundException.class);
 		}
 	}
@@ -114,7 +111,7 @@ public class LocationServiceTest {
 		Long partyId = 1L;
 
 		LocationGetAllRequest locationGetAllRequest
-			= new LocationGetAllRequest(1L, pageSize, partyId);
+				= new LocationGetAllRequest(1L, pageSize, partyId);
 
 		List<Location> partyId1Locations = new ArrayList<>();
 
@@ -123,26 +120,28 @@ public class LocationServiceTest {
 		void getAllLocationsTest() {
 			// Given
 			for (Location location : locationTestUtils.getLocations()) {
-				if (partyId1Locations.size() >= 5)
+				if (partyId1Locations.size() >= 5) {
 					break;
-				if (location.getPartyId() == 1L)
+				}
+				if (location.getPartyId() == 1L) {
 					partyId1Locations.add(location);
+				}
 			}
 
-			given(locationRepository.findAllByPartyIdAndCursorIdLimitPageSize(1L, 1L, 5))
-				.willReturn(partyId1Locations);
+			given(locationRepository.findByPartyId(1L, 5, 1L))
+					.willReturn(partyId1Locations);
 
 			// When
-			LocationGetAllResponse locationGetAllResponse = locationService.getAllLocations(locationGetAllRequest);
+			LocationGetAllResponse locationGetAllResponse = locationService.getAllLocation(locationGetAllRequest);
 
 			// Then
 			assertThat(locationGetAllResponse.locations().size()).isEqualTo(5);
 			for (int i = 0; i < 4; i++) {
 				assertThat(locationGetAllResponse.locations().get(i)).usingRecursiveComparison()
-					.isEqualTo(toLocationGetResponse(locationTestUtils.getLocations().get(i)));
+						.isEqualTo(toLocationGetResponse(locationTestUtils.getLocations().get(i)));
 			}
 			assertThat(locationGetAllResponse.locations().get(4)).usingRecursiveComparison()
-				.isEqualTo(toLocationGetResponse(locationTestUtils.getLocations().get(5)));
+					.isEqualTo(toLocationGetResponse(locationTestUtils.getLocations().get(5)));
 		}
 
 	}
@@ -157,15 +156,15 @@ public class LocationServiceTest {
 		@DisplayName("루트에서 후보지를 삭제할 수 있다.")
 		void deleteRouteLocationTest() {
 			given(locationRepository.findById(any(Long.class))).
-				willReturn(Optional.of(locationTestUtils.getLocation()));
+					willReturn(Optional.of(locationTestUtils.getLocation()));
 
 			// When
 			locationService.deleteRouteLocation(locationId);
 
 			// Then
 			then(locationRepository)
-				.should()
-				.findById(any(Long.class));
+					.should()
+					.findById(any(Long.class));
 		}
 	}
 }
