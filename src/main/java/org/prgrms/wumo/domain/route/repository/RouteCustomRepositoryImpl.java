@@ -2,11 +2,13 @@ package org.prgrms.wumo.domain.route.repository;
 
 import java.util.List;
 
+import org.prgrms.wumo.domain.location.model.QLocation;
 import org.prgrms.wumo.domain.route.model.QRoute;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -18,18 +20,31 @@ public class RouteCustomRepositoryImpl implements RouteCustomRepository {
 	private final JPAQueryFactory jpaQueryFactory;
 
 	private final QRoute qRoute = QRoute.route;
+	private final QLocation qLocation = QLocation.location;
 
 	@Override
-	public List<Route> findAllByCursor(Long cursorId, int pageSize) {
+	public List<Route> findAllByCursorAndSearchWord(Long cursorId, int pageSize, String searchWord) {
 
 		return jpaQueryFactory.selectFrom(qRoute)
-			.where(
+			.where(inRouteAndHasSearchWord(searchWord),
 				ltRouteId(cursorId),
-				isPublic()
-			)
+				isPublic())
 			.orderBy(qRoute.id.desc())
 			.limit(pageSize)
 			.fetch();
+	}
+
+	private BooleanExpression inRouteAndHasSearchWord(String searchWord) {
+		if (searchWord == null) {
+			return null;
+		}
+
+		return JPAExpressions
+			.selectFrom(qLocation)
+			.where(
+				qLocation.route.eq(qRoute),
+				qLocation.address.startsWith(searchWord))
+			.exists();
 	}
 
 	private BooleanExpression ltRouteId(Long cursorId) {

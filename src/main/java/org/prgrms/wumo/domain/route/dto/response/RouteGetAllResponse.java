@@ -7,6 +7,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "루트 목록 조회 응답 시 각각의 루트 정보")
 public record RouteGetAllResponse(
+	@Schema(description = "루트 식별자", example = "1", required = true)
+	long routeId,
+
 	// @Schema(description = "루트의 좋아요 수", example = "10", required = true)
 	// long likeCount,
 
