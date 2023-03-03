@@ -8,6 +8,7 @@ import java.util.List;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
 import org.prgrms.wumo.domain.party.dto.response.InvitationRegisterResponse;
+import org.prgrms.wumo.domain.party.dto.response.InvitationValidateResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetAllResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetAllResponse;
@@ -89,6 +90,10 @@ public class PartyMapper {
 
 	public static InvitationRegisterResponse toInvitationRegisterResponse(Invitation invitation) {
 		return new InvitationRegisterResponse(invitation.getCode());
+	}
+
+	public static InvitationValidateResponse toInvitationValidateResponse(Invitation invitation) {
+		return new InvitationValidateResponse(invitation.getParty().getId());
 	}
 
 }
