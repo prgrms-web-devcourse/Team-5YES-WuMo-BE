@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.prgrms.wumo.domain.location.dto.request.LocationUpdateRequest;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.prgrms.wumo.global.audit.BaseTimeEntity;
 
@@ -34,6 +35,9 @@ public class Location extends BaseTimeEntity {
 
 	@Column(name = "name", nullable = false, updatable = true, unique = false)
 	private String name;
+
+	@Column(name = "search_address", nullable = false, updatable = true, unique = false, length = 20)
+	private String searchAddress;
 
 	@Column(name = "address", nullable = false, updatable = true, unique = false)
 	private String address;
@@ -71,11 +75,13 @@ public class Location extends BaseTimeEntity {
 	private Long partyId;
 
 	@Builder
-	public Location(Long id, String name, String address, Float latitude, Float longitude, String image,
-		String description,
-		LocalDateTime visitDate, int expectedCost, int spending, Category category, Route route, Long partyId) {
+	public Location(Long id, String name, String address, String searchAddress, Float latitude, Float longitude,
+			String image,
+			String description,
+			LocalDateTime visitDate, int expectedCost, int spending, Category category, Route route, Long partyId) {
 		this.id = id;
 		this.name = name;
+		this.searchAddress = searchAddress;
 		this.address = address;
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -89,7 +95,6 @@ public class Location extends BaseTimeEntity {
 		this.partyId = partyId;
 	}
 
-	// TODO 추후 Party 이용, Route 지정할 계획
 	public void addRoute(Route route) {
 		this.route = route;
 	}
@@ -98,4 +103,11 @@ public class Location extends BaseTimeEntity {
 		this.route = null;
 	}
 
+	public void update(LocationUpdateRequest request) {
+		this.visitDate = request.visitDate();
+		this.category = request.category();
+		this.image = request.image();
+		this.expectedCost = request.expectedCost();
+		this.description = request.description() == null ? this.getDescription() : request.description();
+	}
 }

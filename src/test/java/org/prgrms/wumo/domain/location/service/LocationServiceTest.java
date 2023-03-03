@@ -8,11 +8,14 @@ import static org.mockito.BDDMockito.then;
 import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationGetResponse;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,6 +32,12 @@ import org.prgrms.wumo.domain.location.dto.response.LocationRegisterResponse;
 import org.prgrms.wumo.domain.location.model.Category;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
+import org.prgrms.wumo.domain.member.repository.MemberRepository;
+import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
+import org.prgrms.wumo.domain.party.repository.PartyRepository;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("LocationService 에서 ")
@@ -40,9 +49,32 @@ public class LocationServiceTest {
 	@Mock
 	LocationRepository locationRepository;
 
-	// GIVEN
+	@Mock
+	MemberRepository memberRepository;
 
+	@Mock
+	PartyRepository partyRepository;
+
+	@Mock
+	PartyMemberRepository partyMemberRepository;
+
+	// GIVEN
 	LocationTestUtils locationTestUtils = new LocationTestUtils();
+
+
+	@BeforeEach
+	void beforeEach(){
+		SecurityContext context = SecurityContextHolder.getContext();
+		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+				new UsernamePasswordAuthenticationToken(1L, null, Collections.EMPTY_LIST);
+
+		context.setAuthentication(usernamePasswordAuthenticationToken);
+	}
+
+	@AfterEach
+	void afterEach() {
+		SecurityContextHolder.clearContext();
+	}
 
 	@Nested
 	@DisplayName("registerLocation을 사용해서 ")
@@ -50,7 +82,7 @@ public class LocationServiceTest {
 		// Given
 		LocationRegisterRequest locationRegisterRequest
 			= new LocationRegisterRequest(
-			"프로그래머스 강남 교육장", "강남역 2번출구"
+			"프로그래머스 강남 교육장", "서울특별시","강남역 2번출구"
 			, locationTestUtils.getLatitude1(), locationTestUtils.getLongitude1(),
 			"http://programmers_gangnam_image.com"
 			, Category.STUDY, "이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀...."
@@ -129,11 +161,11 @@ public class LocationServiceTest {
 					partyId1Locations.add(location);
 			}
 
-			given(locationRepository.findAllByPartyIdAndCursorIdLimitPageSize(1L, 1L, 5))
+			given(locationRepository.findByPartyId(1L, 5, 1L))
 				.willReturn(partyId1Locations);
 
 			// When
-			LocationGetAllResponse locationGetAllResponse = locationService.getAllLocations(locationGetAllRequest);
+			LocationGetAllResponse locationGetAllResponse = locationService.getAllLocation(locationGetAllRequest);
 
 			// Then
 			assertThat(locationGetAllResponse.locations().size()).isEqualTo(5);
@@ -151,13 +183,14 @@ public class LocationServiceTest {
 	@DisplayName("deleteRouteLocation을 사용해서 ")
 	class deleteRouteLocation {
 		// Given
-		Long locationId = 1L;
+		Long locationId = locationTestUtils.getLocation().getId();
 
 		@Test
 		@DisplayName("루트에서 후보지를 삭제할 수 있다.")
 		void deleteRouteLocationTest() {
 			given(locationRepository.findById(any(Long.class))).
 				willReturn(Optional.of(locationTestUtils.getLocation()));
+			given(partyMemberRepository.existsByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(true);
 
 			// When
 			locationService.deleteRouteLocation(locationId);

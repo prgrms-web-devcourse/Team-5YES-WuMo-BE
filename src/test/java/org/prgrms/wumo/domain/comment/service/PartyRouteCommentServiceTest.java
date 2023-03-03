@@ -218,6 +218,7 @@ public class PartyRouteCommentServiceTest {
 				.partyId(party.getId())
 				.expectedCost(50000)
 				.spending(45000)
+				.searchAddress("고양시")
 				.address("경기도 고양시 일산서구")
 				.name("내 집")
 				.description("언제 와도 좋은 서윗한 내 집")
