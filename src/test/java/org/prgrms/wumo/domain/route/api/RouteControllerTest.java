@@ -89,6 +89,8 @@ public class RouteControllerTest extends MysqlTestContainer {
 
 		Route route = routeRepository.save(getRouteData(location, party));
 		routeId = route.getId();
+		route.updatePublicStatus(true);
+		routeRepository.save(route);
 
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
@@ -174,13 +176,15 @@ public class RouteControllerTest extends MysqlTestContainer {
 		ResultActions resultActions
 			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes")
 			.param("cursorId", (String)null)
-			.param("pageSize", String.valueOf(pageSize)));
+			.param("pageSize", String.valueOf(pageSize))
+			.param("searchWord", (String)null));
 
 		//then
 		resultActions
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.lastId").isNotEmpty())
+			.andExpect(jsonPath("$.lastId").value(routeId))
 			.andExpect(jsonPath("$.routes").isArray())
+			.andExpect(jsonPath("$.routes[0].routeId").value(routeId))
 			.andDo(print());
 	}
 
