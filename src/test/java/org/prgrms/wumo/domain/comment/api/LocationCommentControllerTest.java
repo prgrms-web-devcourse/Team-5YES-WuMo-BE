@@ -81,7 +81,6 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 
 		party = partyRepository.save(
 				Party.builder()
-						//.id(1L)
 						.password("1234").description("오예스팀 모임")
 						.coverImage("party_cover_image.png")
 						.name("오예스")
@@ -105,7 +104,8 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 						.visitDate(LocalDateTime.now().plusDays(4))
 						.description("아인슈페너가 맛있는 곳!")
 						.name("cafe")
-						.address("경기도 고양시")
+						.address("경기도 고양시 일산서구")
+						.searchAddress("고양시")
 						.latitude(12.34F)
 						.longitude(34.56F)
 						.partyId(party.getId())
