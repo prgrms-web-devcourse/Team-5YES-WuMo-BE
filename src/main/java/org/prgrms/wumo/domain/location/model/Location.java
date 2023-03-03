@@ -1,7 +1,6 @@
 package org.prgrms.wumo.domain.location.model;
 
 import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,14 +12,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.prgrms.wumo.domain.route.model.Route;
-import org.prgrms.wumo.global.audit.BaseTimeEntity;
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.prgrms.wumo.domain.location.dto.request.LocationUpdateRequest;
+import org.prgrms.wumo.domain.route.model.Route;
+import org.prgrms.wumo.global.audit.BaseTimeEntity;
 
 @Getter
 @Entity
@@ -34,6 +32,9 @@ public class Location extends BaseTimeEntity {
 
 	@Column(name = "name", nullable = false, updatable = true, unique = false)
 	private String name;
+
+	@Column(name = "search_address", nullable = false, updatable = true, unique = false)
+	private String searchAddress;
 
 	@Column(name = "address", nullable = false, updatable = true, unique = false)
 	private String address;
@@ -71,11 +72,13 @@ public class Location extends BaseTimeEntity {
 	private Long partyId;
 
 	@Builder
-	public Location(Long id, String name, String address, Float latitude, Float longitude, String image,
-		String description,
-		LocalDateTime visitDate, int expectedCost, int spending, Category category, Route route, Long partyId) {
+	public Location(Long id, String name, String searchAddress, String address, Float latitude, Float longitude,
+			String image,
+			String description,
+			LocalDateTime visitDate, int expectedCost, int spending, Category category, Route route, Long partyId) {
 		this.id = id;
 		this.name = name;
+		this.searchAddress = searchAddress;
 		this.address = address;
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -89,7 +92,6 @@ public class Location extends BaseTimeEntity {
 		this.partyId = partyId;
 	}
 
-	// TODO 추후 Party 이용, Route 지정할 계획
 	public void addRoute(Route route) {
 		this.route = route;
 	}
@@ -98,4 +100,16 @@ public class Location extends BaseTimeEntity {
 		this.route = null;
 	}
 
+	public void updateLocation(LocationUpdateRequest request) {
+		this.name = request.name();
+		this.searchAddress = request.searchAddress();
+		this.address = request.address();
+		this.latitude = request.latitude();
+		this.longitude = request.longitude();
+		this.image = request.image();
+		this.visitDate = request.visitDate();
+		this.expectedCost = request.expectedCost();
+		this.category = request.category();
+		this.description = request.description() == null ? this.getDescription() : request.description();
+	}
 }
