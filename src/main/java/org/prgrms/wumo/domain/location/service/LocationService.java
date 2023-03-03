@@ -68,7 +68,7 @@ public class LocationService {
 	public void deleteRouteLocation(long locationId) {
 		Location location = getLocationEntity(locationId);
 
-		//TODO 요청한 회원이 후보지가 속한 모임멤버인지 확인하기
+		// TODO 요청한 회원이 후보지가 속한 모임멤버인지 확인하기
 		checkMemberInParty(location.getPartyId(), getMemberId());
 
 		location.deleteRoute();

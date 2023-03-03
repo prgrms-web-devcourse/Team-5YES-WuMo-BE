@@ -108,7 +108,6 @@ public class LocationControllerTest extends MysqlTestContainer {
 
 	@AfterEach
 	void afterEach() {
-		locationRepository.deleteAll();
 		partyMemberRepository.deleteById(partyMember.getId());
 		partyRepository.deleteById(party.getId());
 		memberRepository.deleteById(member.getId());
