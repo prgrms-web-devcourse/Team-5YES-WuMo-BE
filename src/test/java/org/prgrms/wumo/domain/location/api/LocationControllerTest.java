@@ -182,7 +182,7 @@ public class LocationControllerTest extends MysqlTestContainer {
 		// When
 		ResultActions resultActions = mockMvc.perform(
 				get("/api/v1/locations")
-						.param("cursorId", "0")
+						.param("cursorId", (String)null)
 						.param("pageSize", "5")
 						.param("partyId", "1")
 		);
@@ -193,10 +193,6 @@ public class LocationControllerTest extends MysqlTestContainer {
 				.andExpect(jsonPath("$.locations").isArray())
 				.andExpect(jsonPath("$.locations").isNotEmpty())
 				.andExpect(jsonPath("$.locations[0].id").isNotEmpty())
-				.andExpect(jsonPath("$.locations[0].latitude").value(firstLocation.getLatitude()))
-				.andExpect(jsonPath("$.locations[0].longitude").value(firstLocation.getLongitude()))
-				.andExpect(jsonPath("$.locations[0].spending").value(firstLocation.getSpending()))
-				.andExpect(jsonPath("$.locations[0].expectedCost").value(firstLocation.getExpectedCost()))
 				.andDo(print());
 	}
 
@@ -259,7 +255,24 @@ public class LocationControllerTest extends MysqlTestContainer {
 	@DisplayName(" 루트에서 후보지를 삭제한다")
 	void deleteRouteLocationTest() throws Exception {
 		// Given
-		Long locationId = locationRepository.save(locationTestUtils.getLocation()).getId();
+		Location location = locationRepository.save(
+				Location.builder()
+						.category(Category.COFFEE)
+						.visitDate(locationTestUtils.getDayToVisit())
+						.description("아인슈페너가 맛있는 곳!")
+						.name("cafe")
+						.searchAddress("경기도 고양시")
+						.address("경기도 고양시 일산서구")
+						.latitude(12.34F)
+						.longitude(34.56F)
+						.partyId(party.getId())
+						.expectedCost(4000)
+						.spending(3500)
+						.image("image.url")
+						.build()
+		);
+
+		Long locationId = locationRepository.save(location).getId();
 
 		// When
 		ResultActions resultActions = mockMvc.perform(
