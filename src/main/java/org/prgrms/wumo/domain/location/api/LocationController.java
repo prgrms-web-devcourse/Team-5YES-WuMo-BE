@@ -13,6 +13,7 @@ import org.prgrms.wumo.domain.location.dto.response.LocationGetAllResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationRegisterResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationSpendingUpdateResponse;
+import org.prgrms.wumo.domain.location.dto.response.LocationUpdateResponse;
 import org.prgrms.wumo.domain.location.service.LocationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,10 +67,10 @@ public class LocationController {
 
 	@PatchMapping
 	@Operation(summary = "후보장소 수정")
-	public ResponseEntity<Void> updateLocation(
+	public ResponseEntity<LocationUpdateResponse> updateLocation(
 			@RequestBody @Valid LocationUpdateRequest locationUpdateRequest) {
 
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(locationService.updateLocation(locationUpdateRequest));
 	}
 
 	@DeleteMapping("/{locationId}")

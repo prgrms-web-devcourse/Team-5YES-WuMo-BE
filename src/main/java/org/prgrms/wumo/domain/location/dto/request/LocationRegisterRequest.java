@@ -7,14 +7,18 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.prgrms.wumo.domain.location.model.Category;
 
-@Schema(name = "후보장소 등록 요청 정보")
+@Schema(name = "후보지 등록 요청 정보")
 public record LocationRegisterRequest(
 		@NotBlank(message = "상호명은 필수 입력사항입니다.")
 		@Size(max = 50, message = "상호명은 {max}글자 이하로 입력할 수 있습니다.")
-		@Schema(description = "후보장소 상호명", example = "오예스 식당", required = true)
+		@Schema(description = "후보지 상호명", example = "오예스 식당", required = true)
 		String name,
 
-		@NotBlank(message = "주소 필수 입력사항입니다.")
+		@NotNull(message = "검색용 주소는 필수 입력사항입니다.")
+		@Schema(description = "후보장소 주소", example = "부산광역시 수영구", required = true)
+		String searchAddress,
+
+		@NotNull(message = "주소는 필수 입력사항입니다.")
 		@Schema(description = "후보장소 주소", example = "부산광역시 수영구 ~~~ ", required = true)
 		String address,
 

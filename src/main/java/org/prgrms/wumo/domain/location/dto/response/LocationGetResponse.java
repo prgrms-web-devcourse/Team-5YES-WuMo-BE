@@ -12,6 +12,9 @@ public record LocationGetResponse(
 		@Schema(description = "후보장소 상호명", example = "오예스 식당", required = true)
 		String name,
 
+		@Schema(description = "후보지 검색 주소", example = "부산광역시 수영구", required = true)
+		String searchAddress,
+
 		@Schema(description = "후보장소 주소", example = "부산광역시 수영구 ~~~ ", required = true)
 		String address,
 
