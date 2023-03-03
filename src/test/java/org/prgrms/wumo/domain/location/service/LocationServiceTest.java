@@ -50,7 +50,7 @@ public class LocationServiceTest {
 		// Given
 		LocationRegisterRequest locationRegisterRequest
 			= new LocationRegisterRequest(
-			"프로그래머스 강남 교육장", "강남역 2번출구"
+			"프로그래머스 강남 교육장", "서울특별시","강남역 2번출구"
 			, locationTestUtils.getLatitude1(), locationTestUtils.getLongitude1(),
 			"http://programmers_gangnam_image.com"
 			, Category.STUDY, "이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀...."
@@ -129,11 +129,11 @@ public class LocationServiceTest {
 					partyId1Locations.add(location);
 			}
 
-			given(locationRepository.findAllByPartyIdAndCursorIdLimitPageSize(1L, 1L, 5))
+			given(locationRepository.findByPartyId(1L, 5, 1L))
 				.willReturn(partyId1Locations);
 
 			// When
-			LocationGetAllResponse locationGetAllResponse = locationService.getAllLocations(locationGetAllRequest);
+			LocationGetAllResponse locationGetAllResponse = locationService.getAllLocation(locationGetAllRequest);
 
 			// Then
 			assertThat(locationGetAllResponse.locations().size()).isEqualTo(5);

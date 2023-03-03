@@ -357,6 +357,7 @@ public class RouteServiceTest {
 			.latitude(23.3456F)
 			.longitude(45.5678F)
 			.address("서울특별시 강남구 테헤란로")
+				.searchAddress("서울특별시")
 			.image("http://~~~.png")
 			.visitDate(LocalDateTime.now().plusDays(5))
 			.category(Category.MEAL)
