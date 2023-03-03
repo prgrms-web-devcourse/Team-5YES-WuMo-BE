@@ -33,7 +33,7 @@ public class Location extends BaseTimeEntity {
 	@Column(name = "name", nullable = false, updatable = true, unique = false)
 	private String name;
 
-	@Column(name = "search_address", nullable = false, updatable = true, unique = false)
+	@Column(name = "search_address", nullable = false, updatable = true, unique = false, length = 20)
 	private String searchAddress;
 
 	@Column(name = "address", nullable = false, updatable = true, unique = false)
