@@ -3,6 +3,7 @@ package org.prgrms.wumo.domain.party.api;
 import javax.validation.Valid;
 
 import org.prgrms.wumo.domain.party.dto.request.InvitationRegisterRequest;
+import org.prgrms.wumo.domain.party.dto.request.PartyJoinRequest;
 import org.prgrms.wumo.domain.party.dto.response.InvitationRegisterResponse;
 import org.prgrms.wumo.domain.party.service.InvitationService;
 import org.springframework.http.HttpStatus;
