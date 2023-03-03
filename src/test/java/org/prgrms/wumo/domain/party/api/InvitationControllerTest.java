@@ -1,5 +1,6 @@
 package org.prgrms.wumo.domain.party.api;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -17,8 +18,10 @@ import org.prgrms.wumo.MysqlTestContainer;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.InvitationRegisterRequest;
+import org.prgrms.wumo.domain.party.model.Invitation;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
+import org.prgrms.wumo.domain.party.repository.InvitationRepository;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +57,9 @@ class InvitationControllerTest extends MysqlTestContainer {
 
 	@Autowired
 	private PartyMemberRepository partyMemberRepository;
+
+	@Autowired
+	private InvitationRepository invitationRepository;
 
 	private Member member;
 
@@ -102,7 +108,7 @@ class InvitationControllerTest extends MysqlTestContainer {
 
 	@Test
 	@DisplayName("모임 구성원이 초대코드를 생성할 수 있다.")
-	void registerPartyMember() throws Exception {
+	void registerInvitation() throws Exception {
 		//given
 		InvitationRegisterRequest invitationRegisterRequest = getInvitationRegisterRequest();
 
@@ -115,6 +121,27 @@ class InvitationControllerTest extends MysqlTestContainer {
 		resultActions
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.code").isNotEmpty())
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("초대코드의 유효성 검증을 할 수 있다.")
+	void validateInvitation() throws Exception {
+		//given
+		Invitation invitation = invitationRepository.save(
+				Invitation.builder()
+						.party(party)
+						.expiredDate(LocalDateTime.now().plusDays(7))
+						.build()
+		);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/parties/invitations/{code}", invitation.getCode()));
+
+		//then
+		resultActions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.partyId").value(party.getId()))
 				.andDo(print());
 	}
 

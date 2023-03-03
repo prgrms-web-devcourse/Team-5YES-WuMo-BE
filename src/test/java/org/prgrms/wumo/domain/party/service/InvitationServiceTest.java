@@ -2,6 +2,7 @@ package org.prgrms.wumo.domain.party.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
@@ -25,11 +26,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.party.dto.request.InvitationRegisterRequest;
 import org.prgrms.wumo.domain.party.dto.response.InvitationRegisterResponse;
+import org.prgrms.wumo.domain.party.dto.response.InvitationValidateResponse;
 import org.prgrms.wumo.domain.party.model.Invitation;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.InvitationRepository;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
+import org.prgrms.wumo.global.exception.custom.ExpiredInvitationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -203,6 +206,68 @@ class InvitationServiceTest {
 			//then
 			Assertions.assertThrows(EntityNotFoundException.class,
 					() -> invitationService.registerInvitation(party.getId(), invitationRegisterRequest));
+		}
+
+	}
+	@Nested
+	@DisplayName("validateInvitation 메소드는 유효성 검증 요청시")
+	class ValidateInvitation {
+
+		@Test
+		@DisplayName("만료되지 않은 초대코드라면 초대장 정보를 반환한다.")
+		void success() {
+			//mocking
+			given(invitationRepository.findById(anyLong()))
+					.willReturn(Optional.of(invitation));
+
+			//when
+			InvitationValidateResponse invitationValidateResponse
+					= invitationService.validateInvitation("test");
+
+			//then
+			assertThat(invitationValidateResponse.partyId()).isEqualTo(party.getId());
+			assertThat(invitationValidateResponse.partyId()).isEqualTo(invitation.getParty().getId());
+
+			then(invitationRepository)
+					.should()
+					.findById(anyLong());
+		}
+
+		@Test
+		@DisplayName("존재하지 않는 초대코드인 경우 예외가 발생한다.")
+		void failedIfNotExistsInvitation() {
+			//mocking
+			given(invitationRepository.findById(anyLong()))
+					.willReturn(Optional.empty());
+
+			//when
+			//then
+			Assertions.assertThrows(EntityNotFoundException.class,
+					() -> invitationService.validateInvitation("test"));
+		}
+
+		@Test
+		@DisplayName("만료된 초대코드인 경우 예외가 발생한다.")
+		void failedIfInvitationIsExpired() {
+			//given
+			Invitation oldInvitation = Invitation.builder()
+					.id(10000001L)
+					.party(party)
+					.expiredDate(LocalDateTime.now().minusDays(7))
+					.build();
+
+			//mocking
+			given(invitationRepository.findById(anyLong()))
+					.willReturn(Optional.of(oldInvitation));
+
+			//when
+			//then
+			Assertions.assertThrows(ExpiredInvitationException.class,
+					() -> invitationService.validateInvitation("test"));
+
+			then(invitationRepository)
+					.should()
+					.findById(anyLong());
 		}
 
 	}
