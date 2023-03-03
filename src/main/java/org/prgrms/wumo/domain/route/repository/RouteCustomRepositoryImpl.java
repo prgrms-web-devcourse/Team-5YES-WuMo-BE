@@ -7,6 +7,7 @@ import org.prgrms.wumo.domain.route.model.QRoute;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.springframework.stereotype.Repository;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -23,13 +24,13 @@ public class RouteCustomRepositoryImpl implements RouteCustomRepository {
 	private final QLocation qLocation = QLocation.location;
 
 	@Override
-	public List<Route> findAllByCursorAndSearchWord(Long cursorId, int pageSize, String searchWord) {
+	public List<Route> findAllByCursorAndSearchWord(Long cursorId, int pageSize, int sortType, String searchWord) {
 
 		return jpaQueryFactory.selectFrom(qRoute)
 			.where(inRouteAndHasSearchWord(searchWord),
 				ltRouteId(cursorId),
 				isPublic())
-			.orderBy(qRoute.id.desc())
+			.orderBy(getSortType(sortType))
 			.limit(pageSize)
 			.fetch();
 	}
@@ -57,5 +58,12 @@ public class RouteCustomRepositoryImpl implements RouteCustomRepository {
 
 	private BooleanExpression isPublic() {
 		return qRoute.isPublic.eq(true);
+	}
+
+	private OrderSpecifier<Long> getSortType(int sortType) {
+		if (sortType == 0) {
+			return qRoute.id.desc();
+		}
+		return qRoute.likeCount.desc();
 	}
 }

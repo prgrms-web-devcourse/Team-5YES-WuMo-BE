@@ -73,7 +73,10 @@ public class RouteService {
 	@Transactional(readOnly = true)
 	public RouteGetAllResponses getAllRoute(RouteGetAllRequest routeGetAllRequest) {
 		List<Route> routes = routeRepository.findAllByCursorAndSearchWord(
-			routeGetAllRequest.cursorId(), routeGetAllRequest.pageSize(), routeGetAllRequest.searchWord());
+			routeGetAllRequest.cursorId(),
+			routeGetAllRequest.pageSize(),
+			routeGetAllRequest.sortType(),
+			routeGetAllRequest.searchWord());
 
 		long lastId = -1L;
 		if (routes.size() != 0) {

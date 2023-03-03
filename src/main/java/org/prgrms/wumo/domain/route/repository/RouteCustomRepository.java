@@ -6,5 +6,5 @@ import org.prgrms.wumo.domain.route.model.Route;
 
 public interface RouteCustomRepository {
 
-	List<Route> findAllByCursorAndSearchWord(Long cursorId, int pageSize, String searchWord);
+	List<Route> findAllByCursorAndSearchWord(Long cursorId, int pageSize, int sortType, String searchWord);
 }
