@@ -2,6 +2,7 @@ package org.prgrms.wumo.domain.route.model;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -37,6 +38,9 @@ public class Route extends BaseTimeEntity {
 	@OneToOne
 	private Party party;
 
+	@Column(name = "like_count", nullable = true, updatable = true)
+	private long likeCount;
+
 	@Builder
 	public Route(Long id, List<Location> locations, Party party) {
 		this.id = id;
@@ -55,5 +59,9 @@ public class Route extends BaseTimeEntity {
 
 	public void updatePublicStatus(boolean isPublic) {
 		this.isPublic = isPublic;
+	}
+
+	public void updateLikeCount() {
+
 	}
 }
