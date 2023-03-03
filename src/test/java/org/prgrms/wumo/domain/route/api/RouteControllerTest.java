@@ -224,6 +224,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 			.name("오예스 찜닭")
 			.latitude(12.3456F)
 			.longitude(34.5678F)
+				.searchAddress("제주시")
 			.address("제주시 서귀포시 서귀동")
 			.image("http://~~~.png")
 			.visitDate(LocalDateTime.now().plusDays(10))
