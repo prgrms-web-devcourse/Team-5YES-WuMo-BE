@@ -3,11 +3,12 @@ package org.prgrms.wumo.domain.party.api;
 import javax.validation.Valid;
 
 import org.prgrms.wumo.domain.party.dto.request.InvitationRegisterRequest;
-import org.prgrms.wumo.domain.party.dto.request.PartyJoinRequest;
 import org.prgrms.wumo.domain.party.dto.response.InvitationRegisterResponse;
+import org.prgrms.wumo.domain.party.dto.response.InvitationValidateResponse;
 import org.prgrms.wumo.domain.party.service.InvitationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,13 +40,12 @@ public class InvitationController {
 		);
 	}
 
-	@PostMapping("/join/{code}")
-	@Operation(summary = "모임 참여 요청")
-	public ResponseEntity<Void> joinParty(
-			@PathVariable @Parameter(description = "초대 코드", required = true) String code,
-			@RequestBody @Valid PartyJoinRequest request
+	@GetMapping("/invitations/{code}")
+	@Operation(summary = "모임 초대코드 유효성 검증")
+	public ResponseEntity<InvitationValidateResponse> validateInvitation(
+			@PathVariable @Parameter(description = "초대코드", required = true) String code
 	) {
-		return new ResponseEntity<>(null, HttpStatus.CREATED);
+		return new ResponseEntity<>(invitationService.validateInvitation(code), HttpStatus.OK);
 	}
 
 }

@@ -19,14 +19,14 @@ public class Base62Util {
 		return sb.toString();
 	}
 
-	public static int decode(String value) {
-		int result = 0;
-		int power = 1;
+	public static long decode(String value) {
+		long result = 0;
+		long power = 1L;
 		String S_BASE62 = new String(BASE62);
 		for (int i = 0; i < value.length(); i++) {
-			int digit = S_BASE62.indexOf(value.charAt(i));
+			long digit = S_BASE62.indexOf(value.charAt(i));
 			result += digit * power;
-			power *= 62;
+			power *= 62L;
 		}
 		return result;
 	}
