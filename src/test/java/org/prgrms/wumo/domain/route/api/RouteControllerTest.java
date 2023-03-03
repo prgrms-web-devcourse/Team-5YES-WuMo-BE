@@ -177,6 +177,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes")
 			.param("cursorId", (String)null)
 			.param("pageSize", String.valueOf(pageSize))
+			.param("sortType", String.valueOf(0))
 			.param("searchWord", (String)null));
 
 		//then
