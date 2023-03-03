@@ -141,7 +141,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 		resultActions
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id").value(routeId))
-			.andExpect(jsonPath("$.isPublic").value(false))
+			.andExpect(jsonPath("$.isPublic").value(true))
 			.andExpect(jsonPath("$.locations").isArray())
 			.andExpect(jsonPath("$.partyId").value(partyId))
 			.andDo(print());

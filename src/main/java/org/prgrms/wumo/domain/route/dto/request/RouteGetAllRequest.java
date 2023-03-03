@@ -19,7 +19,7 @@ public record RouteGetAllRequest(
 	// @Schema(description = "정렬 기준", required = false, example = "기본 : 최신순// 좋아요순인지, 지난달 베스트 일정인지 등등 어떻게 받을지 상의필요")
 	// String sortType,
 
-	@Schema(description = "검색어(지역, 포함여부는 앞에서부터만 인식)", required = false, example = "부산광역시 or 부산(광역시는 x)")
+	@Schema(description = "검색어(지역)", required = false, example = "부산광역시")
 	String searchWord
 ) {
 }
