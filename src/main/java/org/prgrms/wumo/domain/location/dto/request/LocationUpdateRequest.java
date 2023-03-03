@@ -22,7 +22,7 @@ public record LocationUpdateRequest(
 		@Schema(description = "후보지 카테고리 수정 내용", example = "DRINK", required = true)
 		Category category,
 
-		@Schema(description = "후보장소 설명 수정 내용", example = "바나나맛이 맛있다고함!", required = false)
+		@Schema(description = "후보지 설명 수정 내용", example = "바나나맛이 맛있다고함!", required = false)
 		String description,
 
 		@NotNull(message = "방문 예정일은 필수 입력사항입니다.")
