@@ -5,6 +5,7 @@ import org.prgrms.wumo.domain.location.dto.request.LocationRegisterRequest;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetAllResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationRegisterResponse;
+import org.prgrms.wumo.domain.location.dto.response.LocationUpdateResponse;
 import org.prgrms.wumo.domain.location.model.Location;
 
 public class LocationMapper {
@@ -18,6 +19,7 @@ public class LocationMapper {
 	public static Location toLocation(LocationRegisterRequest locationRegisterRequest){
 		return Location.builder()
 				.name(locationRegisterRequest.name())
+				.searchAddress(locationRegisterRequest.searchAddress())
 				.address(locationRegisterRequest.address())
 				.latitude(locationRegisterRequest.latitude())
 				.longitude(locationRegisterRequest.longitude())
@@ -34,6 +36,7 @@ public class LocationMapper {
 		return new LocationGetResponse(
 				location.getId(),
 				location.getName(),
+				location.getSearchAddress(),
 				location.getAddress(),
 				location.getLatitude(),
 				location.getLongitude(),
@@ -43,8 +46,7 @@ public class LocationMapper {
 				location.getExpectedCost(),
 				location.getSpending(),
 				location.getCategory(),
-				// TODO Route 의 코드가 추가되면 route.getId()로 대체
-				1L
+				location.getRoute() == null ? null : location.getRoute().getId()
 		);
 	}
 
@@ -52,5 +54,17 @@ public class LocationMapper {
 		return new LocationGetAllResponse(
 				locations.stream().map(LocationMapper::toLocationGetResponse).toList(), lastId
 		);
+	}
+
+	public static LocationUpdateResponse toLocationUpdateResponse(Location location){
+		return new LocationUpdateResponse(
+				location.getId(),
+				location.getImage(),
+				location.getDescription(),
+				location.getVisitDate(),
+				location.getExpectedCost(),
+				location.getCategory()
+		);
+
 	}
 }
