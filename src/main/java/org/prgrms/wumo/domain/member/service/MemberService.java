@@ -19,11 +19,11 @@ import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
 import org.prgrms.wumo.domain.member.model.Email;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
+import org.prgrms.wumo.domain.member.repository.RefreshTokenRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.exception.custom.InvalidRefreshTokenException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.WumoJwt;
-import org.prgrms.wumo.global.util.RefreshTokenRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -77,11 +77,13 @@ public class MemberService {
 		return toMemberLoginResponse(wumoJwt);
 	}
 
+	@Transactional
 	public void logoutMember() {
 		refreshTokenRepository.delete(String.valueOf(getMemberId()));
 		SecurityContextHolder.clearContext();
 	}
 
+	@Transactional
 	public MemberLoginResponse reissueMember(MemberReissueRequest memberReissueRequest) {
 		String accessToken = memberReissueRequest.accessToken();
 		String refreshToken = memberReissueRequest.refreshToken();
