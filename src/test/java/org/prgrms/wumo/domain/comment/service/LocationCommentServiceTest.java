@@ -4,10 +4,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.prgrms.wumo.global.mapper.CommentMapper.toLocationCommentGetAllResponse;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,10 +21,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentGetAllRequest;
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.dto.request.LocationCommentUpdateRequest;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentRegisterResponse;
+import org.prgrms.wumo.domain.comment.dto.response.LocationCommentUpdateResponse;
 import org.prgrms.wumo.domain.comment.model.LocationComment;
 import org.prgrms.wumo.domain.comment.repository.LocationCommentRepository;
+import org.prgrms.wumo.domain.location.model.Category;
+import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.model.Party;
@@ -53,17 +59,19 @@ public class LocationCommentServiceTest {
 	LocationComment locationComment;
 	Party party;
 	PartyMember partyMember;
+	Location location;
 
 	@BeforeEach
 	void beforeEach() {
 		member = getMember();
 		party = getParty();
 		partyMember = getPartyMember();
+		location = getLocation();
 		locationComment = getLocationComment();
 
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-				new UsernamePasswordAuthenticationToken(1L, null, Collections.EMPTY_LIST);
+				new UsernamePasswordAuthenticationToken(member.getId(), null, Collections.EMPTY_LIST);
 
 		context.setAuthentication(usernamePasswordAuthenticationToken);
 	}
@@ -128,14 +136,12 @@ public class LocationCommentServiceTest {
 					.member(member)
 					.build();
 
-
 			List<LocationComment> locationComments = List.of(locationComment2, locationComment3);
 
 			LocationCommentGetAllRequest locationCommentGetAllRequest =
 					new LocationCommentGetAllRequest(null, 2, 2L);
 
 			LocationCommentGetAllResponse expected = toLocationCommentGetAllResponse(locationComments, 3L);
-
 
 			given(locationCommentRepository.findAllByLocationId(2L, null, 2))
 					.willReturn(locationComments);
@@ -149,6 +155,30 @@ public class LocationCommentServiceTest {
 			assertThat(locationCommentGetAllResponse).usingRecursiveComparison().isEqualTo(expected);
 		}
 
+	}
+
+	@Nested
+	@DisplayName("LocationCommentUpdate를 통해 ")
+	class locationCommentUpdate {
+		@Test
+		@DisplayName("후보지 댓글을 수정한다.")
+		void success() {
+			// Given
+			given(partyMemberRepository.existsById(any(Long.class))).willReturn(true);
+			given(locationCommentRepository.findById(any(Long.class))).willReturn(Optional.of(locationComment));
+			given(locationCommentRepository.save(any(LocationComment.class))).willReturn(locationComment);
+
+			LocationCommentUpdateRequest request =
+					new LocationCommentUpdateRequest(locationComment.getId(), "다음에는 반얀트리 가야지!!", "image.png");
+			LocationCommentUpdateResponse expected =
+					new LocationCommentUpdateResponse(locationComment.getId(), "다음에는 반얀트리 가야지!!", "image.png");
+			// When
+			LocationCommentUpdateResponse response = locationCommentService.updateLocationComment(request);
+
+			// Then
+			assertThat(response).usingRecursiveComparison().isEqualTo(expected);
+
+		}
 	}
 
 	private Member getMember() {
@@ -186,10 +216,27 @@ public class LocationCommentServiceTest {
 				.id(1L)
 				.image("image.png")
 				.content("댓글 댓글")
-				.locationId(1L)
+				.locationId(location.getId())
 				.isEdited(false)
 				.partyMember(partyMember)
 				.member(member)
+				.build();
+	}
+
+	private Location getLocation() {
+		return Location.builder()
+				.id(1L)
+				.image("httpL//.png")
+				.category(Category.MEAL)
+				.description("딸기 뷔페!! 드디어 예약 성공!! Must Be StrawBerry!!!")
+				.address("서울특별시 중구 을지로 30 페닌슐라 라운지 & 바")
+				.searchAddress("서울특별시")
+				.name("롯데호텔")
+				.latitude(123.45F)
+				.longitude(34.45F)
+				.partyId(party.getId())
+				.visitDate(LocalDateTime.now())
+				.expectedCost(170000)
 				.build();
 	}
 }
