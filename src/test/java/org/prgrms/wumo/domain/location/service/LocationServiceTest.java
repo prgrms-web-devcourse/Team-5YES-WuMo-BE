@@ -35,6 +35,7 @@ import org.prgrms.wumo.domain.location.repository.LocationRepository;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -61,9 +62,8 @@ public class LocationServiceTest {
 	// GIVEN
 	LocationTestUtils locationTestUtils = new LocationTestUtils();
 
-
 	@BeforeEach
-	void beforeEach(){
+	void beforeEach() {
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
 				new UsernamePasswordAuthenticationToken(1L, null, Collections.EMPTY_LIST);
@@ -81,12 +81,12 @@ public class LocationServiceTest {
 	class RegisterLocation {
 		// Given
 		LocationRegisterRequest locationRegisterRequest
-			= new LocationRegisterRequest(
-			"프로그래머스 강남 교육장", "서울특별시","강남역 2번출구"
-			, locationTestUtils.getLatitude1(), locationTestUtils.getLongitude1(),
-			"http://programmers_gangnam_image.com"
-			, Category.STUDY, "이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀...."
-			, locationTestUtils.getDayToVisit(), 4000, 1L
+				= new LocationRegisterRequest(
+				"프로그래머스 강남 교육장", "서울특별시", "강남역 2번출구"
+				, locationTestUtils.getLatitude1(), locationTestUtils.getLongitude1(),
+				"http://programmers_gangnam_image.com"
+				, Category.STUDY, "이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀...."
+				, locationTestUtils.getDayToVisit(), 4000, 1L
 		);
 
 		@Test
@@ -97,7 +97,7 @@ public class LocationServiceTest {
 
 			// When
 			LocationRegisterResponse locationRegisterResponse =
-				locationService.registerLocation(locationRegisterRequest);
+					locationService.registerLocation(locationRegisterRequest);
 
 			// Then
 			assertThat(locationRegisterResponse.id()).isEqualTo(1L);
@@ -118,11 +118,11 @@ public class LocationServiceTest {
 
 			// When
 			LocationGetResponse locationGetResponse =
-				locationService.getLocation(1L);
+					locationService.getLocation(1L);
 
 			// Then
 			assertThat(locationGetResponse).usingRecursiveComparison()
-				.isEqualTo(toLocationGetResponse(locationTestUtils.getLocation()));
+					.isEqualTo(toLocationGetResponse(locationTestUtils.getLocation()));
 		}
 
 		@Test
@@ -133,7 +133,7 @@ public class LocationServiceTest {
 
 			// When // Then
 			assertThatThrownBy(
-				() -> locationService.getLocation(1L)
+					() -> locationService.getLocation(1L)
 			).isInstanceOf(EntityNotFoundException.class);
 		}
 	}
@@ -146,7 +146,7 @@ public class LocationServiceTest {
 		Long partyId = 1L;
 
 		LocationGetAllRequest locationGetAllRequest
-			= new LocationGetAllRequest(1L, pageSize, partyId);
+				= new LocationGetAllRequest(1L, pageSize, partyId);
 
 		List<Location> partyId1Locations = new ArrayList<>();
 
@@ -162,7 +162,7 @@ public class LocationServiceTest {
 			}
 
 			given(locationRepository.findByPartyId(1L, 5, 1L))
-				.willReturn(partyId1Locations);
+					.willReturn(partyId1Locations);
 
 			// When
 			LocationGetAllResponse locationGetAllResponse = locationService.getAllLocation(locationGetAllRequest);
@@ -171,10 +171,10 @@ public class LocationServiceTest {
 			assertThat(locationGetAllResponse.locations().size()).isEqualTo(5);
 			for (int i = 0; i < 4; i++) {
 				assertThat(locationGetAllResponse.locations().get(i)).usingRecursiveComparison()
-					.isEqualTo(toLocationGetResponse(locationTestUtils.getLocations().get(i)));
+						.isEqualTo(toLocationGetResponse(locationTestUtils.getLocations().get(i)));
 			}
 			assertThat(locationGetAllResponse.locations().get(4)).usingRecursiveComparison()
-				.isEqualTo(toLocationGetResponse(locationTestUtils.getLocations().get(5)));
+					.isEqualTo(toLocationGetResponse(locationTestUtils.getLocations().get(5)));
 		}
 
 	}
@@ -188,8 +188,7 @@ public class LocationServiceTest {
 		@Test
 		@DisplayName("루트에서 후보지를 삭제할 수 있다.")
 		void deleteRouteLocationTest() {
-			given(locationRepository.findById(any(Long.class))).
-				willReturn(Optional.of(locationTestUtils.getLocation()));
+			given(locationRepository.findById(any(Long.class))).willReturn(Optional.of(locationTestUtils.getLocation()));
 			given(partyMemberRepository.existsByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(true);
 
 			// When
@@ -197,8 +196,43 @@ public class LocationServiceTest {
 
 			// Then
 			then(locationRepository)
-				.should()
-				.findById(any(Long.class));
+					.should()
+					.findById(any(Long.class));
 		}
+	}
+
+	@Nested
+	@DisplayName("deleteLocation을 사용해서 ")
+	class deleteLocation {
+		// Given
+		Long locationId = locationTestUtils.getLocation().getId();
+
+		@Test
+		@DisplayName("후보지를 삭제할 수 있다.")
+		void success() {
+			// Given
+			given(locationRepository.findById(any(Long.class))).willReturn(Optional.of(locationTestUtils.getLocation()));
+			given(partyMemberRepository.existsByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(true);
+
+			// When
+			locationService.deleteLocation(locationId);
+
+			// Then
+			then(locationRepository).should().findById(locationId);
+		}
+
+		@Test
+		@DisplayName("모임에 속하지 않은 회원은 삭제할 수 없다.")
+		void failInvalid() {
+			// Given
+			given(locationRepository.findById(any(Long.class))).willReturn(Optional.of(locationTestUtils.getLocation()));
+			given(partyMemberRepository.existsByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(false);
+
+			// When // Then
+			assertThatThrownBy(
+					() -> locationService.deleteLocation(locationId)
+			).isInstanceOf(AccessDeniedException.class);
+		}
+
 	}
 }

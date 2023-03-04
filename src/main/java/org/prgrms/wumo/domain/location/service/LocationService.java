@@ -76,6 +76,15 @@ public class LocationService {
 		location.deleteRoute();
 	}
 
+	@Transactional
+	public void deleteLocation(Long locationId){
+		Location location = getLocationEntity(locationId);
+
+		checkMemberInParty(location.getPartyId(), getMemberId());
+
+		locationRepository.deleteById(locationId);
+	}
+
 	private Location getLocationEntity(Long locationId) {
 		return locationRepository.findById(locationId)
 				.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 후보 장소입니다"));

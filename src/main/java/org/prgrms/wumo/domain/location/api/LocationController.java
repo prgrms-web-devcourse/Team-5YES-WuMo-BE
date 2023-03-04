@@ -80,6 +80,7 @@ public class LocationController {
 	public ResponseEntity<Void> deleteLocation(
 			@PathVariable @Parameter(description = "삭제할 후보장소 아이디") Long locationId) {
 
+		locationService.deleteLocation(locationId);
 		return ResponseEntity.ok().build();
 	}
 
