@@ -2,9 +2,10 @@ package org.prgrms.wumo.global.config;
 
 import java.util.Arrays;
 
-import org.prgrms.wumo.global.exception.custom.CustomAccessDeniedHandler;
-import org.prgrms.wumo.global.exception.custom.CustomAuthenticationEntryPoint;
+import org.prgrms.wumo.global.jwt.CustomAccessDeniedHandler;
+import org.prgrms.wumo.global.jwt.CustomAuthenticationEntryPoint;
 import org.prgrms.wumo.global.jwt.JwtAuthenticationFilter;
+import org.prgrms.wumo.global.jwt.JwtExceptionFilter;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -91,12 +92,14 @@ public class SecurityConfig {
 			.antMatchers("/api/v1/members/signup", "/api/v1/members/login").permitAll()
 			.and()
 
-			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider()),
-				UsernamePasswordAuthenticationFilter.class)
-
 			.exceptionHandling()
 			.authenticationEntryPoint(customAuthenticationEntryPoint())
-			.accessDeniedHandler(customAccessDeniedHandler());
+			.accessDeniedHandler(customAccessDeniedHandler())
+			.and()
+
+			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider()),
+				UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(new JwtExceptionFilter(objectMapper), JwtAuthenticationFilter.class);
 
 		return http.build();
 	}

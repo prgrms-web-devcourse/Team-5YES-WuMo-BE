@@ -5,12 +5,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -211,15 +213,62 @@ public class RouteServiceTest {
 	@DisplayName("getAllRoute 메소드는 공개 루트 목록 조회 요청 시 ")
 	class GetAllRoute {
 		//given
-		RouteGetAllRequest routeGetAllRequest
-			= new RouteGetAllRequest(null, 5);
+		List<Route> routes;
 
 		@Test
-		@DisplayName("최신순으로 공개 루트 목록을 반환한다")
+		@DisplayName("공개 루트 목록을 최신순으로 반환한다")
 		void success() {
+			//given
+			RouteGetAllRequest routeGetAllRequest
+				= new RouteGetAllRequest(3L, 5, null);
+
+			routes = List.of(getPublicRouteData2(), getPublicRouteData1());
+
 			//mocking
-			given(routeRepository.findAllByCursor(any(), anyInt()))
-				.willReturn(Collections.emptyList());
+			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), any()))
+				.willReturn(routes);
+
+			//when
+			RouteGetAllResponses result = routeService.getAllRoute(routeGetAllRequest);
+
+			//then
+			assertThat(result.routes()).hasSize(2);
+			assertThat(result.lastId()).isEqualTo(1);
+		}
+
+		@Test
+		@DisplayName("검색어가 있는 경우 조건에 맞는 공개 루트 목록을 최신순으로 반환한다")
+		void success_search() {
+			//given
+			RouteGetAllRequest routeGetAllRequest
+				= new RouteGetAllRequest(3L, 5, "제주");
+
+			routes = List.of(getPublicRouteData1());
+
+			//mocking
+			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), anyString()))
+				.willReturn(routes);
+
+			//when
+			RouteGetAllResponses result = routeService.getAllRoute(routeGetAllRequest);
+
+			//then
+			assertThat(result.routes()).hasSize(1);
+			assertThat(result.lastId()).isEqualTo(1);
+		}
+
+		@Test
+		@DisplayName("조건에 만족하는 데이터가 없을 경우 빈 리스트를 반환한다")
+		void success_empty_data() {
+			//given
+			RouteGetAllRequest routeGetAllRequest
+				= new RouteGetAllRequest(3L, 5, "부산광역시");
+
+			routes = Collections.emptyList();
+
+			//mocking
+			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), anyString()))
+				.willReturn(routes);
 
 			//when
 			RouteGetAllResponses result = routeService.getAllRoute(routeGetAllRequest);
@@ -291,5 +340,39 @@ public class RouteServiceTest {
 			}})
 			.party(getPartyData())
 			.build();
+	}
+
+	//제주시에 위치한 후보지가 포함된 루트
+	private Route getPublicRouteData1() {
+		Route route = getRouteData();
+		route.updatePublicStatus(true);
+		return route;
+	}
+
+	//서울특별시에 위치한 후보지가 포함된 루트
+	private Route getPublicRouteData2() {
+		Location location = Location.builder()
+			.id(2L)
+			.name("오예스 치킨")
+			.latitude(23.3456F)
+			.longitude(45.5678F)
+			.address("서울특별시 강남구 테헤란로")
+				.searchAddress("서울특별시")
+			.image("http://~~~.png")
+			.visitDate(LocalDateTime.now().plusDays(5))
+			.category(Category.MEAL)
+			.expectedCost(50000)
+			.partyId(2L)
+			.build();
+
+		Route route = Route.builder()
+			.id(2L)
+			.locations(new ArrayList<>() {{
+				add(location);
+			}})
+			.party(getPartyData())
+			.build();
+		route.updatePublicStatus(true);
+		return route;
 	}
 }

@@ -3,6 +3,7 @@ package org.prgrms.wumo.global.exception;
 import javax.persistence.EntityNotFoundException;
 
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
+import org.prgrms.wumo.global.exception.custom.ExpiredInvitationException;
 import org.prgrms.wumo.global.exception.custom.ImageDeleteFailedException;
 import org.prgrms.wumo.global.exception.custom.ImageUploadFailedException;
 import org.prgrms.wumo.global.exception.custom.PartyNotEmptyException;
@@ -38,7 +39,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler({
 		ImageUploadFailedException.class, IllegalArgumentException.class, ImageDeleteFailedException.class,
-			EntityNotFoundException.class, PartyNotEmptyException.class
+			EntityNotFoundException.class, PartyNotEmptyException.class, ExpiredInvitationException.class
 	})
 	public ResponseEntity<ExceptionResponse> handleException(RuntimeException runtimeException) {
 		log.info("exception : " + runtimeException);

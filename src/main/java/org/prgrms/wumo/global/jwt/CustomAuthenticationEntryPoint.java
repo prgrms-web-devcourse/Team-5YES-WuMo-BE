@@ -1,4 +1,4 @@
-package org.prgrms.wumo.global.exception.custom;
+package org.prgrms.wumo.global.jwt;
 
 import java.io.IOException;
 
@@ -30,8 +30,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 		ExceptionResponse exceptionResponse = new ExceptionResponse("로그인 후 사용가능합니다.");
 
 		String responseBody = objectMapper.writeValueAsString(exceptionResponse);
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(responseBody);
 	}

@@ -7,11 +7,14 @@ import java.util.List;
 
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
+import org.prgrms.wumo.domain.party.dto.response.InvitationRegisterResponse;
+import org.prgrms.wumo.domain.party.dto.response.InvitationValidateResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetAllResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetAllResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
+import org.prgrms.wumo.domain.party.model.Invitation;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 
@@ -83,6 +86,14 @@ public class PartyMapper {
 				partyMember.getRole(),
 				partyMember.getMember().getProfileImage()
 		);
+	}
+
+	public static InvitationRegisterResponse toInvitationRegisterResponse(Invitation invitation) {
+		return new InvitationRegisterResponse(invitation.getCode());
+	}
+
+	public static InvitationValidateResponse toInvitationValidateResponse(Invitation invitation) {
+		return new InvitationValidateResponse(invitation.getParty().getId());
 	}
 
 }

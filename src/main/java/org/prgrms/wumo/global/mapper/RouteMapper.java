@@ -53,6 +53,8 @@ public class RouteMapper {
 	public static RouteGetAllResponses toRouteGetAllResponses(List<Route> routes, long lastId) {
 		List<RouteGetAllResponse> routesResponses = routes.stream()
 			.map(route -> new RouteGetAllResponse(
+				route.getId(),
+				route.getLikeCount(),
 				toRouteLocationSimpleResponse(route.getLocations()),
 				route.getParty().getName(),
 				route.getParty().getStartDate(),

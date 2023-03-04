@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record PartyMemberUpdateRequest(
 
 		@NotBlank
-		@Schema(description = "역할", required = true, example = "총무")
+		@Schema(description = "역할", example = "총무", requiredMode = Schema.RequiredMode.REQUIRED)
 		String role
 
 ) {

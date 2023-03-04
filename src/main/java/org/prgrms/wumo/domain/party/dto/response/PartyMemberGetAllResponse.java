@@ -9,7 +9,7 @@ public record PartyMemberGetAllResponse(
 		@Schema(description = "모임 구성원 목록")
 		List<PartyMemberGetResponse> members,
 
-		@Schema(description = "커서 아이디", example = "10", required = true)
+		@Schema(description = "커서 아이디", example = "10", requiredMode = Schema.RequiredMode.REQUIRED)
 		Long lastId
 ) {
 }
