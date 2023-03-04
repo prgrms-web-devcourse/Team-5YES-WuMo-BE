@@ -71,8 +71,8 @@ public class MemberService {
 			throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
 		}
 
-		WumoJwt wumoJwt = jwtTokenProvider.generateToken(String.valueOf(member.getId()));
-		member.updateRefreshToken(wumoJwt.getRefreshToken());
+		String memberId = String.valueOf(member.getId());
+		WumoJwt wumoJwt = getWumoJwt(memberId);
 
 		return toMemberLoginResponse(wumoJwt);
 	}
@@ -93,9 +93,7 @@ public class MemberService {
 		}
 
 		refreshTokenRepository.delete(memberId);
-		WumoJwt wumoJwt = jwtTokenProvider.generateToken(memberId);
-		refreshTokenRepository.save(
-			memberId, wumoJwt.getRefreshToken(), jwtTokenProvider.getRefreshTokenExpireSeconds());
+		WumoJwt wumoJwt = getWumoJwt(memberId);
 
 		return toMemberLoginResponse(wumoJwt);
 	}
@@ -115,8 +113,19 @@ public class MemberService {
 		member.update(
 			memberUpdateRequest.nickname(),
 			memberUpdateRequest.password(),
-			memberUpdateRequest.profileImage());
+			memberUpdateRequest.profileImage()
+		);
 		return toMemberGetResponse(memberRepository.save(member));
+	}
+
+	private WumoJwt getWumoJwt(String memberId) {
+		WumoJwt wumoJwt = jwtTokenProvider.generateToken(memberId);
+		refreshTokenRepository.save(
+			memberId,
+			wumoJwt.getRefreshToken(),
+			jwtTokenProvider.getRefreshTokenExpireSeconds()
+		);
+		return wumoJwt;
 	}
 
 	private Member getMemberEntity(long memberId) {
