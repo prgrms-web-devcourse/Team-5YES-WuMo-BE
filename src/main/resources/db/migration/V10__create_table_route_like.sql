@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS `route_like` (
+`id`        BIGINT  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+`route_id`  BIGINT  NOT NULL,
+`member_id` BIGINT  NOT NULL
+);
