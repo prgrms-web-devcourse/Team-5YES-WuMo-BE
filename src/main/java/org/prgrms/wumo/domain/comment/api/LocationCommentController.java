@@ -10,6 +10,7 @@ import org.prgrms.wumo.domain.comment.dto.request.LocationCommentRegisterRequest
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentUpdateRequest;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentRegisterResponse;
+import org.prgrms.wumo.domain.comment.dto.response.LocationCommentUpdateResponse;
 import org.prgrms.wumo.domain.comment.service.LocationCommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,10 +49,10 @@ public class LocationCommentController {
 
 	@PatchMapping
 	@Operation(summary = "후보지 댓글 수정")
-	public ResponseEntity<Void> updateLocationComment(
+	public ResponseEntity<LocationCommentUpdateResponse> updateLocationComment(
 			@RequestBody @Valid LocationCommentUpdateRequest request
 	) {
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(locationCommentService.updateLocationComment(request));
 	}
 
 	@DeleteMapping("/{id}")
