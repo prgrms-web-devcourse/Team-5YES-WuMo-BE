@@ -23,6 +23,7 @@ import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.exception.custom.InvalidRefreshTokenException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.WumoJwt;
+import org.prgrms.wumo.global.util.RefreshTokenRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,6 +38,7 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final JwtTokenProvider jwtTokenProvider;
+	private final RefreshTokenRepository refreshTokenRepository;
 
 	@Transactional
 	public MemberRegisterResponse registerMember(MemberRegisterRequest memberRegisterRequest) {
@@ -84,16 +86,16 @@ public class MemberService {
 		String accessToken = memberReissueRequest.accessToken();
 		String refreshToken = memberReissueRequest.refreshToken();
 		jwtTokenProvider.validateToken(refreshToken);
-
 		String memberId = jwtTokenProvider.extractMember(accessToken);
-		Member member = getMemberEntity(Integer.parseInt(memberId));
 
-		if (!member.getRefreshToken().equals(refreshToken)) {
+		if (!refreshTokenRepository.get(memberId).equals(refreshToken)) {
 			throw new InvalidRefreshTokenException("인증 정보가 만료되었습니다.");
 		}
 
+		refreshTokenRepository.delete(memberId);
 		WumoJwt wumoJwt = jwtTokenProvider.generateToken(memberId);
-		member.updateRefreshToken(wumoJwt.getRefreshToken());
+		refreshTokenRepository.save(
+			memberId, wumoJwt.getRefreshToken(), jwtTokenProvider.getRefreshTokenExpireSeconds());
 
 		return toMemberLoginResponse(wumoJwt);
 	}
