@@ -7,11 +7,11 @@ import javax.validation.constraints.NotNull;
 public record LocationSpendingUpdateRequest(
 
 		@NotNull
-		@Schema(description = "사용 금액을 갱신할 후보지 식별자", example = "1", required = true)
+		@Schema(description = "사용 금액을 갱신할 후보지 식별자", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
 		Long locationId,
 
 		@NotNull
-		@Schema(description = "갱신할 금액", example = "16000", required = true)
+		@Schema(description = "갱신할 금액", example = "16000", requiredMode = Schema.RequiredMode.REQUIRED)
 		int spending
 ) {
 }

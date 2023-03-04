@@ -32,12 +32,12 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/locations")
 @RequiredArgsConstructor
-@Tag(name = "후보장소 API")
+@Tag(name = "후보지 API")
 public class LocationController {
 	private final LocationService locationService;
 
 	@PostMapping
-	@Operation(summary = "후보장소 등록")
+	@Operation(summary = "후보지 등록")
 	public ResponseEntity<LocationRegisterResponse> registerLocation(
 			@RequestBody @Valid LocationRegisterRequest locationRegisterRequest) {
 
@@ -45,7 +45,7 @@ public class LocationController {
 	}
 
 	@GetMapping("/{locationId}")
-	@Operation(summary = "후보장소 상세 조회")
+	@Operation(summary = "후보지 상세 조회")
 	public ResponseEntity<LocationGetResponse> getLocation(
 			@PathVariable @Parameter(description = "조회할 후보장소 아이디") Long locationId) {
 
@@ -53,14 +53,14 @@ public class LocationController {
 	}
 
 	@GetMapping
-	@Operation(summary = "후보장소 목록 조회")
+	@Operation(summary = "후보지 목록 조회")
 	public ResponseEntity<LocationGetAllResponse> getAllLocation(
 			@Valid LocationGetAllRequest locationGetAllRequest) {
 		return ResponseEntity.ok(locationService.getAllLocation(locationGetAllRequest));
 	}
 
 	@PatchMapping("/spending")
-	@Operation(summary = "후보장소 사용 금액 갱신")
+	@Operation(summary = "후보지 사용 금액 갱신")
 	public ResponseEntity<LocationSpendingUpdateResponse> updateSpending(
 			@RequestBody @Valid LocationSpendingUpdateRequest locationSpendingUpdateRequest
 	) {
@@ -68,7 +68,7 @@ public class LocationController {
 	}
 
 	@PatchMapping
-	@Operation(summary = "후보장소 수정")
+	@Operation(summary = "후보지 수정")
 	public ResponseEntity<LocationUpdateResponse> updateLocation(
 			@RequestBody @Valid LocationUpdateRequest locationUpdateRequest) {
 
@@ -76,7 +76,7 @@ public class LocationController {
 	}
 
 	@DeleteMapping("/{locationId}")
-	@Operation(summary = "후보장소 삭제")
+	@Operation(summary = "후보지 삭제")
 	public ResponseEntity<Void> deleteLocation(
 			@PathVariable @Parameter(description = "삭제할 후보장소 아이디") Long locationId) {
 
