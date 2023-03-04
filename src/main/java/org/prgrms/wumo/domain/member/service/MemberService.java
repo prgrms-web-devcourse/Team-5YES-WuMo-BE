@@ -11,6 +11,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.prgrms.wumo.domain.member.dto.request.MemberLoginRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
+import org.prgrms.wumo.domain.member.dto.request.MemberReissueRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
@@ -19,6 +20,7 @@ import org.prgrms.wumo.domain.member.model.Email;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
+import org.prgrms.wumo.global.exception.custom.InvalidRefreshTokenException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.WumoJwt;
 import org.springframework.security.access.AccessDeniedException;
@@ -73,10 +75,27 @@ public class MemberService {
 		return toMemberLoginResponse(wumoJwt);
 	}
 
-	@Transactional
 	public void logoutMember() {
 		getMemberEntity(getMemberId()).logout();
 		SecurityContextHolder.clearContext();
+	}
+
+	public MemberLoginResponse reissueMember(MemberReissueRequest memberReissueRequest) {
+		String accessToken = memberReissueRequest.accessToken();
+		String refreshToken = memberReissueRequest.refreshToken();
+		jwtTokenProvider.validateToken(refreshToken);
+
+		String memberId = jwtTokenProvider.extractMember(accessToken);
+		Member member = getMemberEntity(Integer.parseInt(memberId));
+
+		if (!member.getRefreshToken().equals(refreshToken)) {
+			throw new InvalidRefreshTokenException("인증 정보가 만료되었습니다.");
+		}
+
+		WumoJwt wumoJwt = jwtTokenProvider.generateToken(memberId);
+		member.updateRefreshToken(wumoJwt.getRefreshToken());
+
+		return toMemberLoginResponse(wumoJwt);
 	}
 
 	@Transactional(readOnly = true)

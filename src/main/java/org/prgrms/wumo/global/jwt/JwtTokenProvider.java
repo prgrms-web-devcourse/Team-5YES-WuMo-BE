@@ -46,27 +46,6 @@ public class JwtTokenProvider {
 			.build();
 	}
 
-	private String generateAccessToken(String memberId, Date currentDate) {
-		Date expireDate = new Date(currentDate.getTime() + ACCESS_TOKEN_EXPIRE_SECONDS);
-
-		return Jwts.builder()
-			.setIssuer(issuer)
-			.setSubject(memberId)
-			.setIssuedAt(new Date())
-			.setExpiration(expireDate)
-			.signWith(secretKey)
-			.compact();
-	}
-
-	private String generateRefreshToken(Date currentDate) {
-		Date expireDate = new Date(currentDate.getTime() + REFRESH_TOKEN_EXPIRE_SECONDS);
-
-		return Jwts.builder()
-			.setExpiration(expireDate)
-			.signWith(secretKey)
-			.compact();
-	}
-
 	public Authentication getAuthentication(String accessToken) {
 		Claims claims = parseClaims(accessToken);
 		return new UsernamePasswordAuthenticationToken(
@@ -86,6 +65,31 @@ public class JwtTokenProvider {
 			log.info("Invalid JWT Token.", exception);
 			throw new InvalidTokenException("올바르지 않은 토큰입니다.");
 		}
+	}
+
+	public String extractMember(String accessToken) {
+		return parseClaims(accessToken).getSubject();
+	}
+
+	private String generateAccessToken(String memberId, Date currentDate) {
+		Date expireDate = new Date(currentDate.getTime() + ACCESS_TOKEN_EXPIRE_SECONDS);
+
+		return Jwts.builder()
+			.setIssuer(issuer)
+			.setSubject(memberId)
+			.setIssuedAt(new Date())
+			.setExpiration(expireDate)
+			.signWith(secretKey)
+			.compact();
+	}
+
+	private String generateRefreshToken(Date currentDate) {
+		Date expireDate = new Date(currentDate.getTime() + REFRESH_TOKEN_EXPIRE_SECONDS);
+
+		return Jwts.builder()
+			.setExpiration(expireDate)
+			.signWith(secretKey)
+			.compact();
 	}
 
 	private Claims parseClaims(String accessToken) {

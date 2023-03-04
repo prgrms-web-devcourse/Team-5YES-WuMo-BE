@@ -6,6 +6,7 @@ import org.prgrms.wumo.domain.member.dto.request.MemberEmailCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberLoginRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberNicknameCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
+import org.prgrms.wumo.domain.member.dto.request.MemberReissueRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
@@ -74,8 +75,18 @@ public class MemberController {
 	@DeleteMapping("/logout")
 	@Operation(summary = "로그아웃")
 	public ResponseEntity<Void> logoutMember() {
+
 		memberService.logoutMember();
 		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/reissue")
+	@Operation(summary = "토큰 재발급")
+	public ResponseEntity<MemberLoginResponse> reissueMember(
+		@RequestBody @Valid MemberReissueRequest memberReissueRequest
+	) {
+
+		return ResponseEntity.ok(memberService.reissueMember(memberReissueRequest));
 	}
 
 	@GetMapping("/{memberId}")
