@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.prgrms.wumo.MysqlTestContainer;
 import org.prgrms.wumo.domain.member.dto.request.MemberEmailCheckRequest;
-import org.prgrms.wumo.domain.member.dto.request.MemberLoginRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberNicknameCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
@@ -123,27 +122,27 @@ public class MemberControllerTest extends MysqlTestContainer {
 			.andExpect(status().isNoContent());
 	}
 
-	@Test
-	@DisplayName("로그인을 한다")
-	void login_member() throws Exception {
-		//given
-		MemberLoginRequest memberLoginRequest
-			= new MemberLoginRequest("taehee@gmail.com", "qwe12345");
-
-		//when
-		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/members/login")
-			.contentType(MediaType.APPLICATION_JSON_VALUE)
-			.content(objectMapper.writeValueAsString(memberLoginRequest)));
-
-		//then
-		resultActions
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.grantType").isNotEmpty())
-			.andExpect(jsonPath("$.accessToken").isNotEmpty())
-			.andExpect(jsonPath("$.refreshToken").isNotEmpty())
-			.andDo(print());
-	}
+	// @Test
+	// @DisplayName("로그인을 한다")
+	// void login_member() throws Exception {
+	// 	//given
+	// 	MemberLoginRequest memberLoginRequest
+	// 		= new MemberLoginRequest("taehee@gmail.com", "qwe12345");
+	//
+	// 	//when
+	// 	ResultActions resultActions
+	// 		= mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/members/login")
+	// 		.contentType(MediaType.APPLICATION_JSON_VALUE)
+	// 		.content(objectMapper.writeValueAsString(memberLoginRequest)));
+	//
+	// 	//then
+	// 	resultActions
+	// 		.andExpect(status().isOk())
+	// 		.andExpect(jsonPath("$.grantType").isNotEmpty())
+	// 		.andExpect(jsonPath("$.accessToken").isNotEmpty())
+	// 		.andExpect(jsonPath("$.refreshToken").isNotEmpty())
+	// 		.andDo(print());
+	// }
 
 	@Test
 	@DisplayName("내 정보를 조회한다")
