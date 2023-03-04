@@ -21,11 +21,20 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler({
-		AccessDeniedException.class, InvalidRefreshTokenException.class
+		InvalidRefreshTokenException.class
+	})
+	public ResponseEntity<ExceptionResponse> handleRefreshTokenException(RuntimeException runtimeException) {
+		log.info("exception : " + runtimeException);
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+			.body(new ExceptionResponse(runtimeException.getMessage()));
+	}
+
+	@ExceptionHandler({
+		AccessDeniedException.class
 	})
 	public ResponseEntity<ExceptionResponse> handleAccessException(RuntimeException runtimeException) {
 		log.info("exception : " + runtimeException);
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+		return ResponseEntity.status(HttpStatus.FORBIDDEN)
 			.body(new ExceptionResponse(runtimeException.getMessage()));
 	}
 

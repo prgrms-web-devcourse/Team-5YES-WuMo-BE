@@ -78,7 +78,7 @@ public class MemberService {
 	}
 
 	public void logoutMember() {
-		getMemberEntity(getMemberId()).logout();
+		refreshTokenRepository.delete(String.valueOf(getMemberId()));
 		SecurityContextHolder.clearContext();
 	}
 
