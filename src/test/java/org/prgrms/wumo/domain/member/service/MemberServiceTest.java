@@ -33,6 +33,7 @@ import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
 import org.prgrms.wumo.domain.member.model.Email;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
+import org.prgrms.wumo.domain.member.repository.RefreshTokenRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.WumoJwt;
@@ -54,6 +55,9 @@ public class MemberServiceTest {
 
 	@Mock
 	JwtTokenProvider jwtTokenProvider;
+
+	@Mock
+	RefreshTokenRepository refreshTokenRepository;
 
 	@BeforeEach
 	void setUp() {

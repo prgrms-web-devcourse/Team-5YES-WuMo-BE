@@ -71,6 +71,10 @@ public class JwtTokenProvider {
 		return parseClaims(accessToken).getSubject();
 	}
 
+	public long getRefreshTokenExpireSeconds() {
+		return REFRESH_TOKEN_EXPIRE_SECONDS;
+	}
+
 	private String generateAccessToken(String memberId, Date currentDate) {
 		Date expireDate = new Date(currentDate.getTime() + ACCESS_TOKEN_EXPIRE_SECONDS);
 

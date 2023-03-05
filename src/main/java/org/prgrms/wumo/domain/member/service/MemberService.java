@@ -19,6 +19,7 @@ import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
 import org.prgrms.wumo.domain.member.model.Email;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
+import org.prgrms.wumo.domain.member.repository.RefreshTokenRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.exception.custom.InvalidRefreshTokenException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
@@ -37,6 +38,7 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final JwtTokenProvider jwtTokenProvider;
+	private final RefreshTokenRepository refreshTokenRepository;
 
 	@Transactional
 	public MemberRegisterResponse registerMember(MemberRegisterRequest memberRegisterRequest) {
@@ -69,31 +71,31 @@ public class MemberService {
 			throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
 		}
 
-		WumoJwt wumoJwt = jwtTokenProvider.generateToken(String.valueOf(member.getId()));
-		member.updateRefreshToken(wumoJwt.getRefreshToken());
+		String memberId = String.valueOf(member.getId());
+		WumoJwt wumoJwt = getWumoJwt(memberId);
 
 		return toMemberLoginResponse(wumoJwt);
 	}
 
+	@Transactional
 	public void logoutMember() {
-		getMemberEntity(getMemberId()).logout();
+		refreshTokenRepository.delete(String.valueOf(getMemberId()));
 		SecurityContextHolder.clearContext();
 	}
 
+	@Transactional
 	public MemberLoginResponse reissueMember(MemberReissueRequest memberReissueRequest) {
 		String accessToken = memberReissueRequest.accessToken();
 		String refreshToken = memberReissueRequest.refreshToken();
 		jwtTokenProvider.validateToken(refreshToken);
-
 		String memberId = jwtTokenProvider.extractMember(accessToken);
-		Member member = getMemberEntity(Integer.parseInt(memberId));
 
-		if (!member.getRefreshToken().equals(refreshToken)) {
+		if (!refreshTokenRepository.get(memberId).equals(refreshToken)) {
 			throw new InvalidRefreshTokenException("인증 정보가 만료되었습니다.");
 		}
 
-		WumoJwt wumoJwt = jwtTokenProvider.generateToken(memberId);
-		member.updateRefreshToken(wumoJwt.getRefreshToken());
+		refreshTokenRepository.delete(memberId);
+		WumoJwt wumoJwt = getWumoJwt(memberId);
 
 		return toMemberLoginResponse(wumoJwt);
 	}
@@ -113,8 +115,19 @@ public class MemberService {
 		member.update(
 			memberUpdateRequest.nickname(),
 			memberUpdateRequest.password(),
-			memberUpdateRequest.profileImage());
+			memberUpdateRequest.profileImage()
+		);
 		return toMemberGetResponse(memberRepository.save(member));
+	}
+
+	private WumoJwt getWumoJwt(String memberId) {
+		WumoJwt wumoJwt = jwtTokenProvider.generateToken(memberId);
+		refreshTokenRepository.save(
+			memberId,
+			wumoJwt.getRefreshToken(),
+			jwtTokenProvider.getRefreshTokenExpireSeconds()
+		);
+		return wumoJwt;
 	}
 
 	private Member getMemberEntity(long memberId) {

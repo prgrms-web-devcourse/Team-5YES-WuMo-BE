@@ -1,0 +1,1 @@
+ALTER TABLE `member` DROP `refresh_token`;
