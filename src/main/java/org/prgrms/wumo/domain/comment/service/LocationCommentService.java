@@ -72,11 +72,24 @@ public class LocationCommentService {
 		checkMemberInParty(locationComment.getPartyMember().getId());
 
 		if (!locationComment.getMember().getId().equals(getMemberId())) {
-			throw new AccessDeniedException("댓글은 작성자만 삭제할 수 있습니다.");
+			throw new AccessDeniedException("댓글은 작성자만 수정할 수 있습니다.");
 		}
 		locationComment.update(locationCommentUpdateRequest);
 
 		return toLocationCommentUpdateResponse(locationCommentRepository.save(locationComment));
+	}
+
+	@Transactional
+	public void deleteLocationComment(Long locationCommentId){
+		LocationComment locationComment = getLocationCommentEntity(locationCommentId);
+
+		checkMemberInParty(locationComment.getPartyMember().getId());
+
+		if (!locationComment.getMember().getId().equals(getMemberId())) {
+			throw new AccessDeniedException("댓글은 작성자만 삭제할 수 있습니다.");
+		}
+
+		locationCommentRepository.deleteById(locationCommentId);
 	}
 
 	private LocationComment getLocationCommentEntity(Long locationCommentId) {
