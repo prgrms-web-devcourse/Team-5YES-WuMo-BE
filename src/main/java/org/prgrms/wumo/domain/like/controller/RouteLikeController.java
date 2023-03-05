@@ -1,5 +1,6 @@
 package org.prgrms.wumo.domain.like.controller;
 
+import org.prgrms.wumo.domain.like.service.RouteLikeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,11 +20,14 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "루트 좋아요 API")
 public class RouteLikeController {
 
+	private final RouteLikeService routeLikeService;
+
 	@PostMapping("/{routeId}/likes")
 	@Operation(summary = "루트 좋아요 등록")
 	public ResponseEntity<Void> registerRouteLike(
 			@PathVariable @Parameter(description = "루트 식별자", required = true) Long routeId
 	) {
+		routeLikeService.registerRouteLike(routeId);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
