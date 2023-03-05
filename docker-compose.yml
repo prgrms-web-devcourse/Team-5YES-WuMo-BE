@@ -10,3 +10,16 @@ services:
     volumes:
       - ./mysqldata:/var/lib/mysql
     restart: always
+
+  redis:
+    container_name: redis_boot
+    image: redis:alpine
+    env_file:
+      - spring.env
+    command: redis-server --port 6379
+    hostname: redis_boot
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - "6379:6379"

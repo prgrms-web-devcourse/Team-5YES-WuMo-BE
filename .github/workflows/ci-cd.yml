@@ -33,12 +33,6 @@ jobs:
           echo "${{ secrets.DB_ENV }}" >> db.env
           echo "${{ secrets.SPRING_ENV }}" >> spring.env
 
-      - name: Redis
-        uses: shogo82148/actions-setup-redis@v1
-        with:
-          redis-version: '6.x'
-          run: redis-cli ping
-
       - name: Run docker-compose
         uses: isbang/compose-action@v1.4.1
         with:
