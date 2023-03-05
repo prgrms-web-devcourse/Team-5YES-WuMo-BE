@@ -1,5 +1,6 @@
 package org.prgrms.wumo.domain.like.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.prgrms.wumo.MysqlTestContainer;
+import org.prgrms.wumo.domain.like.model.RouteLike;
+import org.prgrms.wumo.domain.like.repository.RouteLikeRepository;
 import org.prgrms.wumo.domain.location.model.Category;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
@@ -52,6 +55,9 @@ class RouteLikeControllerTest extends MysqlTestContainer {
 
 	@Autowired
 	private RouteRepository routeRepository;
+
+	@Autowired
+	private RouteLikeRepository routeLikeRepository;
 
 	//given
 	Member member;
@@ -118,13 +124,33 @@ class RouteLikeControllerTest extends MysqlTestContainer {
 
 	@Test
 	@DisplayName("루트에 좋아요를 누를 수 있다.")
-	void validateInvitation() throws Exception {
+	void registerRouteLike() throws Exception {
 		//when
 		ResultActions resultActions = mockMvc.perform(post("/api/v1/routes/{routeId}/likes", route.getId()));
 
 		//then
 		resultActions
 				.andExpect(status().isCreated())
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("루트에 좋아요를 삭제할 수 있다.")
+	void deleteRouteLike() throws Exception {
+		//given
+		routeLikeRepository.save(
+				RouteLike.builder()
+						.routeId(route.getId())
+						.memberId(member.getId())
+						.build()
+		);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(delete("/api/v1/routes/{routeId}/likes", route.getId()));
+
+		//then
+		resultActions
+				.andExpect(status().isOk())
 				.andDo(print());
 	}
 
