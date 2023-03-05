@@ -3,6 +3,7 @@ package org.prgrms.wumo.domain.route.repository;
 import java.util.List;
 
 import org.prgrms.wumo.domain.location.model.QLocation;
+import org.prgrms.wumo.domain.route.dto.request.SortType;
 import org.prgrms.wumo.domain.route.model.QRoute;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.springframework.stereotype.Repository;
@@ -24,7 +25,7 @@ public class RouteCustomRepositoryImpl implements RouteCustomRepository {
 	private final QLocation qLocation = QLocation.location;
 
 	@Override
-	public List<Route> findAllByCursorAndSearchWord(Long cursorId, int pageSize, int sortType, String searchWord) {
+	public List<Route> findAllByCursorAndSearchWord(Long cursorId, int pageSize, SortType sortType, String searchWord) {
 
 		return jpaQueryFactory.selectFrom(qRoute)
 			.where(inRouteAndHasSearchWord(searchWord),
@@ -60,8 +61,8 @@ public class RouteCustomRepositoryImpl implements RouteCustomRepository {
 		return qRoute.isPublic.eq(true);
 	}
 
-	private OrderSpecifier<Long> getSortType(int sortType) {
-		if (sortType == 0) {
+	private OrderSpecifier<Long> getSortType(SortType sortType) {
+		if (sortType.equals(SortType.NEWEST)) {
 			return qRoute.id.desc();
 		}
 		return qRoute.likeCount.desc();

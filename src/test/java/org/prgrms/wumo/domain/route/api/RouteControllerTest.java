@@ -171,14 +171,16 @@ public class RouteControllerTest extends MysqlTestContainer {
 		//given
 		Long cursorId = null;
 		int pageSize = 5;
+		String sortType = "NEWEST";
+		String searchWord = null;
 
 		//when
 		ResultActions resultActions
 			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes")
 			.param("cursorId", (String)null)
 			.param("pageSize", String.valueOf(pageSize))
-			.param("sortType", String.valueOf(0))
-			.param("searchWord", (String)null));
+			.param("sortType", sortType)
+			.param("searchWord", searchWord));
 
 		//then
 		resultActions

@@ -33,6 +33,7 @@ import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.domain.route.dto.request.RouteGetAllRequest;
 import org.prgrms.wumo.domain.route.dto.request.RouteRegisterRequest;
 import org.prgrms.wumo.domain.route.dto.request.RouteStatusUpdateRequest;
+import org.prgrms.wumo.domain.route.dto.request.SortType;
 import org.prgrms.wumo.domain.route.dto.response.RouteGetAllResponses;
 import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
@@ -220,12 +221,12 @@ public class RouteServiceTest {
 		void success() {
 			//given
 			RouteGetAllRequest routeGetAllRequest
-				= new RouteGetAllRequest(3L, 5, 0, null);
+				= new RouteGetAllRequest(3L, 5, SortType.NEWEST, null);
 
 			routes = List.of(getPublicRouteData2(), getPublicRouteData1());
 
 			//mocking
-			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), anyInt(), any()))
+			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), any(SortType.class), any()))
 				.willReturn(routes);
 
 			//when
@@ -241,12 +242,12 @@ public class RouteServiceTest {
 		void success_search() {
 			//given
 			RouteGetAllRequest routeGetAllRequest
-				= new RouteGetAllRequest(3L, 5, 0, "제주");
+				= new RouteGetAllRequest(3L, 5, SortType.NEWEST, "제주");
 
 			routes = List.of(getPublicRouteData1());
 
 			//mocking
-			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), anyInt(), anyString()))
+			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), any(SortType.class), anyString()))
 				.willReturn(routes);
 
 			//when
@@ -262,12 +263,12 @@ public class RouteServiceTest {
 		void success_empty_data() {
 			//given
 			RouteGetAllRequest routeGetAllRequest
-				= new RouteGetAllRequest(3L, 5, 0, "부산광역시");
+				= new RouteGetAllRequest(3L, 5, SortType.NEWEST, "부산광역시");
 
 			routes = Collections.emptyList();
 
 			//mocking
-			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), anyInt(), anyString()))
+			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), any(SortType.class), anyString()))
 				.willReturn(routes);
 
 			//when
