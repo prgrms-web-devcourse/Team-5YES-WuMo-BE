@@ -1,8 +1,10 @@
 package org.prgrms.wumo.domain.comment.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.prgrms.wumo.global.mapper.CommentMapper.toLocationCommentGetAllResponse;
 
 import java.time.LocalDateTime;
@@ -34,6 +36,7 @@ import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -178,6 +181,61 @@ public class LocationCommentServiceTest {
 			// Then
 			assertThat(response).usingRecursiveComparison().isEqualTo(expected);
 
+		}
+
+		@Nested
+		@DisplayName("LocationCommentDelete를 통해")
+		class locationCommentDelete {
+			@Test
+			@DisplayName("후보지 댓글을 삭제한다.")
+			void success() {
+				// Given
+				LocationComment locationCommentTmp = LocationComment.builder()
+						.id(450L)
+						.image("image.png")
+						.content("삭제될 댓글....")
+						.locationId(location.getId())
+						.isEdited(false)
+						.partyMember(partyMember)
+						.member(member)
+						.build();
+
+				given(partyMemberRepository.existsById(any(Long.class))).willReturn(true);
+				given(locationCommentRepository.findById(any(Long.class))).willReturn(Optional.of(locationCommentTmp));
+
+				// When
+				locationCommentService.deleteLocationComment(450L);
+
+				// Then
+				then(locationCommentRepository).should().findById(450L);
+
+			}
+
+			@Test
+			@DisplayName("댓글을 작성하지 않은 사람은 댓글을 삭제할 수 없다.")
+			void failedByOtherMember() {
+				// Given
+				LocationComment locationCommentTmp = LocationComment.builder()
+						.id(450L)
+						.image("image.png")
+						.content("삭제될 댓글....")
+						.locationId(location.getId())
+						.isEdited(false)
+						.partyMember(partyMember)
+						.member(member)
+						.build();
+
+				given(partyMemberRepository.existsById(any(Long.class))).willReturn(false);
+				given(locationCommentRepository.findById(any(Long.class))).willReturn(Optional.of(locationCommentTmp));
+
+				// When
+				assertThatThrownBy(
+						() -> locationCommentService.deleteLocationComment(450L)
+				).isInstanceOf(AccessDeniedException.class);
+
+				// Then
+
+			}
 		}
 	}
 
