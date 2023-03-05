@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -97,7 +99,7 @@ class RouteLikeServiceTest {
 
 	@Nested
 	@DisplayName("registerRouteLike 메소드는 등록 요청시")
-	class RegisterInvitation {
+	class RegisterRouteLike {
 
 		@Test
 		@DisplayName("사용자가 좋아요를 누르지 않은 루트라면 좋아요를 등록한다.")
@@ -152,6 +154,64 @@ class RouteLikeServiceTest {
 			then(routeLikeRepository)
 					.should()
 					.existsByRouteIdAndMemberId(route.getId(), member.getId());
+		}
+
+	}
+
+	@Nested
+	@DisplayName("deleteRouteLike 메소드는 삭제 요청시")
+	class DeleteRouteLike {
+
+		@Test
+		@DisplayName("사용자가 좋아요를 눌렀던 루트라면 좋아요를 삭제한다.")
+		void success() {
+			//mocking
+			given(memberRepository.findById(member.getId()))
+					.willReturn(Optional.of(member));
+			given(routeRepository.findById(route.getId()))
+					.willReturn(Optional.of(route));
+			given(routeLikeRepository.deleteByRouteIdAndMemberId(route.getId(), member.getId()))
+					.willReturn(1);
+
+			//when
+			routeLikeService.deleteRouteLike(route.getId());
+
+			//then
+			then(memberRepository)
+					.should()
+					.findById(member.getId());
+			then(routeRepository)
+					.should()
+					.findById(route.getId());
+			then(routeLikeRepository)
+					.should()
+					.deleteByRouteIdAndMemberId(route.getId(), member.getId());
+		}
+
+		@Test
+		@DisplayName("사용자가 좋아요를 누르지 않은 상태라면 예외가 발생한다.")
+		void failed() {
+			//mocking
+			given(memberRepository.findById(member.getId()))
+					.willReturn(Optional.of(member));
+			given(routeRepository.findById(route.getId()))
+					.willReturn(Optional.of(route));
+			given(routeLikeRepository.deleteByRouteIdAndMemberId(route.getId(), member.getId()))
+					.willReturn(0);
+
+			//when
+			//then
+			Assertions.assertThrows(EntityNotFoundException.class, () -> routeLikeService.deleteRouteLike(route.getId()));
+
+			then(memberRepository)
+					.should()
+					.findById(member.getId());
+			then(routeRepository)
+					.should()
+					.findById(route.getId());
+			then(routeLikeRepository)
+					.should()
+					.deleteByRouteIdAndMemberId(route.getId(), member.getId());
 		}
 
 	}

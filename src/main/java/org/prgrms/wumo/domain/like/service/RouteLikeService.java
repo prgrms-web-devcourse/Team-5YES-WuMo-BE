@@ -38,6 +38,16 @@ public class RouteLikeService {
 		routeLikeRepository.save(toRouteLike(route, member));
 	}
 
+	@Transactional
+	public void deleteRouteLike(Long routeId) {
+		Route route = getRouteEntity(routeId);
+		Member member = getMemberEntity(JwtUtil.getMemberId());
+
+		if (routeLikeRepository.deleteByRouteIdAndMemberId(route.getId(), member.getId()) == 0) {
+			throw new EntityNotFoundException("좋아요를 누르지 않은 루트의 좋아요를 취소할 수 없습니다.");
+		}
+	}
+
 	private Route getRouteEntity(Long routeId) {
 		return routeRepository.findById(routeId)
 				.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));

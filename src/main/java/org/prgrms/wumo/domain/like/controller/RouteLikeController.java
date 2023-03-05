@@ -31,11 +31,12 @@ public class RouteLikeController {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
-	@DeleteMapping("/{routeId}/unlikes")
+	@DeleteMapping("/{routeId}/likes")
 	@Operation(summary = "루트 좋아요 삭제")
 	public ResponseEntity<Void> deleteRouteLike(
 			@PathVariable @Parameter(description = "루트 식별자", required = true) Long routeId
 	) {
+		routeLikeService.deleteRouteLike(routeId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
