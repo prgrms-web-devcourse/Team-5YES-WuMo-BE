@@ -12,14 +12,18 @@ services:
     restart: always
 
   redis:
-    container_name: redis_boot
-    image: redis:alpine
+    container_name: redis_test
+    image: redis:latest
     env_file:
       - spring.env
-    command: redis-server --port 6379
-    hostname: redis_boot
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/data:/data
+      - ./redis/conf/redis.conf:/usr/local/conf/redis.conf
+    # 컨테이너에 docker label을 이용해서 메타데이터 추가
     labels:
       - "name=redis"
       - "mode=standalone"
-    ports:
-      - "6379:6379"
+    restart: always
+    command: redis-server /usr/local/conf/redis.conf
