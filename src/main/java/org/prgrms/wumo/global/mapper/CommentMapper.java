@@ -1,11 +1,13 @@
 package org.prgrms.wumo.global.mapper;
 
 import java.util.List;
+
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentGetResponse;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentRegisterResponse;
+import org.prgrms.wumo.domain.comment.dto.response.LocationCommentUpdateResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResponse;
@@ -47,6 +49,14 @@ public class CommentMapper {
 		return new LocationCommentGetAllResponse(
 				locationComments.stream().map(CommentMapper::toLocationCommentGetResponse).toList(),
 				lastId
+		);
+	}
+
+	public static LocationCommentUpdateResponse toLocationCommentUpdateResponse(LocationComment locationComment) {
+		return new LocationCommentUpdateResponse(
+				locationComment.getId(),
+				locationComment.getContent(),
+				locationComment.getImage()
 		);
 	}
 
