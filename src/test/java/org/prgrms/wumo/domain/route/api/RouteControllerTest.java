@@ -171,13 +171,16 @@ public class RouteControllerTest extends MysqlTestContainer {
 		//given
 		Long cursorId = null;
 		int pageSize = 5;
+		String sortType = "NEWEST";
+		String searchWord = null;
 
 		//when
 		ResultActions resultActions
 			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes")
 			.param("cursorId", (String)null)
 			.param("pageSize", String.valueOf(pageSize))
-			.param("searchWord", (String)null));
+			.param("sortType", sortType)
+			.param("searchWord", searchWord));
 
 		//then
 		resultActions
@@ -228,8 +231,8 @@ public class RouteControllerTest extends MysqlTestContainer {
 			.name("오예스 찜닭")
 			.latitude(12.3456F)
 			.longitude(34.5678F)
-				.searchAddress("서귀포시")
-			.address("제주시 서귀포시 서귀동")
+			.searchAddress("서귀포시")
+			.address("제주특별자치도 서귀포시 서귀동")
 			.image("http://~~~.png")
 			.visitDate(LocalDateTime.now().plusDays(10))
 			.category(Category.MEAL)
