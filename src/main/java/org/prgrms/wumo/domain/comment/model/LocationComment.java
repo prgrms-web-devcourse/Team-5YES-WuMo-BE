@@ -2,8 +2,6 @@ package org.prgrms.wumo.domain.comment.model;
 
 import static lombok.AccessLevel.PROTECTED;
 
-import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -46,7 +44,7 @@ public class LocationComment extends Comment {
 	}
 
 	public void update(LocationCommentUpdateRequest request) {
-		this.image = Objects.requireNonNull(request.image(), this.image);
-		this.content = Objects.requireNonNull(request.content(), this.content);
+		this.image = request.image() == null ? this.getImage() : request.image();
+		this.content = request.content() == null ? this.getContent() : request.content();
 	}
 }
