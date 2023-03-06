@@ -10,6 +10,7 @@ import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterReque
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentUpdateRequest;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResponse;
+import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentUpdateResponse;
 import org.prgrms.wumo.domain.comment.service.PartyRouteCommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,10 +49,10 @@ public class RouteCommentController {
 
 	@PatchMapping
 	@Operation(summary = "모임 내 루트 댓글 수정")
-	public ResponseEntity<Void> updatePrivateRouteComment(
+	public ResponseEntity<PartyRouteCommentUpdateResponse> updatePrivateRouteComment(
 			@RequestBody @Valid PartyRouteCommentUpdateRequest request
 	) {
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(partyRouteCommentService.updatePartyRouteComment(request));
 	}
 
 	@DeleteMapping("/{id}")
