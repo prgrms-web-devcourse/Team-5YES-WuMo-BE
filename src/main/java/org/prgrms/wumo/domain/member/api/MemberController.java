@@ -12,6 +12,7 @@ import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
 import org.prgrms.wumo.domain.member.service.MemberService;
+import org.prgrms.wumo.global.util.MailSender;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,8 +37,26 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
 	private final MemberService memberService;
+	private final MailSender mailSender;
 
-	//////비밀번호 찾기(재설정)
+	@GetMapping
+	@Operation(summary = "이메일 인증코드 전송")
+	public ResponseEntity<Void> sendCodeMail(
+		@RequestParam("address") @Parameter(description = "이메일 인증을 원하는 회원의 이메일 주소") String toAddress) {
+
+		mailSender.sendCodeMail(toAddress);
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping
+	@Operation(summary = "이메일 인증코드 검증")
+	public ResponseEntity<Void> checkCodeMail(
+		@RequestParam("address") @Parameter(description = "이메일 인증을 원하는 회원의 이메일 주소") String toAddress,
+		@RequestParam("code") @Parameter(description = "이메일 인증 코드") String code) {
+
+		memberService.checkCodeMail(toAddress, code);
+		return ResponseEntity.ok().build();
+	}
 
 	@PostMapping("/signup")
 	@Operation(summary = "회원가입")

@@ -4,11 +4,11 @@ import java.time.Duration;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 
-@Repository
+@Component
 @RequiredArgsConstructor
 public class RedisUtil {
 

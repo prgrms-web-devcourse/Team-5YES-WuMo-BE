@@ -20,6 +20,7 @@ import org.prgrms.wumo.domain.member.model.Email;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
+import org.prgrms.wumo.global.exception.custom.InvalidCodeException;
 import org.prgrms.wumo.global.exception.custom.InvalidRefreshTokenException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.WumoJwt;
@@ -39,6 +40,12 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final RedisUtil redisUtil;
+
+	public void checkCodeMail(String toAddress, String code) {
+		if (!redisUtil.get(toAddress).equals(code)) {
+			throw new InvalidCodeException("유효하지 않은 인증 코드입니다.");
+		}
+	}
 
 	@Transactional
 	public MemberRegisterResponse registerMember(MemberRegisterRequest memberRegisterRequest) {

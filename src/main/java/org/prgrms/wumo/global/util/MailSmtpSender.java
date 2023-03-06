@@ -1,21 +1,20 @@
-package org.prgrms.wumo.domain.mail.service;
+package org.prgrms.wumo.global.util;
 
 import java.util.Random;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.prgrms.wumo.global.util.RedisUtil;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 
-@Service
+@Component
 @RequiredArgsConstructor
-public class MailSmtpService implements MailService {
+public class MailSmtpSender implements MailSender {
 
 	private static final String WUMO_MAIL = "5yeswumo@gmail.com";
 
