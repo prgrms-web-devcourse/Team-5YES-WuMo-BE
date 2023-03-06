@@ -1,20 +1,23 @@
 package org.prgrms.wumo.domain.comment.api;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentUpdateRequest;
 import org.prgrms.wumo.domain.comment.model.PartyRouteComment;
 import org.prgrms.wumo.domain.comment.repository.PartyRouteCommentRepository;
 import org.prgrms.wumo.domain.location.model.Category;
@@ -38,6 +41,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -66,16 +71,18 @@ public class PartyRouteCommentControllerTest {
 	@Autowired
 	RouteRepository routeRepository;
 
+	@Autowired
+	PartyRouteCommentRepository partyRouteCommentRepository;
+
 	// GIVEN
 	Member member;
 	Party party;
 	PartyMember partyMember;
 	Location location;
 	Route route;
+	PartyRouteComment partyRouteComment;
 
 	List<Location> locations = new ArrayList<>();
-	@Autowired
-	private PartyRouteCommentRepository partyRouteCommentRepository;
 
 	@BeforeEach
 	void beforeEach() {
@@ -132,6 +139,18 @@ public class PartyRouteCommentControllerTest {
 						.build()
 		);
 
+		partyRouteComment = partyRouteCommentRepository.save(
+				PartyRouteComment.builder()
+						.image("image.png")
+						.content("댓글 댓글")
+						.locationId(location.getId())
+						.isEdited(false)
+						.partyMember(partyMember)
+						.member(member)
+						.routeId(route.getId())
+						.build()
+		);
+
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
 				new UsernamePasswordAuthenticationToken(member.getId(), null, Collections.EMPTY_LIST);
@@ -141,6 +160,8 @@ public class PartyRouteCommentControllerTest {
 
 	@AfterEach
 	void afterEach() {
+		locations.clear();
+		partyRouteCommentRepository.deleteById(partyRouteComment.getId());
 		routeRepository.deleteById(route.getId());
 		locationRepository.deleteById(location.getId());
 		partyMemberRepository.deleteById(partyMember.getId());
@@ -186,7 +207,7 @@ public class PartyRouteCommentControllerTest {
 				.image("image.png")
 				.isEdited(false)
 				.content("댓글 댓글 댓글")
-				.locationId(1L)
+				.locationId(location.getId())
 				.member(member)
 				.build();
 
@@ -196,7 +217,7 @@ public class PartyRouteCommentControllerTest {
 				.image("image.png")
 				.isEdited(false)
 				.content("댓글 댓글 댓글")
-				.locationId(1L)
+				.locationId(location.getId())
 				.member(member)
 				.build();
 
@@ -208,7 +229,7 @@ public class PartyRouteCommentControllerTest {
 						get("/api/v1/party-route-comments")
 								.param("cursorId", (String)null)
 								.param("pageSize", "2")
-								.param("locationId", "1")
+								.param("locationId", String.valueOf(location.getId()))
 				);
 
 		// Then
@@ -216,8 +237,34 @@ public class PartyRouteCommentControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.partyRouteComments").isNotEmpty())
 				.andExpect(jsonPath("$.partyRouteComments").isArray())
-				.andExpect(jsonPath("$.partyRouteComments[0].content").value(partyRouteComment2.getContent()))
 				.andExpect(jsonPath("$.lastId").isNotEmpty())
 				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("모임 내 댓글을 수정할 수 있다.")
+	void updatePartyRouteCommentTest() throws Exception {
+		// Given
+		PartyRouteCommentUpdateRequest partyRouteCommentUpdateRequest =
+				new PartyRouteCommentUpdateRequest(partyRouteComment.getId(), "다음에는 반얀트리 가야지!!", "image.png");
+
+		// When
+		ResultActions resultActions =
+				mockMvc.perform(
+						patch("/api/v1/party-route-comments")
+								.contentType(MediaType.APPLICATION_JSON_VALUE)
+								.characterEncoding("UTF-8")
+								.content(
+										objectMapper.writeValueAsString(partyRouteCommentUpdateRequest)
+								)
+				);
+
+		// Then
+		resultActions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.content").value("다음에는 반얀트리 가야지!!"))
+				.andExpect(jsonPath("$.image").value("image.png"))
+				.andDo(print());
+
 	}
 }

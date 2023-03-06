@@ -11,6 +11,7 @@ import org.prgrms.wumo.domain.comment.dto.response.LocationCommentUpdateResponse
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResponse;
+import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentUpdateResponse;
 import org.prgrms.wumo.domain.comment.model.LocationComment;
 import org.prgrms.wumo.domain.comment.model.PartyRouteComment;
 
@@ -95,6 +96,14 @@ public class CommentMapper {
 		return new PartyRouteCommentGetAllResponse(
 				partyRouteComments.stream().map(CommentMapper::toPartyRouteCommentGetResponse).toList(),
 				lastId
+		);
+	}
+
+	public static PartyRouteCommentUpdateResponse toPartyRouteCommentUpdateResponse(PartyRouteComment partyRouteComment) {
+		return new PartyRouteCommentUpdateResponse(
+				partyRouteComment.getId(),
+				partyRouteComment.getContent(),
+				partyRouteComment.getImage()
 		);
 	}
 }
