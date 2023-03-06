@@ -1,6 +1,7 @@
 package org.prgrms.wumo.domain.comment.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteCommentGetAllResponse;
@@ -19,8 +20,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentGetAllRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentUpdateRequest;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResponse;
+import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentUpdateResponse;
 import org.prgrms.wumo.domain.comment.model.PartyRouteComment;
 import org.prgrms.wumo.domain.comment.repository.PartyRouteCommentRepository;
 import org.prgrms.wumo.domain.location.model.Category;
@@ -33,6 +36,7 @@ import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.prgrms.wumo.domain.route.repository.RouteRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -158,6 +162,48 @@ public class PartyRouteCommentServiceTest {
 
 			assertThat(partyRouteCommentGetAllResponse.partyRouteComments().size()).isEqualTo(2);
 			assertThat(partyRouteCommentGetAllResponse).usingRecursiveComparison().isEqualTo(expected);
+		}
+	}
+
+	@Nested
+	@DisplayName("PartyRouteCommentUpdate를 통해 ")
+	class updatePartyRouteComment {
+		@Test
+		@DisplayName("모임 내 루트 댓글을 수정할 수 있다.")
+		void success() {
+			// Given
+			given(partyMemberRepository.existsById(any(Long.class))).willReturn(true);
+			given(partyRouteCommentRepository.findById(any(Long.class))).willReturn(Optional.of(partyRouteComment));
+			given(partyRouteCommentRepository.save(any(PartyRouteComment.class))).willReturn(partyRouteComment);
+
+			PartyRouteCommentUpdateRequest request =
+					new PartyRouteCommentUpdateRequest(partyRouteComment.getRouteId(), "여기 좋아요!", "image");
+			PartyRouteCommentUpdateResponse expected =
+					new PartyRouteCommentUpdateResponse(partyRouteComment.getRouteId(), "여기 좋아요!", "image");
+
+			// When
+			PartyRouteCommentUpdateResponse response = partyRouteCommentService.updatePartyRouteComment(
+					request);
+
+			// Then
+			assertThat(response).usingRecursiveComparison().isEqualTo(expected);
+		}
+
+		@Test
+		@DisplayName("자신의 댓글이 아니면 수정할 수 없다.")
+		void failWithAccessDenied() {
+			// Given
+			given(partyMemberRepository.existsById(any(Long.class))).willReturn(false);
+			given(partyRouteCommentRepository.findById(any(Long.class))).willReturn(Optional.of(partyRouteComment));
+
+			PartyRouteCommentUpdateRequest request =
+					new PartyRouteCommentUpdateRequest(partyRouteComment.getRouteId(), "여기 좋아요!", "image");
+
+			// When // Then
+			assertThatThrownBy(
+					() -> partyRouteCommentService.updatePartyRouteComment(request)
+			).isInstanceOf(AccessDeniedException.class);
+
 		}
 	}
 
