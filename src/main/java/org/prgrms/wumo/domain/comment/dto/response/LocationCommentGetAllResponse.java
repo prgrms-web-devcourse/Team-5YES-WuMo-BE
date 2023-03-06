@@ -9,7 +9,7 @@ public record LocationCommentGetAllResponse(
 		@Schema(description = "후보지 댓글 목록 정보")
 		List<LocationCommentGetResponse> locationComments,
 
-		@Schema(description = "커서 아이디", example = "10", required = true)
+		@Schema(description = "커서 아이디", example = "10", requiredMode = Schema.RequiredMode.REQUIRED)
 		Long lastId
 ) {
 }

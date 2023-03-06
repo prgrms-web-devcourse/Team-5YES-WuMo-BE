@@ -8,13 +8,13 @@ import javax.validation.constraints.NotNull;
 public record PartyRouteCommentUpdateRequest(
 
 		@NotNull(message = "수정하고자 하는 댓글의 식별자는 필수 입력값입니다")
-		@Schema(description = "수정하는 비공개 댓글", example = "1", required = true)
+		@Schema(description = "수정하는 비공개 댓글", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
 		Long id,
 
-		@Schema(description = "댓글 내용", example = "변경된 내용", required = true)
+		@Schema(description = "댓글 내용", example = "변경된 내용", requiredMode = Schema.RequiredMode.REQUIRED)
 		String content,
 
-		@Schema(description = "댓글 이미지 url", example = "http://", required = true)
+		@Schema(description = "댓글 이미지 url", example = "http://", requiredMode = Schema.RequiredMode.REQUIRED)
 		String image
 ) {
 	public PartyRouteCommentUpdateRequest(
