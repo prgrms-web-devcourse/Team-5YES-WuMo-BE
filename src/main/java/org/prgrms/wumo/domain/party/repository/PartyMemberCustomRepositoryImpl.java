@@ -1,8 +1,13 @@
 package org.prgrms.wumo.domain.party.repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
+import org.prgrms.wumo.domain.party.dto.request.PartyType;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.model.QPartyMember;
 import org.springframework.stereotype.Repository;
@@ -48,12 +53,12 @@ public class PartyMemberCustomRepositoryImpl implements PartyMemberCustomReposit
 
 	@Override
 	public List<PartyMember> findAllByPartyId(Long partyId, Long cursorId, int pageSize) {
-		return findAllByColumnId("party", partyId, cursorId, pageSize);
+		return findAllByColumnId("party", partyId, cursorId, pageSize, PartyType.ALL);
 	}
 
 	@Override
-	public List<PartyMember> findAllByMemberId(Long memberId, Long cursorId, int pageSize) {
-		return findAllByColumnId("member", memberId, cursorId, pageSize);
+	public List<PartyMember> findAllByMemberId(Long memberId, Long cursorId, int pageSize, PartyType partyType) {
+		return findAllByColumnId("member", memberId, cursorId, pageSize, partyType);
 	}
 
 
@@ -68,7 +73,7 @@ public class PartyMemberCustomRepositoryImpl implements PartyMemberCustomReposit
 		return exist != null;
 	}
 
-	private List<PartyMember> findAllByColumnId(String column, Long columnId, Long cursorId, int pageSize) {
+	private List<PartyMember> findAllByColumnId(String column, Long columnId, Long cursorId, int pageSize, PartyType partyType) {
 		return jpaQueryFactory
 				.selectFrom(qPartyMember)
 				.where(
@@ -77,15 +82,16 @@ public class PartyMemberCustomRepositoryImpl implements PartyMemberCustomReposit
 							case "member" -> eqMemberId(columnId);
 							default -> null;
 						},
-						gtPartyMemberId(cursorId)
+						ltPartyMemberId(cursorId),
+						eqPartyType(partyType)
 				)
-				.orderBy(qPartyMember.id.asc())
+				.orderBy(qPartyMember.id.desc())
 				.limit(pageSize)
 				.fetch();
 	}
 
-	private BooleanExpression gtPartyMemberId(Long cursorId) {
-		return (cursorId != null) ? qPartyMember.id.gt(cursorId) : null;
+	private BooleanExpression ltPartyMemberId(Long cursorId) {
+		return (cursorId != null) ? qPartyMember.id.lt(cursorId) : null;
 	}
 
 	private BooleanExpression eqPartyId(Long partyId) {
@@ -98,6 +104,15 @@ public class PartyMemberCustomRepositoryImpl implements PartyMemberCustomReposit
 
 	private BooleanExpression eqMemberId(Long memberId) {
 		return qPartyMember.member.id.eq(memberId);
+	}
+
+	private BooleanExpression eqPartyType(PartyType partyType) {
+		LocalDateTime NOW = LocalDateTime.of(LocalDate.now(ZoneId.of("Asia/Tokyo")), LocalTime.MIN);
+		return switch (partyType) {
+			case ONGOING -> qPartyMember.party.endDate.goe(NOW);
+			case COMPLETED -> qPartyMember.party.endDate.before(NOW);
+			case ALL -> null;
+		};
 	}
 
 }
