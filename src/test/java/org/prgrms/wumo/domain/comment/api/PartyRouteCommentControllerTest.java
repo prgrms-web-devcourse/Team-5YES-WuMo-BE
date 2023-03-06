@@ -1,5 +1,6 @@
 package org.prgrms.wumo.domain.comment.api;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -264,6 +265,35 @@ public class PartyRouteCommentControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.content").value("다음에는 반얀트리 가야지!!"))
 				.andExpect(jsonPath("$.image").value("image.png"))
+				.andDo(print());
+
+	}
+
+	@Test
+	@DisplayName("모임 내 루트 댓글을 삭제 할 수 있다.")
+	void deletePartyRouteCommentTest() throws Exception {
+		// Given
+		PartyRouteComment toBeDeleted = partyRouteCommentRepository.save(
+				PartyRouteComment.builder()
+						.member(member)
+						.image("image.png")
+						.locationId(location.getId())
+						.content("여기 별론데...")
+						.partyMember(partyMember)
+						.routeId(route.getId())
+						.isEdited(false)
+						.build()
+		);
+
+		// When
+		ResultActions resultActions =
+				mockMvc.perform(
+						delete("/api/v1/party-route-comments/{partyRouteCommentId}", toBeDeleted.getId())
+				);
+
+		// Then
+		resultActions
+				.andExpect(status().isOk())
 				.andDo(print());
 
 	}

@@ -4,11 +4,14 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteCommentGetAllResponse;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -75,14 +78,14 @@ public class PartyRouteCommentServiceTest {
 	void beforeEach() {
 		member = getMember();
 		party = getParty();
-		partyMember = getPartyMember();
-		partyRouteComment = getPartyRouteComment();
-		route = getRoute();
 		location = getLocation();
+		partyMember = getPartyMember();
+		route = getRoute();
+		partyRouteComment = getPartyRouteComment();
 
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-				new UsernamePasswordAuthenticationToken(1L, null, Collections.EMPTY_LIST);
+				new UsernamePasswordAuthenticationToken(member.getId(), null, Collections.EMPTY_LIST);
 
 		context.setAuthentication(usernamePasswordAuthenticationToken);
 	}
@@ -94,17 +97,18 @@ public class PartyRouteCommentServiceTest {
 
 	@Nested
 	@DisplayName("registerPartyRouteComment를 통해 ")
-	class registerPartyRouteComment{
+	class registerPartyRouteComment {
 		@Test
 		@DisplayName("모임 내 일정에 댓글을 등록한다")
-		void success(){
+		void success() {
 			// Given
 			PartyRouteCommentRegisterRequest request = new PartyRouteCommentRegisterRequest(
 					1L, "모임 내 댓글", "image.png", 1L, 1L
 			);
 
 			given(memberRepository.findById(any(Long.class))).willReturn(Optional.of(member));
-			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(Optional.of(partyMember));
+			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(
+					Optional.of(partyMember));
 			given(routeRepository.findById(any(Long.class))).willReturn(Optional.of(route));
 			given(locationRepository.existsById(any(Long.class))).willReturn(true);
 			given(partyRouteCommentRepository.save(any(PartyRouteComment.class))).willReturn(partyRouteComment);
@@ -120,11 +124,11 @@ public class PartyRouteCommentServiceTest {
 
 	@Nested
 	@DisplayName("getAllPartyRouteComment를 통해 ")
-	class getAllPartyRouteComment{
+	class getAllPartyRouteComment {
 
 		@Test
 		@DisplayName("모임 내 댓글들 중 특정 후보지의 댓글 목록을 조회할 수 있다.")
-		void success(){
+		void success() {
 			// Given
 			PartyRouteComment partyRouteComment2 = PartyRouteComment.builder()
 					.id(2L)
@@ -207,6 +211,59 @@ public class PartyRouteCommentServiceTest {
 		}
 	}
 
+	@Nested
+	@DisplayName("deletePartyRouteComment 를 통해 ")
+	class deletePartyRouteComment {
+		@Test
+		@DisplayName("모임 내 댓글을 삭제할 수 있다.")
+		void success() {
+			// Given
+			PartyRouteComment tmp = PartyRouteComment.builder()
+				.id(450L)
+				.image("image.png")
+				.content("삭제될 댓글....")
+				.locationId(location.getId())
+				.isEdited(false)
+				.routeId(route.getId())
+				.partyMember(partyMember)
+				.member(member)
+				.build();
+
+			given(partyMemberRepository.existsById(any(Long.class))).willReturn(true);
+			given(partyRouteCommentRepository.findById(any(Long.class))).willReturn(Optional.of(tmp));
+
+			// When
+			partyRouteCommentService.deletePartyRouteComment(450L);
+
+			// Then
+			then(partyRouteCommentRepository).should().findById(450L);
+		}
+
+		@Test
+		@DisplayName("댓글을 작성하지 않은 사람은 댓글을 삭제할 수 없다.")
+		void failedByOtherMember() {
+			// Given
+			PartyRouteComment tmp = PartyRouteComment.builder()
+				.id(450L)
+				.image("image.png")
+				.content("삭제될 댓글....")
+				.locationId(location.getId())
+				.isEdited(false)
+				.routeId(route.getId())
+				.partyMember(partyMember)
+				.member(member)
+				.build();
+
+			given(partyMemberRepository.existsById(any(Long.class))).willReturn(false);
+			given(partyRouteCommentRepository.findById(any(Long.class))).willReturn(Optional.of(tmp));
+
+			// When // Then
+			assertThatThrownBy(
+					() -> partyRouteCommentService.deletePartyRouteComment(450L)
+			).isInstanceOf(AccessDeniedException.class);
+		}
+	}
+
 	private Member getMember() {
 		return Member.builder()
 				.id(1L)
@@ -240,17 +297,17 @@ public class PartyRouteCommentServiceTest {
 	private PartyRouteComment getPartyRouteComment() {
 		return PartyRouteComment.builder()
 				.id(1L)
-				.routeId(1L)
+				.routeId(route.getId())
 				.partyMember(partyMember)
 				.image("image.png")
 				.content("모임 내 댓글")
 				.isEdited(false)
-				.locationId(1L)
+				.locationId(location.getId())
 				.member(member)
 				.build();
 	}
 
-	private Route getRoute(){
+	private Route getRoute() {
 		return Route.builder()
 				.id(1L)
 				.party(party)
@@ -258,7 +315,7 @@ public class PartyRouteCommentServiceTest {
 				.build();
 	}
 
-	private Location getLocation(){
+	private Location getLocation() {
 		return Location.builder()
 				.id(1L)
 				.partyId(party.getId())
