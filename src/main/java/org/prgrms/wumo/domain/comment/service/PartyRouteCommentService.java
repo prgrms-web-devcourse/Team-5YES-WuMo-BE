@@ -99,7 +99,7 @@ public class PartyRouteCommentService {
 		checkMemberInParty(partyRouteComment.getPartyMember().getId());
 
 		if (!partyRouteComment.getMember().getId().equals(getMemberId())) {
-			throw new AccessDeniedException("댓글은 작성자만 수정할 수 있습니다.");
+			throw new AccessDeniedException("댓글은 작성자만 삭제할 수 있습니다.");
 		}
 
 		partyRouteCommentRepository.deleteById(partyRouteCommentId);

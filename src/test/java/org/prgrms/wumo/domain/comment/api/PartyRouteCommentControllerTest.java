@@ -288,7 +288,7 @@ public class PartyRouteCommentControllerTest {
 		// When
 		ResultActions resultActions =
 				mockMvc.perform(
-						delete("/api/v1/party-route-comments/{id}", toBeDeleted.getId())
+						delete("/api/v1/party-route-comments/{partyRouteCommentId}", toBeDeleted.getId())
 				);
 
 		// Then
