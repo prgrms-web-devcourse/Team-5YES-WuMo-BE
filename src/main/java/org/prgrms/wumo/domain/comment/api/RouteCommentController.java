@@ -64,6 +64,7 @@ public class RouteCommentController {
 	public ResponseEntity<Void> deletePrivateRouteComment(
 			@PathVariable("id") @Parameter(description = "삭제하고자 하는 비공개 루트 댓글") Long id
 	) {
+		partyRouteCommentService.deletePartyRouteComment(id);
 		return ResponseEntity.ok().build();
 	}
 
