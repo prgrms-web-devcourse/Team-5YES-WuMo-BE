@@ -176,17 +176,17 @@ public class PartyRouteCommentServiceTest {
 			given(partyRouteCommentRepository.findById(any(Long.class))).willReturn(Optional.of(partyRouteComment));
 			given(partyRouteCommentRepository.save(any(PartyRouteComment.class))).willReturn(partyRouteComment);
 
-			PartyRouteCommentUpdateRequest request =
+			PartyRouteCommentUpdateRequest partyRouteCommentUpdateRequest =
 					new PartyRouteCommentUpdateRequest(partyRouteComment.getRouteId(), "여기 좋아요!", "image");
 			PartyRouteCommentUpdateResponse expected =
 					new PartyRouteCommentUpdateResponse(partyRouteComment.getRouteId(), "여기 좋아요!", "image");
 
 			// When
-			PartyRouteCommentUpdateResponse response = partyRouteCommentService.updatePartyRouteComment(
-					request);
+			PartyRouteCommentUpdateResponse partyRouteCommentUpdateResponse = partyRouteCommentService.updatePartyRouteComment(
+					partyRouteCommentUpdateRequest);
 
 			// Then
-			assertThat(response).usingRecursiveComparison().isEqualTo(expected);
+			assertThat(partyRouteCommentUpdateResponse).usingRecursiveComparison().isEqualTo(expected);
 		}
 
 		@Test
@@ -196,12 +196,12 @@ public class PartyRouteCommentServiceTest {
 			given(partyMemberRepository.existsById(any(Long.class))).willReturn(false);
 			given(partyRouteCommentRepository.findById(any(Long.class))).willReturn(Optional.of(partyRouteComment));
 
-			PartyRouteCommentUpdateRequest request =
+			PartyRouteCommentUpdateRequest partyRouteCommentUpdateRequest =
 					new PartyRouteCommentUpdateRequest(partyRouteComment.getRouteId(), "여기 좋아요!", "image");
 
 			// When // Then
 			assertThatThrownBy(
-					() -> partyRouteCommentService.updatePartyRouteComment(request)
+					() -> partyRouteCommentService.updatePartyRouteComment(partyRouteCommentUpdateRequest)
 			).isInstanceOf(AccessDeniedException.class);
 
 		}

@@ -3,8 +3,11 @@ package org.prgrms.wumo.domain.comment.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import javax.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
+
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentGetAllRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentUpdateRequest;
@@ -34,25 +37,26 @@ public class RouteCommentController {
 	@PostMapping
 	@Operation(summary = "모임 내 루트 댓글 생성")
 	public ResponseEntity<PartyRouteCommentRegisterResponse> registerPartyRouteComment(
-			@RequestBody @Valid PartyRouteCommentRegisterRequest request
+			@RequestBody @Valid PartyRouteCommentRegisterRequest partyRouteCommentRegisterRequest
 	) {
-		return new ResponseEntity<>(partyRouteCommentService.registerPartyRouteComment(request), HttpStatus.CREATED);
+		return new ResponseEntity<>(partyRouteCommentService.registerPartyRouteComment(partyRouteCommentRegisterRequest),
+				HttpStatus.CREATED);
 	}
 
 	@GetMapping
 	@Operation(summary = "모임 내 루트 댓글 목록 조회")
 	public ResponseEntity<PartyRouteCommentGetAllResponse> getAllPartyRouteComment(
-			@Valid PartyRouteCommentGetAllRequest request
+			@Valid PartyRouteCommentGetAllRequest partyRouteCommentGetAllRequest
 	) {
-		return ResponseEntity.ok(partyRouteCommentService.getAllPartyRouteComment(request));
+		return ResponseEntity.ok(partyRouteCommentService.getAllPartyRouteComment(partyRouteCommentGetAllRequest));
 	}
 
 	@PatchMapping
 	@Operation(summary = "모임 내 루트 댓글 수정")
 	public ResponseEntity<PartyRouteCommentUpdateResponse> updatePrivateRouteComment(
-			@RequestBody @Valid PartyRouteCommentUpdateRequest request
+			@RequestBody @Valid PartyRouteCommentUpdateRequest partyRouteCommentUpdateRequest
 	) {
-		return ResponseEntity.ok(partyRouteCommentService.updatePartyRouteComment(request));
+		return ResponseEntity.ok(partyRouteCommentService.updatePartyRouteComment(partyRouteCommentUpdateRequest));
 	}
 
 	@DeleteMapping("/{id}")

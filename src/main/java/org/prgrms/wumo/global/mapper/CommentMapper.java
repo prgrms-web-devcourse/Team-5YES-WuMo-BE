@@ -99,11 +99,11 @@ public class CommentMapper {
 		);
 	}
 
-	public static PartyRouteCommentUpdateResponse toPartyRouteCommentUpdateResponse(PartyRouteComment comment){
+	public static PartyRouteCommentUpdateResponse toPartyRouteCommentUpdateResponse(PartyRouteComment partyRouteComment) {
 		return new PartyRouteCommentUpdateResponse(
-				comment.getId(),
-				comment.getContent(),
-				comment.getImage()
+				partyRouteComment.getId(),
+				partyRouteComment.getContent(),
+				partyRouteComment.getImage()
 		);
 	}
 }

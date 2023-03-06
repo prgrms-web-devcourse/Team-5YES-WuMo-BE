@@ -245,7 +245,7 @@ public class PartyRouteCommentControllerTest {
 	@DisplayName("모임 내 댓글을 수정할 수 있다.")
 	void updatePartyRouteCommentTest() throws Exception {
 		// Given
-		PartyRouteCommentUpdateRequest request =
+		PartyRouteCommentUpdateRequest partyRouteCommentUpdateRequest =
 				new PartyRouteCommentUpdateRequest(partyRouteComment.getId(), "다음에는 반얀트리 가야지!!", "image.png");
 
 		// When
@@ -255,7 +255,7 @@ public class PartyRouteCommentControllerTest {
 								.contentType(MediaType.APPLICATION_JSON_VALUE)
 								.characterEncoding("UTF-8")
 								.content(
-										objectMapper.writeValueAsString(request)
+										objectMapper.writeValueAsString(partyRouteCommentUpdateRequest)
 								)
 				);
 

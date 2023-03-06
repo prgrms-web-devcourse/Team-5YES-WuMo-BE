@@ -7,8 +7,9 @@ import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteCommentReg
 import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteCommentUpdateResponse;
 
 import java.util.List;
+
 import javax.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
+
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentGetAllRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentUpdateRequest;
@@ -27,6 +28,8 @@ import org.prgrms.wumo.domain.route.repository.RouteRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -75,17 +78,18 @@ public class PartyRouteCommentService {
 	}
 
 	@Transactional
-	public PartyRouteCommentUpdateResponse updatePartyRouteComment(PartyRouteCommentUpdateRequest request) {
-		PartyRouteComment comment = getPartyRouteCommentEntity(request.id());
+	public PartyRouteCommentUpdateResponse updatePartyRouteComment(
+			PartyRouteCommentUpdateRequest partyRouteCommentUpdateRequest) {
+		PartyRouteComment partyRouteComment = getPartyRouteCommentEntity(partyRouteCommentUpdateRequest.id());
 
-		checkMemberInParty(comment.getPartyMember().getId());
+		checkMemberInParty(partyRouteComment.getPartyMember().getId());
 
-		if (!comment.getMember().getId().equals(getMemberId())) {
+		if (!partyRouteComment.getMember().getId().equals(getMemberId())) {
 			throw new AccessDeniedException("댓글은 작성자만 수정할 수 있습니다.");
 		}
-		comment.update(request);
+		partyRouteComment.update(partyRouteCommentUpdateRequest);
 
-		return toPartyRouteCommentUpdateResponse(partyRouteCommentRepository.save(comment));
+		return toPartyRouteCommentUpdateResponse(partyRouteCommentRepository.save(partyRouteComment));
 	}
 
 	private Member getMemberEntity(Long memberId) {
@@ -107,8 +111,8 @@ public class PartyRouteCommentService {
 		}
 	}
 
-	private PartyRouteComment getPartyRouteCommentEntity(Long commentId) {
-		return partyRouteCommentRepository.findById(commentId)
+	private PartyRouteComment getPartyRouteCommentEntity(Long partyRouteCommentId) {
+		return partyRouteCommentRepository.findById(partyRouteCommentId)
 				.orElseThrow(() -> new EntityNotFoundException("모임 내 존재하지 않는 회원입니다"));
 	}
 
