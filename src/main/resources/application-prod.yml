@@ -40,6 +40,9 @@ jwt:
   access-token-expire-seconds: ${JWT_ACCESS_TOKEN_EXPIRE_SECONDS}
   refresh-token-expire-seconds: ${JWT_REFRESH_TOKEN_EXPIRE_SECONDS}
 
+wumo:
+  mail: ${WUMO_MAIL}
+
 cloud:
   aws:
     credentials:

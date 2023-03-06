@@ -11,8 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.prgrms.wumo.MysqlTestContainer;
-import org.prgrms.wumo.domain.member.dto.request.MemberEmailCheckRequest;
-import org.prgrms.wumo.domain.member.dto.request.MemberNicknameCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
 import org.prgrms.wumo.domain.member.model.Member;
@@ -90,14 +88,12 @@ public class MemberControllerTest extends MysqlTestContainer {
 	@DisplayName("회원 이메일의 중복체크를 한다")
 	void check_email_not_duplicate() throws Exception {
 		//given
-		MemberEmailCheckRequest memberEmailCheckRequest
-			= new MemberEmailCheckRequest("5yes-check@gmail.com");
+		String email = "5yes-check@gmail.com";
 
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/members/check-email")
-			.contentType(MediaType.APPLICATION_JSON_VALUE)
-			.content(objectMapper.writeValueAsString(memberEmailCheckRequest)));
+			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/members/check-email")
+			.param("email", email));
 
 		//then
 		resultActions
@@ -108,14 +104,12 @@ public class MemberControllerTest extends MysqlTestContainer {
 	@DisplayName("회원 닉네임의 중복체크를 한다")
 	void check_nickname_not_duplicate() throws Exception {
 		//given
-		MemberNicknameCheckRequest memberNicknameCheckRequest
-			= new MemberNicknameCheckRequest("오예스딸기");
+		String nickname = "오예스딸기";
 
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/members/check-nickname")
-			.contentType(MediaType.APPLICATION_JSON_VALUE)
-			.content(objectMapper.writeValueAsString(memberNicknameCheckRequest)));
+			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/members/check-nickname")
+			.param("nickname", nickname));
 
 		//then
 		resultActions
