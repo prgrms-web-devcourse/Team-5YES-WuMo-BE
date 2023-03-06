@@ -60,6 +60,8 @@ public class LocationCommentController {
 	public ResponseEntity<Void> deleteLocationComment(
 			@PathVariable("id") @Parameter(description = "삭제하고자 하는 후보지 댓글") Long id
 	) {
+
+		locationCommentService.deleteLocationComment(id);
 		return ResponseEntity.ok().build();
 	}
 }

@@ -1,5 +1,6 @@
 package org.prgrms.wumo.domain.comment.api;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -224,7 +225,7 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 	void updateLocationCommentUpdateTest() throws Exception {
 		// Given
 		LocationCommentUpdateRequest request =
-					new LocationCommentUpdateRequest(locationComment.getId(), "다음에는 반얀트리 가야지!!", "image.png");
+				new LocationCommentUpdateRequest(locationComment.getId(), "다음에는 반얀트리 가야지!!", "image.png");
 
 		// When
 		ResultActions resultActions =
@@ -244,5 +245,32 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 				.andExpect(jsonPath("$.image").value("image.png"))
 				.andDo(print());
 
+	}
+
+	@Test
+	@DisplayName(" 후보지 댓글을 삭제할 수 있다.")
+	void deleteLocationComment() throws Exception {
+		// Given
+		LocationComment toBeDeleted = locationCommentRepository.save(
+				LocationComment.builder()
+						.member(member)
+						.image("image.png")
+						.locationId(location.getId())
+						.content("여기 별론데...")
+						.partyMember(partyMember)
+						.isEdited(false)
+						.build()
+		);
+
+		// When
+		ResultActions resultActions =
+				mockMvc.perform(
+						delete("/api/v1/location-comments/{id}", toBeDeleted.getId())
+				);
+
+		// Then
+		resultActions
+				.andExpect(status().isOk())
+				.andDo(print());
 	}
 }
