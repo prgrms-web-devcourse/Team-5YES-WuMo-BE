@@ -92,6 +92,19 @@ public class PartyRouteCommentService {
 		return toPartyRouteCommentUpdateResponse(partyRouteCommentRepository.save(partyRouteComment));
 	}
 
+	@Transactional
+	public void deletePartyRouteComment(Long partyRouteCommentId) {
+		PartyRouteComment partyRouteComment = getPartyRouteCommentEntity(partyRouteCommentId);
+
+		checkMemberInParty(partyRouteComment.getPartyMember().getId());
+
+		if (!partyRouteComment.getMember().getId().equals(getMemberId())) {
+			throw new AccessDeniedException("댓글은 작성자만 수정할 수 있습니다.");
+		}
+
+		partyRouteCommentRepository.deleteById(partyRouteCommentId);
+	}
+
 	private Member getMemberEntity(Long memberId) {
 		return memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("존재 하지 않는 회원입니다"));
 	}
