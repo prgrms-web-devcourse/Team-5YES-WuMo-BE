@@ -42,7 +42,8 @@ public class SecurityConfig {
 			.antMatchers(apiUrls)
 			.antMatchers("/api/v1/members/signup")
 			.antMatchers("/api/v1/members/login")
-			.antMatchers("/api/v1/emails/**");
+			.antMatchers("/api/v1/members/send-code")
+			.antMatchers("/api/v1/members/check-code");
 	}
 
 	@Bean
@@ -96,7 +97,8 @@ public class SecurityConfig {
 			.antMatchers(
 				"/api/v1/members/signup",
 				"/api/v1/members/login",
-				"/api/v1/emails/**").permitAll()
+				"/api/v1/members/send-code",
+				"/api/v1/members/check-code").permitAll()
 			.and()
 
 			.exceptionHandling()

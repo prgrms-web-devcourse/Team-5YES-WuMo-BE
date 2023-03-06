@@ -2,6 +2,7 @@ package org.prgrms.wumo.domain.member.api;
 
 import javax.validation.Valid;
 
+import org.prgrms.wumo.domain.member.dto.request.MemberCodeCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberEmailCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberLoginRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberNicknameCheckRequest;
@@ -39,7 +40,7 @@ public class MemberController {
 	private final MemberService memberService;
 	private final MailSender mailSender;
 
-	@GetMapping
+	@GetMapping("/send-code")
 	@Operation(summary = "이메일 인증코드 전송")
 	public ResponseEntity<Void> sendCodeMail(
 		@RequestParam("address") @Parameter(description = "이메일 인증을 원하는 회원의 이메일 주소") String toAddress) {
@@ -48,13 +49,12 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping
+	@GetMapping("/check-code")
 	@Operation(summary = "이메일 인증코드 검증")
 	public ResponseEntity<Void> checkCodeMail(
-		@RequestParam("address") @Parameter(description = "이메일 인증을 원하는 회원의 이메일 주소") String toAddress,
-		@RequestParam("code") @Parameter(description = "이메일 인증 코드") String code) {
+		@Valid MemberCodeCheckRequest memberCodeCheckRequest) {
 
-		memberService.checkCodeMail(toAddress, code);
+		memberService.checkCodeMail(memberCodeCheckRequest.address(), memberCodeCheckRequest.code());
 		return ResponseEntity.ok().build();
 	}
 
@@ -66,19 +66,19 @@ public class MemberController {
 		return new ResponseEntity<>(memberService.registerMember(memberRegisterRequest), HttpStatus.CREATED);
 	}
 
-	@PostMapping("/check-email")
+	@GetMapping("/check-email")
 	@Operation(summary = "이메일 중복체크")
 	public ResponseEntity<Void> checkEmail(
-		@RequestBody @Valid MemberEmailCheckRequest memberEmailCheckRequest) {
+		@Valid MemberEmailCheckRequest memberEmailCheckRequest) {
 
 		memberService.checkEmail(memberEmailCheckRequest.email());
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
-	@PostMapping("/check-nickname")
+	@GetMapping("/check-nickname")
 	@Operation(summary = "닉네임 중복체크")
 	public ResponseEntity<Void> checkNickname(
-		@RequestBody @Valid MemberNicknameCheckRequest memberNicknameCheckRequest) {
+		@Valid MemberNicknameCheckRequest memberNicknameCheckRequest) {
 
 		memberService.checkNickname(memberNicknameCheckRequest.nickname());
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
