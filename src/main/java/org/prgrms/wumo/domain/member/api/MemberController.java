@@ -2,6 +2,7 @@ package org.prgrms.wumo.domain.member.api;
 
 import javax.validation.Valid;
 
+import org.prgrms.wumo.domain.member.dto.request.MemberCodeCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberEmailCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberLoginRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberNicknameCheckRequest;
@@ -12,6 +13,7 @@ import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
 import org.prgrms.wumo.domain.member.service.MemberService;
+import org.prgrms.wumo.global.sender.Sender;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,8 +38,25 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
 	private final MemberService memberService;
+	private final Sender sender;
 
-	//////비밀번호 찾기(재설정)
+	@GetMapping("/send-code")
+	@Operation(summary = "이메일 인증코드 전송")
+	public ResponseEntity<Void> sendCodeMail(
+		@RequestParam("address") @Parameter(description = "이메일 인증을 원하는 회원의 이메일 주소") String toAddress) {
+
+		sender.sendCode(toAddress);
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/check-code")
+	@Operation(summary = "이메일 인증코드 검증")
+	public ResponseEntity<Void> checkCodeMail(
+		@Valid MemberCodeCheckRequest memberCodeCheckRequest) {
+
+		memberService.checkCodeMail(memberCodeCheckRequest.address(), memberCodeCheckRequest.code());
+		return ResponseEntity.ok().build();
+	}
 
 	@PostMapping("/signup")
 	@Operation(summary = "회원가입")
@@ -46,19 +66,19 @@ public class MemberController {
 		return new ResponseEntity<>(memberService.registerMember(memberRegisterRequest), HttpStatus.CREATED);
 	}
 
-	@PostMapping("/check-email")
+	@GetMapping("/check-email")
 	@Operation(summary = "이메일 중복체크")
 	public ResponseEntity<Void> checkEmail(
-		@RequestBody @Valid MemberEmailCheckRequest memberEmailCheckRequest) {
+		@Valid MemberEmailCheckRequest memberEmailCheckRequest) {
 
 		memberService.checkEmail(memberEmailCheckRequest.email());
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
-	@PostMapping("/check-nickname")
+	@GetMapping("/check-nickname")
 	@Operation(summary = "닉네임 중복체크")
 	public ResponseEntity<Void> checkNickname(
-		@RequestBody @Valid MemberNicknameCheckRequest memberNicknameCheckRequest) {
+		@Valid MemberNicknameCheckRequest memberNicknameCheckRequest) {
 
 		memberService.checkNickname(memberNicknameCheckRequest.nickname());
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

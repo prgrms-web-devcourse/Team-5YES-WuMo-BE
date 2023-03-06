@@ -2,6 +2,7 @@ package org.prgrms.wumo.global.config;
 
 import java.util.Arrays;
 
+import org.prgrms.wumo.global.config.properties.JwtProperties;
 import org.prgrms.wumo.global.jwt.CustomAccessDeniedHandler;
 import org.prgrms.wumo.global.jwt.CustomAuthenticationEntryPoint;
 import org.prgrms.wumo.global.jwt.JwtAuthenticationFilter;
@@ -28,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final JwtConfig jwtConfig;
+	private final JwtProperties jwtProperties;
 	private final ObjectMapper objectMapper;
 
 	private final String[] apiUrls = {
@@ -38,13 +39,17 @@ public class SecurityConfig {
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return web -> web.ignoring()
-			.antMatchers(apiUrls);
+			.antMatchers(apiUrls)
+			.antMatchers("/api/v1/members/signup")
+			.antMatchers("/api/v1/members/login")
+			.antMatchers("/api/v1/members/send-code")
+			.antMatchers("/api/v1/members/check-code");
 	}
 
 	@Bean
 	public JwtTokenProvider jwtTokenProvider() {
-		return new JwtTokenProvider(jwtConfig.getIssuer(), jwtConfig.getSecretKey(),
-			jwtConfig.getAccessTokenExpireSeconds(), jwtConfig.getRefreshTokenExpireSeconds());
+		return new JwtTokenProvider(jwtProperties.getIssuer(), jwtProperties.getSecretKey(),
+			jwtProperties.getAccessTokenExpireSeconds(), jwtProperties.getRefreshTokenExpireSeconds());
 	}
 
 	@Bean
@@ -89,7 +94,11 @@ public class SecurityConfig {
 
 			.authorizeHttpRequests()
 			.antMatchers(apiUrls).permitAll()
-			.antMatchers("/api/v1/members/signup", "/api/v1/members/login").permitAll()
+			.antMatchers(
+				"/api/v1/members/signup",
+				"/api/v1/members/login",
+				"/api/v1/members/send-code",
+				"/api/v1/members/check-code").permitAll()
 			.and()
 
 			.exceptionHandling()

@@ -11,6 +11,17 @@ spring:
   redis:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
 
 jwt:
   header: ${JWT_HEADER}
@@ -18,6 +29,9 @@ jwt:
   secret-key: ${JWT_SECRET_KEY}
   access-token-expire-seconds: ${JWT_ACCESS_TOKEN_EXPIRE_SECONDS}
   refresh-token-expire-seconds: ${JWT_REFRESH_TOKEN_EXPIRE_SECONDS}
+
+wumo:
+  mail: ${WUMO_MAIL}
 
 cloud:
   aws:

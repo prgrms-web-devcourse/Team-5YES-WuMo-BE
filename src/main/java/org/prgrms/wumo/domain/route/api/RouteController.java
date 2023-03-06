@@ -44,6 +44,7 @@ public class RouteController {
 	@GetMapping("/{routeId}")
 	@Operation(summary = "루트 상세 조회")
 	public ResponseEntity<RouteGetResponse> getRoute(
+		//TODO routeId -> partyId로 바꾸기
 		@PathVariable @Parameter(description = "조회할 루트 아이디") long routeId,
 		@RequestParam("path") @Parameter(description = "접근 경로(모임에서이면 0, 공개 목록에서이면 1)") int fromPublic) {
 
