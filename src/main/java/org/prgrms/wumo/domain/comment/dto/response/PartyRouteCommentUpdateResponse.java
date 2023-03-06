@@ -10,7 +10,7 @@ public record PartyRouteCommentUpdateResponse(
 		@Schema(description = "수정된 후보지 댓글 내용", example = "1", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 		String content,
 
-		@Schema(description = "수정된 후보지 댓글 이미지", example = "http://~.png", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+		@Schema(description = "수정된 후보지 댓글 이미지 주소", example = "http://~.png", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 		String image
 ) {
 }

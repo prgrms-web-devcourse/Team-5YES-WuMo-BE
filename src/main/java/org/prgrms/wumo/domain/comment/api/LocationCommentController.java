@@ -50,18 +50,18 @@ public class LocationCommentController {
 	@PatchMapping
 	@Operation(summary = "후보지 댓글 수정")
 	public ResponseEntity<LocationCommentUpdateResponse> updateLocationComment(
-			@RequestBody @Valid LocationCommentUpdateRequest request
+			@RequestBody @Valid LocationCommentUpdateRequest locationCommentUpdateRequest
 	) {
-		return ResponseEntity.ok(locationCommentService.updateLocationComment(request));
+		return ResponseEntity.ok(locationCommentService.updateLocationComment(locationCommentUpdateRequest));
 	}
 
 	@DeleteMapping("/{id}")
 	@Operation(summary = "후보지 댓글 삭제")
 	public ResponseEntity<Void> deleteLocationComment(
-			@PathVariable("id") @Parameter(description = "삭제하고자 하는 후보지 댓글") Long id
+			@PathVariable("id") @Parameter(description = "삭제하고자 하는 후보지 댓글 식별자") Long locationCommentId
 	) {
 
-		locationCommentService.deleteLocationComment(id);
+		locationCommentService.deleteLocationComment(locationCommentId);
 		return ResponseEntity.ok().build();
 	}
 }

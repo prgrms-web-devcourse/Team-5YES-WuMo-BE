@@ -53,7 +53,7 @@ public class RouteCommentController {
 
 	@PatchMapping
 	@Operation(summary = "모임 내 루트 댓글 수정")
-	public ResponseEntity<PartyRouteCommentUpdateResponse> updatePrivateRouteComment(
+	public ResponseEntity<PartyRouteCommentUpdateResponse> updatePartyRouteComment(
 			@RequestBody @Valid PartyRouteCommentUpdateRequest partyRouteCommentUpdateRequest
 	) {
 		return ResponseEntity.ok(partyRouteCommentService.updatePartyRouteComment(partyRouteCommentUpdateRequest));
@@ -61,10 +61,10 @@ public class RouteCommentController {
 
 	@DeleteMapping("/{id}")
 	@Operation(summary = "모임 내 루트 댓글 삭제")
-	public ResponseEntity<Void> deletePrivateRouteComment(
-			@PathVariable("id") @Parameter(description = "삭제하고자 하는 비공개 루트 댓글") Long id
+	public ResponseEntity<Void> deletePartyRouteComment(
+			@PathVariable("id") @Parameter(description = "삭제하고자 하는 모임 내 루트 댓글 식별자") Long partyRouteCommentId
 	) {
-		partyRouteCommentService.deletePartyRouteComment(id);
+		partyRouteCommentService.deletePartyRouteComment(partyRouteCommentId);
 		return ResponseEntity.ok().build();
 	}
 
