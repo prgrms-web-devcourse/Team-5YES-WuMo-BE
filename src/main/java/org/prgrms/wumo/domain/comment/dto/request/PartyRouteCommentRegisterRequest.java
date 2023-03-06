@@ -4,25 +4,25 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
 
-@Schema(name = "모임 내 일정 댓글 생성 요청")
+@Schema(name = "모임 내 루트 댓글 생성 요청")
 public record PartyRouteCommentRegisterRequest(
 
-		@NotNull(message = "댓글 성성 요청자의 id는 필수 입력값입니다")
-		@Schema(description = "댓글 생성 요청자 id", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+		@NotNull(message = "댓글 성성 요청자의 식별자는 필수 입력값입니다")
+		@Schema(description = "댓글 생성 요청자 식별자", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
 		Long memberId,
 
 		@Schema(description = "댓글 내용", example = "댓글", requiredMode = Schema.RequiredMode.REQUIRED)
 		String content,
 
-		@Schema(description = "댓글 사진 링크", example = "http://", requiredMode = Schema.RequiredMode.REQUIRED)
+		@Schema(description = "댓글 이미지 주소", example = "http://~.png", requiredMode = Schema.RequiredMode.REQUIRED)
 		String image,
 
-		@NotNull(message = "댓글이 쓰여지는 일정의 id는 필수 입력값입니다.")
-		@Schema(description = "루트 id", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+		@NotNull(message = "댓글이 쓰여지는 일정의 식별자는 필수 입력값입니다.")
+		@Schema(description = "루트 식별자", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
 		Long routeId,
 
-		@NotNull(message = "댓글이 쓰여지는 일정에서의 장소 id는 필수 입력값입니다. ")
-		@Schema(description = "후보지 id", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+		@NotNull(message = "댓글이 쓰여지는 후보지의 식별자는 필수 입력값입니다. ")
+		@Schema(description = "후보지 식별자", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
 		Long locationId
 ) {
 	public PartyRouteCommentRegisterRequest(

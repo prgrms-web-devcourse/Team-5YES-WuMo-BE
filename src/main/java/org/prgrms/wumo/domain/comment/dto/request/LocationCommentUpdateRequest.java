@@ -15,14 +15,14 @@ public record LocationCommentUpdateRequest(
 		@Schema(description = "수정된 댓글 내용", example = "변경된 내용", requiredMode = Schema.RequiredMode.REQUIRED)
 		String content,
 
-		@Schema(description = "수정된 댓글 이미지", example = "http://", requiredMode = Schema.RequiredMode.REQUIRED)
+		@Schema(description = "수정된 댓글 이미지 주소", example = "http://~.png", requiredMode = Schema.RequiredMode.REQUIRED)
 		String image
 ) {
 	public LocationCommentUpdateRequest(
 			Long id, String content, String image
 	) {
 		if (content.isEmpty() && image.isEmpty())
-			throw new ValidationException("");
+			throw new ValidationException("내용이 빌 수는 없습니다.");
 
 		this.id = id;
 		this.content = content;
