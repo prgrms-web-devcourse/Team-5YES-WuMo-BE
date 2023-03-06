@@ -33,10 +33,10 @@ class ImageControllerTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	@Value("${cloud.aws.s3.bucket:#{null}}")
+	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 
-	@Value("${cloud.aws.region.static:#{null}}")
+	@Value("${cloud.aws.region.static}")
 	private String region;
 
 	@Test
