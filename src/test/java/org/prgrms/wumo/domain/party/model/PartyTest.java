@@ -23,8 +23,12 @@ class PartyTest {
 	@DisplayName("수정할 때 모임 시작일보다 모임 종료일이 빠르면 예외가 발생한다.")
 	void checkEndDateIsBeforeStartDateOnUpdate() {
 		Party party = Party.builder()
+				.name("오예스 워크샵")
 				.startDate(LocalDateTime.now())
 				.endDate(LocalDateTime.now().plusDays(1))
+				.description("팀 설립 기념 워크샵")
+				.coverImage("https://~.jpeg")
+				.password("1234")
 				.build();
 
 		assertThrows(IllegalArgumentException.class, () -> party.update(

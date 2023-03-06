@@ -28,6 +28,7 @@ import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyGetRequest;
 import org.prgrms.wumo.domain.party.dto.request.PartyRegisterRequest;
+import org.prgrms.wumo.domain.party.dto.request.PartyType;
 import org.prgrms.wumo.domain.party.dto.request.PartyUpdateRequest;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetAllResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyGetResponse;
@@ -165,29 +166,29 @@ class PartyServiceTest {
 		@DisplayName("사용자가 속한 모임 목록을 반환한다.")
 		void success() {
 			//mocking
-			given(partyMemberRepository.findAllByMemberId(member.getId(), null, 1))
+			given(partyMemberRepository.findAllByMemberId(member.getId(), null, 1, PartyType.ALL))
 					.willReturn(List.of(partyMember));
 
 			//when
-			PartyGetAllResponse partyGetAllResponse = partyService.getAllParty(new PartyGetRequest(null, 1));
+			PartyGetAllResponse partyGetAllResponse = partyService.getAllParty(new PartyGetRequest(PartyType.ALL, null, 1));
 
 			//then
 			assertThat(partyGetAllResponse.party()).isNotEmpty();
 
 			then(partyMemberRepository)
 					.should()
-					.findAllByMemberId(member.getId(), null, 1);
+					.findAllByMemberId(member.getId(), null, 1, PartyType.ALL);
 		}
 
 		@Test
 		@DisplayName("사용자가 속한 모임이 없다면 빈 목록을 반환한다.")
 		void empty() {
 			//mocking
-			given(partyMemberRepository.findAllByMemberId(member.getId(), null, 1))
+			given(partyMemberRepository.findAllByMemberId(member.getId(), null, 1, PartyType.ALL))
 					.willReturn(Collections.emptyList());
 
 			//when
-			PartyGetAllResponse partyGetAllResponse = partyService.getAllParty(new PartyGetRequest(null, 1));
+			PartyGetAllResponse partyGetAllResponse = partyService.getAllParty(new PartyGetRequest(PartyType.ALL, null, 1));
 
 			//then
 			assertThat(partyGetAllResponse.party()).isEmpty();
@@ -195,7 +196,7 @@ class PartyServiceTest {
 
 			then(partyMemberRepository)
 					.should()
-					.findAllByMemberId(member.getId(), null, 1);
+					.findAllByMemberId(member.getId(), null, 1, PartyType.ALL);
 		}
 
 	}
