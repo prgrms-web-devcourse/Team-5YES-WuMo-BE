@@ -15,7 +15,7 @@ public record PartyRouteCommentGetResponse(
 		@Schema(description = "댓글 등록인 프로필 사진", example = "http://~.png", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 		String profileImage,
 
-		@Schema(description = "후보지 댓글 등록인 역할", example = "총무", requiredMode = Schema.RequiredMode.REQUIRED)
+		@Schema(description = "댓글 등록인 역할", example = "총무", requiredMode = Schema.RequiredMode.REQUIRED)
 		String memberRole,
 
 		@Schema(description = "댓글 내용", example = "이거 먹으러 가자!", requiredMode = Schema.RequiredMode.NOT_REQUIRED)

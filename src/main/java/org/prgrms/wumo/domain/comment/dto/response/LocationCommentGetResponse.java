@@ -21,7 +21,7 @@ public record LocationCommentGetResponse(
 		@Schema(description = "댓글 내용", example = "이거 먹으러 가자!", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 		String content,
 
-		@Schema(description = "댓글 첨부 이미지 주소", example = "http://~.jpeg", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+		@Schema(description = "댓글 이미지 주소", example = "http://~.jpeg", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 		String image,
 
 		@Schema(description = "댓글 등록 시간", example = "2023-03-03T13:03:23", requiredMode = Schema.RequiredMode.REQUIRED)
