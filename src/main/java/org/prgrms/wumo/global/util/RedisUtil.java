@@ -1,4 +1,4 @@
-package org.prgrms.wumo.domain.member.repository;
+package org.prgrms.wumo.global.util;
 
 import java.time.Duration;
 
@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
-public class RefreshTokenRepository {
+public class RedisUtil {
 
 	private final StringRedisTemplate stringRedisTemplate;
 

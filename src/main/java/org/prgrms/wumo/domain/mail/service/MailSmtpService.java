@@ -5,6 +5,7 @@ import java.util.Random;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.prgrms.wumo.global.util.RedisUtil;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -20,16 +21,20 @@ public class MailSmtpService implements MailService {
 
 	private static final String CODE_SUBJECT = "WuMo(우리들의 모임) 회원가입 이메일 인증 코드입니다.";
 	private static final String CODE_CONTENT = "회원가입 화면에 아래의 이메일 인증 코드를 입력해주세요\n";
+	private static final int SAVE_SECONDS = 180;
 
 	private static final Random random = new Random();
 
 	private final JavaMailSender javaMailSender;
+	private final RedisUtil redisUtil;
 
 	@Override
 	public void sendCodeMail(String toAddress) {
 		try {
-			MimeMessage message = getMail(toAddress, CODE_CONTENT, CODE_SUBJECT + generateMailCode());
+			String mailCode = generateMailCode();
+			MimeMessage message = getMail(toAddress, CODE_CONTENT, CODE_SUBJECT + mailCode);
 			javaMailSender.send(message);
+			redisUtil.save(toAddress, mailCode, SAVE_SECONDS);
 		} catch (MessagingException exception) {
 			throw new MailSendException("메일 전송에 실패하였습니다.");
 		}
