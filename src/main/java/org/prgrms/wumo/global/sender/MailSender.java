@@ -1,11 +1,11 @@
-package org.prgrms.wumo.global.mail;
+package org.prgrms.wumo.global.sender;
 
 import java.util.Random;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.prgrms.wumo.global.redis.RedisUtil;
+import org.prgrms.wumo.global.repository.RedisRepository;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class MailSmtpSender implements MailSender {
+public class MailSender implements Sender {
 
 	private static final String WUMO_MAIL = "5yeswumo@gmail.com";
 
@@ -26,15 +26,15 @@ public class MailSmtpSender implements MailSender {
 	private static final Random random = new Random();
 
 	private final JavaMailSender javaMailSender;
-	private final RedisUtil redisUtil;
+	private final RedisRepository redisRepository;
 
 	@Override
-	public void sendCodeMail(String toAddress) {
+	public void sendCode(String toAddress) {
 		try {
 			String mailCode = generateMailCode();
 			MimeMessage message = getMail(toAddress, CODE_CONTENT, CODE_SUBJECT + mailCode);
 			javaMailSender.send(message);
-			redisUtil.save(toAddress, mailCode, SAVE_SECONDS);
+			redisRepository.save(toAddress, mailCode, SAVE_SECONDS);
 		} catch (MessagingException exception) {
 			throw new MailSendException("메일 전송에 실패하였습니다.");
 		}

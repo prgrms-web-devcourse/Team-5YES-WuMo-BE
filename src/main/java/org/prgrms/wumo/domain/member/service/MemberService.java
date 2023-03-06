@@ -24,7 +24,7 @@ import org.prgrms.wumo.global.exception.custom.InvalidCodeException;
 import org.prgrms.wumo.global.exception.custom.InvalidRefreshTokenException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.WumoJwt;
-import org.prgrms.wumo.global.redis.RedisUtil;
+import org.prgrms.wumo.global.repository.RedisRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,10 +39,10 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final JwtTokenProvider jwtTokenProvider;
-	private final RedisUtil redisUtil;
+	private final RedisRepository redisRepository;
 
 	public void checkCodeMail(String toAddress, String code) {
-		if (!redisUtil.get(toAddress).equals(code)) {
+		if (!redisRepository.get(toAddress).equals(code)) {
 			throw new InvalidCodeException("유효하지 않은 인증 코드입니다.");
 		}
 	}
@@ -86,7 +86,7 @@ public class MemberService {
 
 	@Transactional
 	public void logoutMember() {
-		redisUtil.delete(String.valueOf(getMemberId()));
+		redisRepository.delete(String.valueOf(getMemberId()));
 		SecurityContextHolder.clearContext();
 	}
 
@@ -97,11 +97,11 @@ public class MemberService {
 		jwtTokenProvider.validateToken(refreshToken);
 		String memberId = jwtTokenProvider.extractMember(accessToken);
 
-		if (!redisUtil.get(memberId).equals(refreshToken)) {
+		if (!redisRepository.get(memberId).equals(refreshToken)) {
 			throw new InvalidRefreshTokenException("인증 정보가 만료되었습니다.");
 		}
 
-		redisUtil.delete(memberId);
+		redisRepository.delete(memberId);
 		WumoJwt wumoJwt = getWumoJwt(memberId);
 
 		return toMemberLoginResponse(wumoJwt);
@@ -129,7 +129,7 @@ public class MemberService {
 
 	private WumoJwt getWumoJwt(String memberId) {
 		WumoJwt wumoJwt = jwtTokenProvider.generateToken(memberId);
-		redisUtil.save(
+		redisRepository.save(
 			memberId,
 			wumoJwt.getRefreshToken(),
 			jwtTokenProvider.getRefreshTokenExpireSeconds()
