@@ -6,6 +6,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.prgrms.wumo.global.repository.RedisRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -15,9 +16,10 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class MailSender implements Sender {
+public class EmailSender implements Sender {
 
-	private static final String WUMO_MAIL = "5yeswumo@gmail.com";
+	@Value("${wumo.mail}")
+	private String FromAddress;
 
 	private static final String CODE_SUBJECT = "WuMo(우리들의 모임) 회원가입 이메일 인증 코드입니다.";
 	private static final String CODE_CONTENT = "회원가입 화면에 아래의 이메일 인증 코드를 입력해주세요\n";
@@ -45,7 +47,7 @@ public class MailSender implements Sender {
 		MimeMessageHelper messageHelper = new MimeMessageHelper(message, false, "UTF-8");
 
 		messageHelper.setTo(toAddress);
-		messageHelper.setFrom(WUMO_MAIL);
+		messageHelper.setFrom(FromAddress);
 		messageHelper.setSubject(subject);
 		messageHelper.setText(content);
 
@@ -54,10 +56,7 @@ public class MailSender implements Sender {
 
 	private String generateMailCode() {
 		StringBuilder emailCode = new StringBuilder();
-
-		for (int i = 0; i < 6; i++) {
-			emailCode.append(random.nextInt(10));
-		}
+		emailCode.append(random.nextInt(100000, 1000000));
 
 		return emailCode.toString();
 	}
