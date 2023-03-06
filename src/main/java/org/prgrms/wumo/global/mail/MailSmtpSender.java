@@ -1,10 +1,11 @@
-package org.prgrms.wumo.global.util;
+package org.prgrms.wumo.global.mail;
 
 import java.util.Random;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.prgrms.wumo.global.redis.RedisUtil;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;

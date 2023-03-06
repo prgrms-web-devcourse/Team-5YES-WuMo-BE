@@ -1,4 +1,4 @@
-package org.prgrms.wumo.global.util;
+package org.prgrms.wumo.global.redis;
 
 import java.time.Duration;
 

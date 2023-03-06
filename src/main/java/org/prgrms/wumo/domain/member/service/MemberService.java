@@ -24,7 +24,7 @@ import org.prgrms.wumo.global.exception.custom.InvalidCodeException;
 import org.prgrms.wumo.global.exception.custom.InvalidRefreshTokenException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.WumoJwt;
-import org.prgrms.wumo.global.util.RedisUtil;
+import org.prgrms.wumo.global.redis.RedisUtil;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;

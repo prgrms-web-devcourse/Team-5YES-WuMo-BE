@@ -1,4 +1,4 @@
-package org.prgrms.wumo.global.util;
+package org.prgrms.wumo.global.mail;
 
 public interface MailSender {
 	void sendCodeMail(String toAddress);
