@@ -124,14 +124,14 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 		);
 
 		locationComment = locationCommentRepository.save(
-				LocationComment.builder()
-						.image("image.png")
+				LocationComment.builder().image("image.png")
 						.content("댓글 댓글")
 						.locationId(location.getId())
 						.isEdited(false)
 						.partyMember(partyMember)
 						.member(member)
 						.build()
+
 		);
 
 		SecurityContext context = SecurityContextHolder.getContext();

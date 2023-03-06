@@ -1,13 +1,16 @@
 package org.prgrms.wumo.domain.comment.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteCommentGetAllResponse;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,8 +22,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentGetAllRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentUpdateRequest;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResponse;
+import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentUpdateResponse;
 import org.prgrms.wumo.domain.comment.model.PartyRouteComment;
 import org.prgrms.wumo.domain.comment.repository.PartyRouteCommentRepository;
 import org.prgrms.wumo.domain.location.model.Category;
@@ -33,6 +38,7 @@ import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.prgrms.wumo.domain.route.repository.RouteRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -90,17 +96,18 @@ public class PartyRouteCommentServiceTest {
 
 	@Nested
 	@DisplayName("registerPartyRouteComment를 통해 ")
-	class registerPartyRouteComment{
+	class registerPartyRouteComment {
 		@Test
 		@DisplayName("모임 내 일정에 댓글을 등록한다")
-		void success(){
+		void success() {
 			// Given
 			PartyRouteCommentRegisterRequest request = new PartyRouteCommentRegisterRequest(
 					1L, "모임 내 댓글", "image.png", 1L, 1L
 			);
 
 			given(memberRepository.findById(any(Long.class))).willReturn(Optional.of(member));
-			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(Optional.of(partyMember));
+			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(
+					Optional.of(partyMember));
 			given(routeRepository.findById(any(Long.class))).willReturn(Optional.of(route));
 			given(locationRepository.existsById(any(Long.class))).willReturn(true);
 			given(partyRouteCommentRepository.save(any(PartyRouteComment.class))).willReturn(partyRouteComment);
@@ -116,11 +123,11 @@ public class PartyRouteCommentServiceTest {
 
 	@Nested
 	@DisplayName("getAllPartyRouteComment를 통해 ")
-	class getAllPartyRouteComment{
+	class getAllPartyRouteComment {
 
 		@Test
 		@DisplayName("모임 내 댓글들 중 특정 후보지의 댓글 목록을 조회할 수 있다.")
-		void success(){
+		void success() {
 			// Given
 			PartyRouteComment partyRouteComment2 = PartyRouteComment.builder()
 					.id(2L)
@@ -158,6 +165,48 @@ public class PartyRouteCommentServiceTest {
 
 			assertThat(partyRouteCommentGetAllResponse.partyRouteComments().size()).isEqualTo(2);
 			assertThat(partyRouteCommentGetAllResponse).usingRecursiveComparison().isEqualTo(expected);
+		}
+	}
+
+	@Nested
+	@DisplayName("PartyRouteCommentUpdate를 통해 ")
+	class updatePartyRouteComment {
+		@Test
+		@DisplayName("모임 내 루트 댓글을 수정할 수 있다.")
+		void success() {
+			// Given
+			given(partyMemberRepository.existsById(any(Long.class))).willReturn(true);
+			given(partyRouteCommentRepository.findById(any(Long.class))).willReturn(Optional.of(partyRouteComment));
+			given(partyRouteCommentRepository.save(any(PartyRouteComment.class))).willReturn(partyRouteComment);
+
+			PartyRouteCommentUpdateRequest request =
+					new PartyRouteCommentUpdateRequest(partyRouteComment.getRouteId(), "여기 좋아요!", "image");
+			PartyRouteCommentUpdateResponse expected =
+					new PartyRouteCommentUpdateResponse(partyRouteComment.getRouteId(), "여기 좋아요!", "image");
+
+			// When
+			PartyRouteCommentUpdateResponse response = partyRouteCommentService.updatePartyRouteComment(
+					request);
+
+			// Then
+			assertThat(response).usingRecursiveComparison().isEqualTo(expected);
+		}
+
+		@Test
+		@DisplayName("자신의 댓글이 아니면 수정할 수 없다.")
+		void failWithAccessDenied() {
+			// Given
+			given(partyMemberRepository.existsById(any(Long.class))).willReturn(false);
+			given(partyRouteCommentRepository.findById(any(Long.class))).willReturn(Optional.of(partyRouteComment));
+
+			PartyRouteCommentUpdateRequest request =
+					new PartyRouteCommentUpdateRequest(partyRouteComment.getRouteId(), "여기 좋아요!", "image");
+
+			// When // Then
+			assertThatThrownBy(
+					() -> partyRouteCommentService.updatePartyRouteComment(request)
+			).isInstanceOf(AccessDeniedException.class);
+
 		}
 	}
 
@@ -204,7 +253,7 @@ public class PartyRouteCommentServiceTest {
 				.build();
 	}
 
-	private Route getRoute(){
+	private Route getRoute() {
 		return Route.builder()
 				.id(1L)
 				.party(party)
@@ -212,7 +261,7 @@ public class PartyRouteCommentServiceTest {
 				.build();
 	}
 
-	private Location getLocation(){
+	private Location getLocation() {
 		return Location.builder()
 				.id(1L)
 				.partyId(party.getId())
