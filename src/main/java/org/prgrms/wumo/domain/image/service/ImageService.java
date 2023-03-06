@@ -32,9 +32,12 @@ public class ImageService {
 
 	private final AmazonS3 amazonS3;
 
+	private final String BUCKET_URL;
+
 	public ImageService(@Value("${cloud.aws.s3.bucket:#{null}}") String bucket, AmazonS3 amazonS3) {
 		this.bucket = Objects.requireNonNull(bucket, "AWS S3 Bucket 정보를 불러오지 못했습니다.");
 		this.amazonS3 = amazonS3;
+		this.BUCKET_URL = String.format("%s.s3.%s.amazonaws.com", bucket, amazonS3.getBucketLocation(bucket));
 	}
 
 	public ImageRegisterResponse registerImage(ImageRegisterRequest imageRegisterRequest) {
@@ -47,7 +50,10 @@ public class ImageService {
 
 	public void deleteImage(ImageDeleteRequest imageDeleteRequest) {
 		try {
-			amazonS3.deleteObject(bucket, extractImagePath(imageDeleteRequest.imageUrl()));
+			String imageUrlWithHost = removeProtocols(imageDeleteRequest.imageUrl());
+			validateHost(imageUrlWithHost);
+
+			amazonS3.deleteObject(bucket, removeHost(imageUrlWithHost));
 		} catch (AmazonServiceException e) {
 			throw new ImageDeleteFailedException("버킷에서 이미지 삭제에 실패했습니다.");
 		}
@@ -81,9 +87,18 @@ public class ImageService {
 		}
 	}
 
-	private String extractImagePath(String imageUrl) {
-		String url = imageUrl.replaceAll("(http|https)://", "");
-		return url.substring(url.indexOf("/") + 1);
+	private String removeProtocols(String imageUrl) {
+		return imageUrl.replaceAll("(http|https)://", "");
+	}
+
+	private void validateHost(String imageUrl) {
+		if (!imageUrl.substring(0, imageUrl.indexOf("/")).equals(BUCKET_URL)) {
+			throw new ImageDeleteFailedException("버킷에 저장된 이미지가 아닙니다.");
+		}
+	}
+
+	private String removeHost(String imageUrl) {
+		return imageUrl.substring(imageUrl.indexOf("/") + 1);
 	}
 
 }
