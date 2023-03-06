@@ -85,7 +85,7 @@ class ImageControllerTest {
 	@Test
 	@DisplayName("이미지 URL을 통해 버킷에서 이미지를 삭제할 수 있다.")
 	void deleteImageFromValidHost() throws Exception {
-		//given (유효하지 않은 이미지 경로 사용)
+		//given
 		ImageDeleteRequest imageDeleteRequest
 				= new ImageDeleteRequest(String.format("https://%s.s3.%s.amazonaws.com/test.png", bucket, region));
 
