@@ -10,6 +10,8 @@ import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentUpdateRequest;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 
@@ -41,5 +43,10 @@ public class PartyRouteComment extends Comment {
 
 	public void setPartyMember(PartyMember partyMember) {
 		this.partyMember = partyMember;
+	}
+
+	public void update(PartyRouteCommentUpdateRequest request) {
+		this.image = request.image() == null ? this.getImage() : request.image();
+		this.content = request.content() == null ? this.getContent() : request.content();
 	}
 }
