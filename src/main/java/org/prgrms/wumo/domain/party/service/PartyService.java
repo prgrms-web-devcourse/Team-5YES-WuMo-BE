@@ -138,6 +138,7 @@ public class PartyService {
 	}
 
 	private void setPartyMemberDetail(Party party) {
+		// TODO : N개의 Party에 대해 2번씩 쿼리가 나가기 때문에 개선할 필요
 		party.setTotalMembers(partyMemberRepository.countAllByParty(party));
 		party.setPartyMembers(
 				partyMemberRepository.findAllByPartyId(party.getId(), null, MEMBER_PREVIEW)
