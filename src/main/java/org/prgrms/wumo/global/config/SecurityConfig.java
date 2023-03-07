@@ -72,7 +72,7 @@ public class SecurityConfig {
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
 
-		corsConfiguration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173", frontServer));
+		corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://5yes-wumo.vercel.app"));
 		corsConfiguration.setAllowedMethods(Arrays.asList("HEAD", "OPTIONS", "POST", "GET", "DELETE", "PUT", "PATCH"));
 		corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
 		corsConfiguration.setAllowCredentials(true);
