@@ -18,13 +18,11 @@ import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResp
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentUpdateResponse;
 import org.prgrms.wumo.domain.comment.model.PartyRouteComment;
 import org.prgrms.wumo.domain.comment.repository.PartyRouteCommentRepository;
+import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
-import org.prgrms.wumo.domain.member.model.Member;
-import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.route.model.Route;
-import org.prgrms.wumo.domain.route.repository.RouteRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,28 +34,21 @@ import lombok.RequiredArgsConstructor;
 public class PartyRouteCommentService {
 
 	private final PartyRouteCommentRepository partyRouteCommentRepository;
-	private final MemberRepository memberRepository;
 	private final PartyMemberRepository partyMemberRepository;
-	private final RouteRepository routeRepository;
 	private final LocationRepository locationRepository;
 
 	@Transactional
 	public PartyRouteCommentRegisterResponse registerPartyRouteComment(
 			PartyRouteCommentRegisterRequest partyRouteCommentRegisterRequest) {
 
-		PartyRouteComment partyRouteComment = toPartyRouteComment(partyRouteCommentRegisterRequest);
+		PartyMember partyMember = getPartyMemberEntity(partyRouteCommentRegisterRequest.partyId(), getMemberId());
+		Location location = getLocationEntity(partyRouteCommentRegisterRequest.locationId());
+		Route route = location.getRoute();
+		PartyRouteComment partyRouteComment = toPartyRouteComment(partyRouteCommentRegisterRequest,
+				route.getId());
 
-		partyRouteComment.setMember(getMemberEntity(getMemberId()));
-
-		partyRouteComment.setPartyMember(
-				getPartyMemberEntity(
-						getRouteEntity(
-								partyRouteCommentRegisterRequest.routeId()).getParty().getId(),
-						getMemberId()
-				)
-		);
-
-		validateLocation(partyRouteCommentRegisterRequest.locationId());
+		partyRouteComment.setPartyMember(partyMember);
+		partyRouteComment.setMember(partyMember.getMember());
 
 		return toPartyRouteCommentRegisterResponse(
 				partyRouteCommentRepository.save(partyRouteComment)
@@ -82,11 +73,8 @@ public class PartyRouteCommentService {
 			PartyRouteCommentUpdateRequest partyRouteCommentUpdateRequest) {
 		PartyRouteComment partyRouteComment = getPartyRouteCommentEntity(partyRouteCommentUpdateRequest.id());
 
-		checkMemberInParty(partyRouteComment.getPartyMember().getId());
+		checkAuthorization(partyRouteComment, getMemberId());
 
-		if (!partyRouteComment.getMember().getId().equals(getMemberId())) {
-			throw new AccessDeniedException("댓글은 작성자만 수정할 수 있습니다.");
-		}
 		partyRouteComment.update(partyRouteCommentUpdateRequest);
 
 		return toPartyRouteCommentUpdateResponse(partyRouteCommentRepository.save(partyRouteComment));
@@ -96,21 +84,9 @@ public class PartyRouteCommentService {
 	public void deletePartyRouteComment(Long partyRouteCommentId) {
 		PartyRouteComment partyRouteComment = getPartyRouteCommentEntity(partyRouteCommentId);
 
-		checkMemberInParty(partyRouteComment.getPartyMember().getId());
-
-		if (!partyRouteComment.getMember().getId().equals(getMemberId())) {
-			throw new AccessDeniedException("댓글은 작성자만 삭제할 수 있습니다.");
-		}
+		checkAuthorization(partyRouteComment, getMemberId());
 
 		partyRouteCommentRepository.deleteById(partyRouteCommentId);
-	}
-
-	private Member getMemberEntity(Long memberId) {
-		return memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("존재 하지 않는 회원입니다"));
-	}
-
-	private Route getRouteEntity(Long routeId) {
-		return routeRepository.findById(routeId).orElseThrow(() -> new EntityNotFoundException("루트가 존재하지 않습니다"));
 	}
 
 	private PartyMember getPartyMemberEntity(Long partyId, Long memberId) {
@@ -118,15 +94,14 @@ public class PartyRouteCommentService {
 				.orElseThrow(() -> new EntityNotFoundException("모임 내 존재하지 않는 회원입니다"));
 	}
 
-	private void validateLocation(Long locationId) {
-		if (!locationRepository.existsById(locationId)) {
-			throw new EntityNotFoundException("댓글을 작성하고자 하는 후보지가 존재하지 않습니다");
-		}
-	}
-
 	private PartyRouteComment getPartyRouteCommentEntity(Long partyRouteCommentId) {
 		return partyRouteCommentRepository.findById(partyRouteCommentId)
-				.orElseThrow(() -> new EntityNotFoundException("모임 내 존재하지 않는 회원입니다"));
+				.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 모임 내 댓글입니다."));
+	}
+
+	private Location getLocationEntity(Long locationId) {
+		return locationRepository.findById(locationId)
+				.orElseThrow(() -> new EntityNotFoundException("댓글을 작성하고자 하는 후보지가 존재하지 않습니다"));
 	}
 
 	private void checkMemberInParty(Long partyMemberId) {
@@ -134,4 +109,10 @@ public class PartyRouteCommentService {
 			throw new AccessDeniedException("모임 내 회원이 아닙니다.");
 		}
 	}
+
+	private void checkAuthorization(PartyRouteComment partyRouteComment, Long memberId) {
+		checkMemberInParty(partyRouteComment.getPartyMember().getId());
+		partyRouteComment.checkAuthorization(memberId);
+	}
 }
+
