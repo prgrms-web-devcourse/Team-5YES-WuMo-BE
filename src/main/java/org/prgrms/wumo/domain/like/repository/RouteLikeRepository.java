@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-public interface RouteLikeRepository extends JpaRepository<RouteLike, Long> {
+public interface RouteLikeRepository extends JpaRepository<RouteLike, Long>, RouteLikeCustomRepository {
 
 	boolean existsByRouteIdAndMemberId(Long routeId, Long memberId);
 
