@@ -2,6 +2,7 @@ package org.prgrms.wumo.domain.location.api;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.prgrms.wumo.MysqlTestContainer;
 import org.prgrms.wumo.domain.location.LocationTestUtils;
 import org.prgrms.wumo.domain.location.dto.request.LocationRegisterRequest;
+import org.prgrms.wumo.domain.location.dto.request.LocationSpendingUpdateRequest;
 import org.prgrms.wumo.domain.location.model.Category;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
@@ -178,7 +180,6 @@ public class LocationControllerTest extends MysqlTestContainer {
 	void getAllLocationTest() throws Exception {
 		// Given
 		List<Location> locations = locationRepository.saveAll(locationTestUtils.getLocations());
-		Location firstLocation = locations.get(0);
 
 		// When
 		ResultActions resultActions = mockMvc.perform(
@@ -263,5 +264,48 @@ public class LocationControllerTest extends MysqlTestContainer {
 		resultActions
 				.andExpect(status().isOk())
 				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("후보지에서 실제 사용한 금액을 갱신할 수 있다.")
+	void updateSpending() throws Exception {
+		// Given
+		Location location = locationRepository.save(
+				Location.builder()
+						.category(Category.COFFEE)
+						.visitDate(locationTestUtils.getDayToVisit())
+						.description("아인슈페너가 맛있는 곳!")
+						.name("cafe")
+						.searchAddress("고양시")
+						.address("경기도 고양시 일산서구")
+						.latitude(12.34F)
+						.longitude(34.56F)
+						.partyId(party.getId())
+						.expectedCost(4000)
+						.spending(3500)
+						.image("image.url")
+						.build()
+		);
+
+		LocationSpendingUpdateRequest locationSpendingUpdateRequest =
+				new LocationSpendingUpdateRequest(location.getId(), 50000);
+
+		// When
+		ResultActions resultActions =
+				mockMvc.perform(
+						patch("/api/v1/locations/spending")
+								.contentType(MediaType.APPLICATION_JSON_VALUE)
+								.characterEncoding("UTF-8")
+								.content(
+										objectMapper.writeValueAsString(locationSpendingUpdateRequest)
+								)
+				);
+
+		// Then
+		resultActions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.spending").value("50000"))
+				.andDo(print());
+
 	}
 }

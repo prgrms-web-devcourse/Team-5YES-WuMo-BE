@@ -26,15 +26,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.prgrms.wumo.domain.location.LocationTestUtils;
 import org.prgrms.wumo.domain.location.dto.request.LocationGetAllRequest;
 import org.prgrms.wumo.domain.location.dto.request.LocationRegisterRequest;
+import org.prgrms.wumo.domain.location.dto.request.LocationSpendingUpdateRequest;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetAllResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationRegisterResponse;
+import org.prgrms.wumo.domain.location.dto.response.LocationSpendingUpdateResponse;
 import org.prgrms.wumo.domain.location.model.Category;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
-import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
-import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -49,12 +49,6 @@ public class LocationServiceTest {
 
 	@Mock
 	LocationRepository locationRepository;
-
-	@Mock
-	MemberRepository memberRepository;
-
-	@Mock
-	PartyRepository partyRepository;
 
 	@Mock
 	PartyMemberRepository partyMemberRepository;
@@ -233,6 +227,46 @@ public class LocationServiceTest {
 					() -> locationService.deleteLocation(locationId)
 			).isInstanceOf(AccessDeniedException.class);
 		}
+	}
 
+	@Nested
+	@DisplayName("updateSpending을 통해 ")
+	class updateSpending {
+		// GIVEN
+		Long locationId = locationTestUtils.getLocation().getId();
+		LocationSpendingUpdateRequest locationSpendingUpdateRequest =
+				new LocationSpendingUpdateRequest(locationId, 45000);
+
+		@Test
+		@DisplayName("후보지의 실제 사용 금액을 갱신할 수 있다.")
+		void success() {
+			// Given
+			given(locationRepository.findById(any(Long.class))).willReturn(Optional.of(locationTestUtils.getLocation()));
+			given(partyMemberRepository.existsByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(true);
+
+			// When
+			LocationSpendingUpdateResponse locationSpendingUpdateResponse =
+					locationService.updateSpending(locationSpendingUpdateRequest);
+
+			// Then
+			assertThat(locationSpendingUpdateResponse.spending()).isEqualTo(45000);
+			then(locationRepository)
+					.should()
+					.save(any(Location.class));
+
+		}
+
+		@Test
+		@DisplayName("본인의 모임이 아니면 실제 사용 금액을 갱신할 수 없다.")
+		void failedUnAuthorized() {
+			// Given
+			given(locationRepository.findById(any(Long.class))).willReturn(Optional.of(locationTestUtils.getLocation()));
+			given(partyMemberRepository.existsByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(false);
+
+			// When // Then
+			assertThatThrownBy(
+					() -> locationService.updateSpending(locationSpendingUpdateRequest)
+			).isInstanceOf(AccessDeniedException.class);
+		}
 	}
 }
