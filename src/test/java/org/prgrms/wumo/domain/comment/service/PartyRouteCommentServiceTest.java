@@ -272,7 +272,7 @@ public class PartyRouteCommentServiceTest {
 	private Party getParty() {
 		return Party.builder()
 				.id(1L)
-				.password("1234").description("오예스팀 모임")
+				.description("오예스팀 모임")
 				.coverImage("party_cover_image.png")
 				.name("오예스")
 				.endDate(LocalDateTime.now().plusDays(5))

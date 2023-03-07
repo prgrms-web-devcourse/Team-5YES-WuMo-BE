@@ -45,9 +45,6 @@ public class Party extends BaseTimeEntity {
 	@Column(name = "image_url", nullable = false, unique = false, length = 255)
 	private String coverImage;
 
-	@Column(name = "password", nullable = true, unique = false, length = 4)
-	private String password;
-
 	@Transient
 	private long totalMembers;
 
@@ -55,9 +52,7 @@ public class Party extends BaseTimeEntity {
 	private List<PartyMember> partyMembers;
 
 	@Builder
-	public Party(Long id, String name, LocalDateTime startDate, LocalDateTime endDate, String description,
-			String coverImage,
-			String password) {
+	public Party(Long id, String name, LocalDateTime startDate, LocalDateTime endDate, String description, String coverImage) {
 		Assert.isTrue(startDate.isBefore(endDate) || startDate.isEqual(endDate), "종료일이 시작일보다 빠를 수 없습니다.");
 
 		this.id = id;
@@ -66,11 +61,9 @@ public class Party extends BaseTimeEntity {
 		this.endDate = endDate;
 		this.description = description;
 		this.coverImage = coverImage;
-		this.password = password;
 	}
 
-	public void update(String name, LocalDateTime startDate, LocalDateTime endDate, String description, String coverImage,
-			String password) {
+	public void update(String name, LocalDateTime startDate, LocalDateTime endDate, String description, String coverImage) {
 		this.name = Objects.requireNonNullElse(name, this.name);
 		if (startDate != null) {
 			Assert.isTrue(startDate.isBefore(endDate) || startDate.isEqual(endDate), "종료일이 시작일보다 빠를 수 없습니다.");
@@ -82,7 +75,6 @@ public class Party extends BaseTimeEntity {
 		}
 		this.description = Objects.requireNonNullElse(description, this.description);
 		this.coverImage = Objects.requireNonNullElse(coverImage, this.coverImage);
-		this.password = Objects.requireNonNullElse(password, this.password);
 	}
 
 	public void setTotalMembers(long totalMembers) {
@@ -91,11 +83,6 @@ public class Party extends BaseTimeEntity {
 
 	public void setPartyMembers(List<PartyMember> partyMembers) {
 		this.partyMembers = partyMembers;
-	}
-
-	// TODO : 입장 시 비밀번호 체크 로직
-	public boolean checkPassword(String password) {
-		return true;
 	}
 
 }

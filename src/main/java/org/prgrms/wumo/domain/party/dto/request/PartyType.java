@@ -2,6 +2,8 @@ package org.prgrms.wumo.domain.party.dto.request;
 
 import java.util.Arrays;
 
+import javax.validation.ValidationException;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum PartyType {
@@ -21,7 +23,7 @@ public enum PartyType {
 		return Arrays.stream(PartyType.values())
 				.filter(partyType -> partyType.value.equals(value))
 				.findFirst()
-				.orElse(null);
+				.orElseThrow(() -> new ValidationException("올바른 조회 기준이 아닙니다."));
 	}
 
 }

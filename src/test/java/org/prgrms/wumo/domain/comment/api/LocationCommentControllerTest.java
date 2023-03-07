@@ -89,7 +89,7 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 
 		party = partyRepository.save(
 				Party.builder()
-						.password("1234").description("오예스팀 모임")
+						.description("오예스팀 모임")
 						.coverImage("party_cover_image.png")
 						.name("오예스")
 						.startDate(LocalDateTime.now().plusDays(2))

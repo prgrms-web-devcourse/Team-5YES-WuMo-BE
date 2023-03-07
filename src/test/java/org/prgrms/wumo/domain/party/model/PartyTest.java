@@ -28,14 +28,12 @@ class PartyTest {
 				.endDate(LocalDateTime.now().plusDays(1))
 				.description("팀 설립 기념 워크샵")
 				.coverImage("https://~.jpeg")
-				.password("1234")
 				.build();
 
 		assertThrows(IllegalArgumentException.class, () -> party.update(
 				null,
 				LocalDateTime.now(),
 				LocalDateTime.now().minusDays(1),
-				null,
 				null,
 				null
 		));

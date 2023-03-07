@@ -160,8 +160,7 @@ class PartyControllerTest extends MysqlTestContainer {
 				LocalDate.now().plusDays(1),
 				LocalDate.now().plusDays(2),
 				"팀 설립 기념 워크샵 (수정)",
-				"https://~~~.jpeg",
-				"4321"
+				"https://~~~.jpeg"
 		);
 
 		//when
