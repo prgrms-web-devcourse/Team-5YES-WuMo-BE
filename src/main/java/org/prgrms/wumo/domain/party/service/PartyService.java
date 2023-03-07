@@ -22,6 +22,7 @@ import org.prgrms.wumo.domain.party.dto.response.PartyGetResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
+import org.prgrms.wumo.domain.party.repository.InvitationRepository;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.global.jwt.JwtUtil;
@@ -42,6 +43,8 @@ public class PartyService {
 	private final PartyRepository partyRepository;
 
 	private final PartyMemberRepository partyMemberRepository;
+
+	private final InvitationRepository invitationRepository;
 
 	@Transactional
 	public PartyRegisterResponse registerParty(PartyRegisterRequest partyRegisterRequest) {
@@ -112,6 +115,7 @@ public class PartyService {
 		PartyMember partyLeader = getPartyLeaderEntity(partyId);
 		checkAuthorization(partyLeader);
 
+		invitationRepository.deleteAllByParty(partyLeader.getParty());
 		partyMemberRepository.deleteAllByParty(partyLeader.getParty());
 		partyRepository.delete(partyLeader.getParty());
 	}

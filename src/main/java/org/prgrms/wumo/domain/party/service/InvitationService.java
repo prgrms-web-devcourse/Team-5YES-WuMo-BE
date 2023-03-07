@@ -20,6 +20,7 @@ import org.prgrms.wumo.global.base62.Base62Util;
 import org.prgrms.wumo.global.exception.custom.ExpiredInvitationException;
 import org.prgrms.wumo.global.jwt.JwtUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +32,7 @@ public class InvitationService {
 
 	private final InvitationRepository invitationRepository;
 
+	@Transactional
 	public InvitationRegisterResponse registerInvitation(
 			Long partyId,
 			InvitationRegisterRequest invitationRegisterRequest
@@ -55,6 +57,7 @@ public class InvitationService {
 		return toInvitationRegisterResponse(invitationRepository.save(newInvitation));
 	}
 
+	@Transactional(readOnly = true)
 	public InvitationValidateResponse validateInvitation(String code) {
 		Invitation invitation = getInvitationEntity(code);
 		if (invitation.getExpiredDate().isBefore(LocalDateTime.now())) {
