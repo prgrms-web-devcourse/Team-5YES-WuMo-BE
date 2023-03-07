@@ -68,7 +68,7 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 	PartyMemberRepository partyMemberRepository;
 
 	@Autowired
-	private LocationCommentRepository locationCommentRepository;
+	LocationCommentRepository locationCommentRepository;
 
 	// GIVEN
 	Member member;
@@ -156,7 +156,7 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 	void registerLocationComment() throws Exception {
 		// Given
 		LocationCommentRegisterRequest locationCommentRegisterRequest =
-				new LocationCommentRegisterRequest("댓글 댓글", "image.png", location.getId(), partyMember.getId());
+				new LocationCommentRegisterRequest("댓글 댓글", "image.png", location.getId(), party.getId());
 
 		// When
 		ResultActions resultActions =

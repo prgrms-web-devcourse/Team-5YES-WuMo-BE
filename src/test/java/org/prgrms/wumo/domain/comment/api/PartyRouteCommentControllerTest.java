@@ -140,6 +140,9 @@ public class PartyRouteCommentControllerTest {
 						.build()
 		);
 
+		location.addRoute(route);
+		location = locationRepository.save(location);
+
 		partyRouteComment = partyRouteCommentRepository.save(
 				PartyRouteComment.builder()
 						.image("image.png")
@@ -175,7 +178,14 @@ public class PartyRouteCommentControllerTest {
 	@DisplayName("모임 내 일정에 댓글을 생성할 수 있다")
 	void registerPartyRouteCommentTest() throws Exception {
 		// Given
-		PartyRouteCommentRegisterRequest request = new PartyRouteCommentRegisterRequest(
+
+		System.out.println("-=--==-==============---=-===-=-=-=");
+		System.out.println(location.getRoute().getId());
+		System.out.println(location.getId());
+		System.out.println("--------------------=-=-=-=-=-=-=-=");
+		System.out.println(route.getId());
+
+		PartyRouteCommentRegisterRequest partyRouteCommentRegisterRequest = new PartyRouteCommentRegisterRequest(
 				"모임 내 댓글", "image.png", party.getId(), location.getId()
 		);
 
@@ -186,7 +196,7 @@ public class PartyRouteCommentControllerTest {
 								.contentType(MediaType.APPLICATION_JSON_VALUE)
 								.characterEncoding("UTF-8")
 								.content(
-										objectMapper.writeValueAsString(request)
+										objectMapper.writeValueAsString(partyRouteCommentRegisterRequest)
 								)
 				);
 
