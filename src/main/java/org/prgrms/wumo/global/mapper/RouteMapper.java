@@ -1,7 +1,6 @@
 package org.prgrms.wumo.global.mapper;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.prgrms.wumo.domain.location.model.Location;
@@ -35,7 +34,6 @@ public class RouteMapper {
 
 	public static RouteGetResponse toRouteGetResponse(Route route) {
 		List<RouteLocationResponse> routeLocations = route.getLocations().stream()
-			.sorted(Comparator.comparing(Location::getVisitDate))
 			.map(location -> new RouteLocationResponse(
 				location.getId(),
 				location.getName(),
@@ -70,7 +68,6 @@ public class RouteMapper {
 
 	private static List<RouteLocationSimpleResponse> toRouteLocationSimpleResponse(List<Location> locations) {
 		return locations.stream()
-			.sorted(Comparator.comparing(Location::getVisitDate))
 			.map(location -> new RouteLocationSimpleResponse(
 				location.getId(),
 				location.getName(),
