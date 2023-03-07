@@ -61,7 +61,12 @@ public class PartyService {
 
 	@Transactional(readOnly = true)
 	public PartyGetAllResponse getAllParty(PartyGetRequest partyGetRequest) {
-		List<PartyMember> partyMembers = partyMemberRepository.findAllByMemberId(JwtUtil.getMemberId(), partyGetRequest.cursorId(), partyGetRequest.pageSize());
+		List<PartyMember> partyMembers = partyMemberRepository.findAllByMemberId(
+				JwtUtil.getMemberId(),
+				partyGetRequest.cursorId(),
+				partyGetRequest.pageSize(),
+				partyGetRequest.partyType()
+		);
 
 		long lastId = (partyMembers.size() > 0) ? partyMembers.get(partyMembers.size()-1).getId() : -1L;
 

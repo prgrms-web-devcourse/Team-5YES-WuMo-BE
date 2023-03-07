@@ -1,6 +1,7 @@
 package org.prgrms.wumo.domain.party.model;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -49,7 +50,7 @@ public class Party extends BaseTimeEntity {
 	public Party(Long id, String name, LocalDateTime startDate, LocalDateTime endDate, String description,
 			String coverImage,
 			String password) {
-		Assert.isTrue(startDate.isBefore(endDate), "종료일이 시작일보다 빠를 수 없습니다.");
+		Assert.isTrue(startDate.isBefore(endDate) || startDate.isEqual(endDate), "종료일이 시작일보다 빠를 수 없습니다.");
 
 		this.id = id;
 		this.name = name;
@@ -62,18 +63,18 @@ public class Party extends BaseTimeEntity {
 
 	public void update(String name, LocalDateTime startDate, LocalDateTime endDate, String description, String coverImage,
 			String password) {
-		if (name != null) this.name = name;
+		this.name = Objects.requireNonNullElse(name, this.name);
 		if (startDate != null) {
-			Assert.isTrue(startDate.isBefore(endDate), "종료일이 시작일보다 빠를 수 없습니다.");
+			Assert.isTrue(startDate.isBefore(endDate) || startDate.isEqual(endDate), "종료일이 시작일보다 빠를 수 없습니다.");
 			this.startDate = startDate;
 		}
 		if (endDate != null) {
-			Assert.isTrue(endDate.isAfter(this.startDate), "시작일이 종료일보다 느릴 수 없습니다.");
+			Assert.isTrue(endDate.isAfter(this.startDate) || endDate.isEqual(this.startDate), "시작일이 종료일보다 느릴 수 없습니다.");
 			this.endDate = endDate;
 		}
-		if (description != null) this.description = description;
-		if (coverImage != null) this.coverImage = coverImage;
-		if (password != null) this.password = password;
+		this.description = Objects.requireNonNullElse(description, this.description);
+		this.coverImage = Objects.requireNonNullElse(coverImage, this.coverImage);
+		this.password = Objects.requireNonNullElse(password, this.password);
 	}
 
 	// TODO : 입장 시 비밀번호 체크 로직

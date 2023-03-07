@@ -105,6 +105,7 @@ class PartyControllerTest extends MysqlTestContainer {
 
 		//when
 		ResultActions resultActions = mockMvc.perform(get("/api/v1/parties/members/me")
+				.param("partyType", "ALL")
 				.param("cursorId", (String)null)
 				.param("pageSize", "5"));
 
@@ -135,8 +136,8 @@ class PartyControllerTest extends MysqlTestContainer {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(partyRegisterResponse.id()))
 				.andExpect(jsonPath("$.name").value(partyRegisterRequest.name()))
-				.andExpect(jsonPath("$.startDate").isNotEmpty())	// 소수점 표기 기준이 달라 값이 있는지만 검증
-				.andExpect(jsonPath("$.endDate").isNotEmpty())		// 위와 동일
+				.andExpect(jsonPath("$.startDate").isNotEmpty())  // 소수점 표기 기준이 달라 값이 있는지만 검증
+				.andExpect(jsonPath("$.endDate").isNotEmpty())    // 위와 동일
 				.andExpect(jsonPath("$.description").value(partyRegisterRequest.description()))
 				.andExpect(jsonPath("$.coverImage").value(partyRegisterRequest.coverImage()))
 				.andDo(print());
