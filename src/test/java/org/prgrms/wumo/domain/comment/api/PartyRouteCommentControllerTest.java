@@ -179,12 +179,6 @@ public class PartyRouteCommentControllerTest {
 	void registerPartyRouteCommentTest() throws Exception {
 		// Given
 
-		System.out.println("-=--==-==============---=-===-=-=-=");
-		System.out.println(location.getRoute().getId());
-		System.out.println(location.getId());
-		System.out.println("--------------------=-=-=-=-=-=-=-=");
-		System.out.println(route.getId());
-
 		PartyRouteCommentRegisterRequest partyRouteCommentRegisterRequest = new PartyRouteCommentRegisterRequest(
 				"모임 내 댓글", "image.png", party.getId(), location.getId()
 		);
