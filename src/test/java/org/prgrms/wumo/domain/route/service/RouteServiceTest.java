@@ -24,6 +24,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.prgrms.wumo.domain.like.repository.RouteLikeRepository;
 import org.prgrms.wumo.domain.location.model.Category;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
@@ -66,6 +67,9 @@ public class RouteServiceTest {
 
 	@Mock
 	PartyMemberRepository partyMemberRepository;
+
+	@Mock
+	RouteLikeRepository routeLikeRepository;
 
 	@BeforeEach
 	void setUp() {
@@ -228,6 +232,8 @@ public class RouteServiceTest {
 			//mocking
 			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), any(SortType.class), any()))
 				.willReturn(routes);
+			given(routeLikeRepository.existsByRouteIdAndMemberId(anyLong(), anyLong()))
+				.willReturn(true);
 
 			//when
 			RouteGetAllResponses result = routeService.getAllRoute(routeGetAllRequest);
@@ -249,6 +255,8 @@ public class RouteServiceTest {
 			//mocking
 			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), any(SortType.class), anyString()))
 				.willReturn(routes);
+			given(routeLikeRepository.existsByRouteIdAndMemberId(anyLong(), anyLong()))
+				.willReturn(true);
 
 			//when
 			RouteGetAllResponses result = routeService.getAllRoute(routeGetAllRequest);
