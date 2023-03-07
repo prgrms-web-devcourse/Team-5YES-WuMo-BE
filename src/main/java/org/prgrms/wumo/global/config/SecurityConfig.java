@@ -2,8 +2,6 @@ package org.prgrms.wumo.global.config;
 
 import static org.springframework.http.HttpMethod.OPTIONS;
 
-import java.util.Arrays;
-
 import org.prgrms.wumo.global.config.properties.JwtProperties;
 import org.prgrms.wumo.global.jwt.CustomAccessDeniedHandler;
 import org.prgrms.wumo.global.jwt.CustomAuthenticationEntryPoint;
@@ -19,9 +17,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -69,20 +64,6 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration corsConfiguration = new CorsConfiguration();
-
-		corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://5yes-wumo.vercel.app"));
-		corsConfiguration.setAllowedMethods(Arrays.asList("HEAD", "OPTIONS", "POST", "GET", "DELETE", "PUT", "PATCH"));
-		corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
-		corsConfiguration.setAllowCredentials(true);
-
-		UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-		urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-		return urlBasedCorsConfigurationSource;
-	}
-
-	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf().disable()
@@ -92,7 +73,6 @@ public class SecurityConfig {
 			.logout().disable()
 
 			.cors()
-			.configurationSource(corsConfigurationSource())
 			.and()
 
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
