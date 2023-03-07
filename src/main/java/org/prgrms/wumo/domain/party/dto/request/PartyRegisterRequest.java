@@ -38,6 +38,7 @@ public record PartyRegisterRequest(
 		@Schema(description = "입장 비밀번호", example = "1234", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 		String password,
 
+		@Length(min = 0, max = 10, message = "역할은 {min}자 이상 {max}자 이하만 가능합니다.")
 		@Schema(description = "역할", example = "총무", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 		String role
 
