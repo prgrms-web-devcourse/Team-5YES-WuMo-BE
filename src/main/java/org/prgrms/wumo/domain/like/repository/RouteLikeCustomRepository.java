@@ -4,7 +4,7 @@ import java.util.Map;
 
 public interface RouteLikeCustomRepository {
 
-	Map<Long, Long> countAllByRouteId(Long cursorId, int pageSize);
+	Map<Long, Long> countAllByRouteId(Long cursorId, int batchSize);
 
 	void updateLikeCount(Map<Long, Long> likeCounts);
 

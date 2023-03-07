@@ -30,14 +30,14 @@ public class RouteLikeCustomRepositoryImpl implements RouteLikeCustomRepository 
 	private final QRouteLike qRouteLike = QRouteLike.routeLike;
 
 	@Override
-	public Map<Long, Long> countAllByRouteId(Long cursorId, int pageSize) {
+	public Map<Long, Long> countAllByRouteId(Long cursorId, int batchSize) {
 		List<Tuple> tuples = jpaQueryFactory
 				.select(qRouteLike.routeId, qRouteLike.count())
 				.from(qRouteLike)
 				.where(gtRouteId(cursorId))
 				.groupBy(qRouteLike.routeId)
 				.orderBy(qRouteLike.routeId.asc())
-				.limit(pageSize)
+				.limit(batchSize)
 				.fetch();
 
 		HashMap<Long, Long> hashMap = new HashMap<>();
