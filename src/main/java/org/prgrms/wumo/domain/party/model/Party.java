@@ -1,6 +1,7 @@
 package org.prgrms.wumo.domain.party.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -9,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.prgrms.wumo.global.audit.BaseTimeEntity;
 import org.springframework.util.Assert;
@@ -46,6 +48,12 @@ public class Party extends BaseTimeEntity {
 	@Column(name = "password", nullable = true, unique = false, length = 4)
 	private String password;
 
+	@Transient
+	private long totalMembers;
+
+	@Transient
+	private List<PartyMember> partyMembers;
+
 	@Builder
 	public Party(Long id, String name, LocalDateTime startDate, LocalDateTime endDate, String description,
 			String coverImage,
@@ -75,6 +83,14 @@ public class Party extends BaseTimeEntity {
 		this.description = Objects.requireNonNullElse(description, this.description);
 		this.coverImage = Objects.requireNonNullElse(coverImage, this.coverImage);
 		this.password = Objects.requireNonNullElse(password, this.password);
+	}
+
+	public void setTotalMembers(long totalMembers) {
+		this.totalMembers = totalMembers;
+	}
+
+	public void setPartyMembers(List<PartyMember> partyMembers) {
+		this.partyMembers = partyMembers;
 	}
 
 	// TODO : 입장 시 비밀번호 체크 로직

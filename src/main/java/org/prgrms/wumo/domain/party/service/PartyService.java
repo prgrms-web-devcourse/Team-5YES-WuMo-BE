@@ -7,6 +7,7 @@ import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyRegisterResponse;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
@@ -33,6 +34,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class PartyService {
+
+	private static final int MEMBER_PREVIEW = 3;
 
 	private final MemberRepository memberRepository;
 
@@ -68,10 +71,11 @@ public class PartyService {
 				partyGetRequest.partyType()
 		);
 
-		long lastId = (partyMembers.size() > 0) ? partyMembers.get(partyMembers.size()-1).getId() : -1L;
+		long lastId = (partyMembers.size() > 0) ? partyMembers.get(partyMembers.size() - 1).getId() : -1L;
 
 		List<Party> parties = partyMembers.stream()
 				.map(PartyMember::getParty)
+				.peek(this::setPartyMemberDetail)
 				.toList();
 
 		return toPartyGetAllResponse(parties, lastId);
@@ -79,7 +83,10 @@ public class PartyService {
 
 	@Transactional(readOnly = true)
 	public PartyGetResponse getParty(Long partyId) {
-		return toPartyGetDetailResponse(getPartyEntity(partyId));
+		Party party = getPartyEntity(partyId);
+		setPartyMemberDetail(party);
+
+		return toPartyGetDetailResponse(party);
 	}
 
 	@Transactional
@@ -96,6 +103,7 @@ public class PartyService {
 				partyUpdateRequest.coverImage(),
 				partyUpdateRequest.password()
 		);
+		setPartyMemberDetail(party);
 
 		return toPartyGetDetailResponse(partyRepository.save(party));
 	}
@@ -128,6 +136,16 @@ public class PartyService {
 		if (!JwtUtil.isValidAccess(partyMember.getMember().getId())) {
 			throw new AccessDeniedException("모임을 생성한 회원만 가능합니다.");
 		}
+	}
+
+	private void setPartyMemberDetail(Party party) {
+		party.setTotalMembers(partyMemberRepository.countAllByParty(party));
+		party.setPartyMembers(
+				partyMemberRepository.findAllByPartyId(party.getId(), null, MEMBER_PREVIEW)
+						.stream()
+						.sorted(Comparator.comparing(PartyMember::getId))
+						.toList()
+		);
 	}
 
 }

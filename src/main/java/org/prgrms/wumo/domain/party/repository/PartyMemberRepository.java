@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface PartyMemberRepository extends JpaRepository<PartyMember, Long>, PartyMemberCustomRepository {
 
+	long countAllByParty(Party party);
+
 	@Modifying(clearAutomatically = true)
 	@Query("DELETE FROM PartyMember pm WHERE pm.party = :party")
 	void deleteAllByParty(Party party);
