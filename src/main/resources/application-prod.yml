@@ -58,4 +58,4 @@ cloud:
       auto: false
 
 front:
-  server: ${FRONT_SERVER}
+  server: https://5yes-wumo.vercel.app/
