@@ -62,8 +62,9 @@ public class RouteService {
 	}
 
 	@Transactional(readOnly = true)
-	public RouteGetResponse getRoute(long routeId, int fromPublic) {
-		Route route = getRouteEntity(routeId);
+	public RouteGetResponse getRoute(long partyId, int fromPublic) {
+		Route route = routeRepository.findByPartyId(partyId)
+			.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
 
 		if (fromPublic == 0) {
 			validateAccess(route.getParty().getId());
