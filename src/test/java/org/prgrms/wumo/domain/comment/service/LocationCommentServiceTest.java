@@ -124,7 +124,6 @@ public class LocationCommentServiceTest {
 					.image("image.png")
 					.content("첫 번째 댓글")
 					.locationId(2L)
-					.isEdited(false)
 					.partyMember(partyMember)
 					.member(member)
 					.build();
@@ -134,7 +133,6 @@ public class LocationCommentServiceTest {
 					.image("image.png")
 					.content("두 번째 댓글")
 					.locationId(2L)
-					.isEdited(false)
 					.partyMember(partyMember)
 					.member(member)
 					.build();
@@ -195,7 +193,6 @@ public class LocationCommentServiceTest {
 						.image("image.png")
 						.content("삭제될 댓글....")
 						.locationId(location.getId())
-						.isEdited(false)
 						.partyMember(partyMember)
 						.member(member)
 						.build();
@@ -220,7 +217,6 @@ public class LocationCommentServiceTest {
 						.image("image.png")
 						.content("삭제될 댓글....")
 						.locationId(location.getId())
-						.isEdited(false)
 						.partyMember(partyMember)
 						.member(member)
 						.build();
@@ -275,7 +271,6 @@ public class LocationCommentServiceTest {
 				.image("image.png")
 				.content("댓글 댓글")
 				.locationId(location.getId())
-				.isEdited(false)
 				.partyMember(partyMember)
 				.member(member)
 				.build();

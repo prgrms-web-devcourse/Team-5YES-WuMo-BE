@@ -128,7 +128,6 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 						.image("image.png")
 						.content("댓글 댓글")
 						.locationId(location.getId())
-						.isEdited(false)
 						.partyMember(partyMember)
 						.member(member)
 						.build()
@@ -186,7 +185,6 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 				.image("image.png")
 				.content("첫 번째 댓글")
 				.locationId(location.getId())
-				.isEdited(false)
 				.partyMember(partyMember)
 				.member(member)
 				.build();
@@ -195,7 +193,6 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 				.image("image.png")
 				.content("두 번째 댓글")
 				.locationId(location.getId())
-				.isEdited(false)
 				.partyMember(partyMember)
 				.member(member)
 				.build();
@@ -258,7 +255,6 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 						.locationId(location.getId())
 						.content("여기 별론데...")
 						.partyMember(partyMember)
-						.isEdited(false)
 						.build()
 		);
 
