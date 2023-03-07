@@ -1,0 +1,1 @@
+ALTER TABLE `comment` DROP `is_edited`;

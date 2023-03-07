@@ -1,6 +1,7 @@
 package org.prgrms.wumo.domain.comment.model;
 
 import static lombok.AccessLevel.PROTECTED;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -12,10 +13,12 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.global.audit.BaseTimeEntity;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -39,15 +42,11 @@ public class Comment extends BaseTimeEntity {
 	@Column(name = "image_url", nullable = true, unique = true, updatable = true, length = 255)
 	protected String image;
 
-	@Column(name = "is_edited", nullable = false, updatable = true, unique = false)
-	protected boolean isEdited;
-
-	public Comment(Long id, Member member, String content, String image, boolean isEdited) {
+	public Comment(Long id, Member member, String content, String image) {
 		this.id = id;
 		this.member = member;
 		this.content = content;
 		this.image = image;
-		this.isEdited = isEdited;
 	}
 
 	public void setMember(Member member) {

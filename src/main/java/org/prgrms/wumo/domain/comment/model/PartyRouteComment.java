@@ -36,8 +36,8 @@ public class PartyRouteComment extends Comment {
 
 	@Builder
 	public PartyRouteComment(Long id, Member member, String content, String image, Long routeId,
-			PartyMember partyMember, boolean isEdited, Long locationId) {
-		super(id, member, content, image, isEdited);
+			PartyMember partyMember, Long locationId) {
+		super(id, member, content, image);
 		this.routeId = routeId;
 		this.partyMember = partyMember;
 		this.locationId = locationId;

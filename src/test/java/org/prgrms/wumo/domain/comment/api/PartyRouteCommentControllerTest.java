@@ -145,7 +145,6 @@ public class PartyRouteCommentControllerTest {
 						.image("image.png")
 						.content("댓글 댓글")
 						.locationId(location.getId())
-						.isEdited(false)
 						.partyMember(partyMember)
 						.member(member)
 						.routeId(route.getId())
@@ -206,7 +205,6 @@ public class PartyRouteCommentControllerTest {
 				.routeId(route.getId())
 				.partyMember(partyMember)
 				.image("image.png")
-				.isEdited(false)
 				.content("댓글 댓글 댓글")
 				.locationId(location.getId())
 				.member(member)
@@ -216,7 +214,6 @@ public class PartyRouteCommentControllerTest {
 				.routeId(route.getId())
 				.partyMember(partyMember)
 				.image("image.png")
-				.isEdited(false)
 				.content("댓글 댓글 댓글")
 				.locationId(location.getId())
 				.member(member)
@@ -281,7 +278,6 @@ public class PartyRouteCommentControllerTest {
 						.content("여기 별론데...")
 						.partyMember(partyMember)
 						.routeId(route.getId())
-						.isEdited(false)
 						.build()
 		);
 
