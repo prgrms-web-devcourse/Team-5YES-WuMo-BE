@@ -8,7 +8,6 @@ import org.prgrms.wumo.global.jwt.CustomAuthenticationEntryPoint;
 import org.prgrms.wumo.global.jwt.JwtAuthenticationFilter;
 import org.prgrms.wumo.global.jwt.JwtExceptionFilter;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,9 +25,6 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-	@Value("${front.server}")
-	private String frontServer;
 
 	private final JwtProperties jwtProperties;
 	private final ObjectMapper objectMapper;
