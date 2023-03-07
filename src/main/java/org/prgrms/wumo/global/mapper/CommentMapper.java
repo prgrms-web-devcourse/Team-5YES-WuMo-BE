@@ -14,6 +14,7 @@ import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResp
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentUpdateResponse;
 import org.prgrms.wumo.domain.comment.model.LocationComment;
 import org.prgrms.wumo.domain.comment.model.PartyRouteComment;
+import org.prgrms.wumo.domain.party.model.PartyMember;
 
 public class CommentMapper {
 	public static LocationCommentRegisterResponse toLocationCommentRegisterResponse(LocationComment locationcomment) {
@@ -22,12 +23,12 @@ public class CommentMapper {
 		);
 	}
 
-	public static LocationComment toLocationComment(LocationCommentRegisterRequest locationCommentRegisterRequest) {
+	public static LocationComment toLocationComment(LocationCommentRegisterRequest locationCommentRegisterRequest, PartyMember partyMember) {
 		return LocationComment.builder()
 				.locationId(locationCommentRegisterRequest.locationId())
 				.content(locationCommentRegisterRequest.content())
 				.image(locationCommentRegisterRequest.image())
-				.locationId(locationCommentRegisterRequest.locationId())
+				.partyMember(partyMember)
 				.build();
 	}
 
@@ -69,10 +70,10 @@ public class CommentMapper {
 	}
 
 	public static PartyRouteComment toPartyRouteComment(
-			PartyRouteCommentRegisterRequest partyRouteCommentRegisterRequest) {
+			PartyRouteCommentRegisterRequest partyRouteCommentRegisterRequest, Long routeId) {
 		return PartyRouteComment.builder()
 				.locationId(partyRouteCommentRegisterRequest.locationId())
-				.routeId(partyRouteCommentRegisterRequest.routeId())
+				.routeId(routeId)
 				.content(partyRouteCommentRegisterRequest.content())
 				.image(partyRouteCommentRegisterRequest.image())
 				.build();
