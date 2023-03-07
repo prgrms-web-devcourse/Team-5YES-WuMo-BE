@@ -103,7 +103,7 @@ public class PartyRouteCommentServiceTest {
 		void success() {
 			// Given
 			PartyRouteCommentRegisterRequest request = new PartyRouteCommentRegisterRequest(
-					1L, "모임 내 댓글", "image.png", 1L, 1L
+					"모임 내 댓글", "image.png", party.getId(), location.getId()
 			);
 
 			given(memberRepository.findById(any(Long.class))).willReturn(Optional.of(member));

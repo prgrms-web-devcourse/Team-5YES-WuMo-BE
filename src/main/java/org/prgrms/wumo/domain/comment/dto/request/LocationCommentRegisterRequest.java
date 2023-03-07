@@ -18,20 +18,20 @@ public record LocationCommentRegisterRequest(
 		@Schema(description = "댓글이 작성된 후보지 식별자", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
 		Long locationId,
 
-		@NotNull(message = "댓글을 다는 모임에서의 역할 식별자는 필수 입력값입니다.")
-		@Schema(description = "댓글의 모임 역할 식별자", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
-		Long partyMemberId
+		@NotNull(message = "모임 식별자는 필수 입력값입니다.")
+		@Schema(description = "댓글을 다는 모임 식별자", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+		Long partyId
 
 ) {
 	public LocationCommentRegisterRequest(
-			String content, String image, Long locationId, Long partyMemberId
+			String content, String image, Long locationId, Long partyId
 	) {
 		if (content.isEmpty() && image.isEmpty())
-			throw new ValidationException("내용이 빌 수는 없습니다");
+			throw new ValidationException("댓글 내용 또는 이미지 둘 중 하나는 입력해야합니다.");
 
 		this.content = content;
 		this.image = image;
 		this.locationId = locationId;
-		this.partyMemberId = partyMemberId;
+		this.partyId = partyId;
 	}
 }

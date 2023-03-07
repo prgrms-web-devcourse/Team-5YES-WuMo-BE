@@ -176,7 +176,7 @@ public class PartyRouteCommentControllerTest {
 	void registerPartyRouteCommentTest() throws Exception {
 		// Given
 		PartyRouteCommentRegisterRequest request = new PartyRouteCommentRegisterRequest(
-				member.getId(), "모임 내 댓글", "image.png", route.getId(), location.getId()
+				"모임 내 댓글", "image.png", party.getId(), location.getId()
 		);
 
 		// When
