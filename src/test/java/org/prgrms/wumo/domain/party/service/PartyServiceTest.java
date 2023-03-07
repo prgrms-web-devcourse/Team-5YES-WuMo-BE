@@ -168,16 +168,27 @@ class PartyServiceTest {
 			//mocking
 			given(partyMemberRepository.findAllByMemberId(member.getId(), null, 1, PartyType.ALL))
 					.willReturn(List.of(partyMember));
+			given(partyMemberRepository.countAllByParty(party))
+					.willReturn(1L);
+			given(partyMemberRepository.findAllByPartyId(party.getId(), null, 3))
+					.willReturn(List.of(partyMember));
 
 			//when
 			PartyGetAllResponse partyGetAllResponse = partyService.getAllParty(new PartyGetRequest(PartyType.ALL, null, 1));
 
 			//then
 			assertThat(partyGetAllResponse.party()).isNotEmpty();
+			assertThat(partyGetAllResponse.party().get(0).members()).isNotEmpty();
 
 			then(partyMemberRepository)
 					.should()
 					.findAllByMemberId(member.getId(), null, 1, PartyType.ALL);
+			then(partyMemberRepository)
+					.should()
+					.countAllByParty(party);
+			then(partyMemberRepository)
+					.should()
+					.findAllByPartyId(party.getId(), null, 3);
 		}
 
 		@Test
@@ -211,6 +222,10 @@ class PartyServiceTest {
 			//mocking
 			given(partyRepository.findById(party.getId()))
 					.willReturn(Optional.of(party));
+			given(partyMemberRepository.countAllByParty(party))
+					.willReturn(1L);
+			given(partyMemberRepository.findAllByPartyId(party.getId(), null, 3))
+					.willReturn(List.of(partyMember));
 
 			//when
 			PartyGetResponse myParty = partyService.getParty(party.getId());
@@ -222,10 +237,18 @@ class PartyServiceTest {
 			assertThat(myParty.endDate()).isEqualTo(LocalDate.from(party.getEndDate()));
 			assertThat(myParty.description()).isEqualTo(party.getDescription());
 			assertThat(myParty.coverImage()).isEqualTo(party.getCoverImage());
+			assertThat(myParty.totalMembers()).isEqualTo(1L);
+			assertThat(myParty.members()).isNotEmpty();
 
 			then(partyRepository)
 					.should()
 					.findById(party.getId());
+			then(partyMemberRepository)
+					.should()
+					.countAllByParty(party);
+			then(partyMemberRepository)
+					.should()
+					.findAllByPartyId(party.getId(), null, 3);
 		}
 
 		@Test

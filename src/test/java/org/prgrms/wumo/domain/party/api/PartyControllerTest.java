@@ -117,6 +117,9 @@ class PartyControllerTest extends MysqlTestContainer {
 				.andExpect(jsonPath("$.party[0].id").value(partyRegisterResponse.id()))
 				.andExpect(jsonPath("$.party[0].name").value(partyRegisterRequest.name()))
 				.andExpect(jsonPath("$.party[0].coverImage").value(partyRegisterRequest.coverImage()))
+				.andExpect(jsonPath("$.party[0].totalMembers").value(1L))
+				.andExpect(jsonPath("$.party[0].members").isArray())
+				.andExpect(jsonPath("$.party[0].members").isNotEmpty())
 				.andExpect(jsonPath("$.lastId").isNotEmpty())
 				.andDo(print());
 	}
@@ -140,6 +143,9 @@ class PartyControllerTest extends MysqlTestContainer {
 				.andExpect(jsonPath("$.endDate").isNotEmpty())    // 위와 동일
 				.andExpect(jsonPath("$.description").value(partyRegisterRequest.description()))
 				.andExpect(jsonPath("$.coverImage").value(partyRegisterRequest.coverImage()))
+				.andExpect(jsonPath("$.totalMembers").value(1L))
+				.andExpect(jsonPath("$.members").isArray())
+				.andExpect(jsonPath("$.members").isNotEmpty())
 				.andDo(print());
 	}
 
@@ -172,6 +178,9 @@ class PartyControllerTest extends MysqlTestContainer {
 				.andExpect(jsonPath("$.endDate").isNotEmpty())
 				.andExpect(jsonPath("$.description").value(partyUpdateRequest.description()))
 				.andExpect(jsonPath("$.coverImage").value(partyUpdateRequest.coverImage()))
+				.andExpect(jsonPath("$.totalMembers").value(1L))
+				.andExpect(jsonPath("$.members").isArray())
+				.andExpect(jsonPath("$.members").isNotEmpty())
 				.andDo(print());
 	}
 
