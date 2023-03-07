@@ -40,7 +40,8 @@ public class SecurityConfig {
 			.antMatchers("/api/v1/members/signup")
 			.antMatchers("/api/v1/members/login")
 			.antMatchers("/api/v1/members/send-code")
-			.antMatchers("/api/v1/members/check-code");
+			.antMatchers("/api/v1/members/check-code")
+			.antMatchers("/api/v1/members/reissue");
 	}
 
 	@Bean
@@ -81,7 +82,8 @@ public class SecurityConfig {
 				"/api/v1/members/signup",
 				"/api/v1/members/login",
 				"/api/v1/members/send-code",
-				"/api/v1/members/check-code").permitAll()
+				"/api/v1/members/check-code",
+				"/api/v1/members/reissue").permitAll()
 			.and()
 
 			.exceptionHandling()
