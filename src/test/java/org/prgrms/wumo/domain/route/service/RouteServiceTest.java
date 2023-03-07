@@ -182,11 +182,11 @@ public class RouteServiceTest {
 			int isPublic = 0;
 
 			//mocking
-			given(routeRepository.findById(anyLong()))
+			given(routeRepository.findByPartyId(anyLong()))
 				.willReturn(Optional.of(route));
 
 			//when, then
-			assertThatThrownBy(() -> routeService.getRoute(routeId, isPublic))
+			assertThatThrownBy(() -> routeService.getRoute(partyId, isPublic))
 				.isInstanceOf(AccessDeniedException.class)
 				.hasMessage("잘못된 접근입니다.");
 		}
@@ -199,18 +199,18 @@ public class RouteServiceTest {
 			int isPublic = 1;
 
 			//mocking
-			given(routeRepository.findById(anyLong()))
+			given(routeRepository.findByPartyId(anyLong()))
 				.willReturn(Optional.of(route));
 
 			//when
-			RouteGetResponse result = routeService.getRoute(routeId, isPublic);
+			RouteGetResponse result = routeService.getRoute(partyId, isPublic);
 
 			//then
 			assertThat(result.partyId()).isEqualTo(partyId);
 			assertThat(result.locations()).hasSize(1);
 			then(routeRepository)
 				.should()
-				.findById(anyLong());
+				.findByPartyId(anyLong());
 		}
 	}
 
