@@ -46,3 +46,6 @@ cloud:
       auto: false
     stack:
       auto: false
+
+front:
+  server: ${FRONT_SERVER}

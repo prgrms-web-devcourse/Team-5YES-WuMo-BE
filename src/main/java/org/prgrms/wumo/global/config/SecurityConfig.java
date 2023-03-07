@@ -1,5 +1,7 @@
 package org.prgrms.wumo.global.config;
 
+import static org.springframework.http.HttpMethod.OPTIONS;
+
 import java.util.Arrays;
 
 import org.prgrms.wumo.global.config.properties.JwtProperties;
@@ -8,6 +10,7 @@ import org.prgrms.wumo.global.jwt.CustomAuthenticationEntryPoint;
 import org.prgrms.wumo.global.jwt.JwtAuthenticationFilter;
 import org.prgrms.wumo.global.jwt.JwtExceptionFilter;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,6 +31,9 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+	@Value("${front.server}")
+	private String frontServer;
 
 	private final JwtProperties jwtProperties;
 	private final ObjectMapper objectMapper;
@@ -66,8 +72,8 @@ public class SecurityConfig {
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
 
-		corsConfiguration.setAllowedOriginPatterns(Arrays.asList("*"));
-		corsConfiguration.setAllowedMethods(Arrays.asList("POST", "GET", "DELETE", "PUT", "PATCH"));
+		corsConfiguration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173", frontServer));
+		corsConfiguration.setAllowedMethods(Arrays.asList("HEAD", "OPTIONS", "POST", "GET", "DELETE", "PUT", "PATCH"));
 		corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
 		corsConfiguration.setAllowCredentials(true);
 
@@ -93,6 +99,7 @@ public class SecurityConfig {
 			.and()
 
 			.authorizeHttpRequests()
+			.antMatchers(OPTIONS, "/api/*").permitAll()
 			.antMatchers(apiUrls).permitAll()
 			.antMatchers(
 				"/api/v1/members/signup",
