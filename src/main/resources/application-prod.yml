@@ -56,3 +56,6 @@ cloud:
       auto: false
     stack:
       auto: false
+
+front:
+  server: https://5yes-wumo.vercel.app/
