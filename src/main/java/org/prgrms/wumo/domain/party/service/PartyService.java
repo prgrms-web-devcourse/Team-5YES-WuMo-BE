@@ -100,8 +100,7 @@ public class PartyService {
 				LocalDateTime.of(partyUpdateRequest.startDate(), LocalTime.MIN),
 				LocalDateTime.of(partyUpdateRequest.endDate(), LocalTime.MAX),
 				partyUpdateRequest.description(),
-				partyUpdateRequest.coverImage(),
-				partyUpdateRequest.password()
+				partyUpdateRequest.coverImage()
 		);
 		setPartyMemberDetail(party);
 

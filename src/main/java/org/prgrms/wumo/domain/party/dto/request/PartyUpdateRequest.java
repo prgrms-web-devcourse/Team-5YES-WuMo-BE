@@ -25,10 +25,6 @@ public record PartyUpdateRequest(
 
 		@Length(max = 255, message = "이미지 경로는 {max}자를 초과할 수 없습니다.")
 		@Schema(description = "이미지 경로", example = "https://~.jpeg", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-		String coverImage,
-
-		@Length(min = 4, max = 4, message = "비밀번호는 {min}자리가 필요합니다.")
-		@Schema(description = "입장 비밀번호", example = "1234", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-		String password
+		String coverImage
 ) {
 }

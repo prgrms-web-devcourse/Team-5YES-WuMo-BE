@@ -89,7 +89,6 @@ class PartyServiceTest {
 				.endDate(LocalDateTime.of(partyRegisterRequest.endDate(), LocalTime.MAX))
 				.description(partyRegisterRequest.description())
 				.coverImage(partyRegisterRequest.coverImage())
-				.password(partyRegisterRequest.password())
 				.build();
 
 		partyMember = PartyMember.builder()
@@ -273,8 +272,7 @@ class PartyServiceTest {
 				LocalDate.now(),
 				LocalDate.now().plusDays(2),
 				"팀 설립 기념 워크샵 (수정)",
-				null,
-				"4321"
+				null
 		);
 
 		@Test
@@ -313,7 +311,6 @@ class PartyServiceTest {
 					null,
 					LocalDate.now().plusDays(1),
 					LocalDate.now(),
-					null,
 					null,
 					null
 			);

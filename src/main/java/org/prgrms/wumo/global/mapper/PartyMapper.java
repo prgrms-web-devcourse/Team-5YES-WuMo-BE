@@ -31,7 +31,6 @@ public class PartyMapper {
 				.endDate(LocalDateTime.of(partyRegisterRequest.endDate(), LocalTime.MIN))
 				.description(partyRegisterRequest.description())
 				.coverImage(partyRegisterRequest.coverImage())
-				.password(partyRegisterRequest.password())
 				.build();
 	}
 
