@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(name = "모임 목록 조회 요청 정보")
 public record PartyGetRequest(
 
-		@NotNull(message = "조회 옵션은 필수 입력 사항입니다.")
+		@NotNull(message = "조회 옵션은 필수 입력사항입니다.")
 		@Schema(description = "조회 옵션(ONGOING, COMPLETED, ALL)", example = "ONGOING", requiredMode = Schema.RequiredMode.REQUIRED)
 		PartyType partyType,
 

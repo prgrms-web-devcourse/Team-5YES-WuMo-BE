@@ -47,7 +47,12 @@ public class PartyMapper {
 						LocalDate.from(party.getStartDate()),
 						LocalDate.from(party.getEndDate()),
 						party.getDescription(),
-						party.getCoverImage()))
+						party.getCoverImage(),
+						party.getTotalMembers(),
+						party.getPartyMembers().stream()
+								.map(PartyMapper::toPartyMemberGetResponse)
+								.toList())
+				)
 				.toList();
 		return new PartyGetAllResponse(partyGetResponses, lastId);
 	}
@@ -59,7 +64,11 @@ public class PartyMapper {
 				LocalDate.from(party.getStartDate()),
 				LocalDate.from(party.getEndDate()),
 				party.getDescription(),
-				party.getCoverImage()
+				party.getCoverImage(),
+				party.getTotalMembers(),
+				party.getPartyMembers().stream()
+						.map(PartyMapper::toPartyMemberGetResponse)
+						.toList()
 		);
 	}
 
@@ -72,11 +81,11 @@ public class PartyMapper {
 				.build();
 	}
 
-	public static PartyMemberGetAllResponse toPartyMemberGetAllResponse(List<PartyMember> partyMembers, Long lastId) {
+	public static PartyMemberGetAllResponse toPartyMemberGetAllResponse(Long totalMembers, List<PartyMember> partyMembers, Long lastId) {
 		List<PartyMemberGetResponse> partyMemberGetResponses = partyMembers.stream()
 				.map(PartyMapper::toPartyMemberGetResponse)
 				.toList();
-		return new PartyMemberGetAllResponse(partyMemberGetResponses, lastId);
+		return new PartyMemberGetAllResponse(totalMembers, partyMemberGetResponses, lastId);
 	}
 
 	public static PartyMemberGetResponse toPartyMemberGetResponse(PartyMember partyMember) {

@@ -20,7 +20,7 @@ public record PartyUpdateRequest(
 		LocalDate endDate,
 
 		@Length(max = 255, message = "모임 설명은 {max}자를 초과할 수 없습니다.")
-		@Schema(description = "종료일", example = "팀 설립 기념 워크샵", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+		@Schema(description = "모임 설명", example = "팀 설립 기념 워크샵", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 		String description,
 
 		@Length(max = 255, message = "이미지 경로는 {max}자를 초과할 수 없습니다.")

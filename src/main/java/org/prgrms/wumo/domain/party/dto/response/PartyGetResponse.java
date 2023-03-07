@@ -1,6 +1,7 @@
 package org.prgrms.wumo.domain.party.dto.response;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -23,7 +24,13 @@ public record PartyGetResponse(
 		String description,
 
 		@Schema(description = "이미지 경로", example = "https://~.jpeg", requiredMode = Schema.RequiredMode.REQUIRED)
-		String coverImage
+		String coverImage,
+
+		@Schema(description = "전체 모임 구성원 수", example = "3", requiredMode = Schema.RequiredMode.REQUIRED)
+		Long totalMembers,
+
+		@Schema(description = "모임 구성원 목록 (최대 3명)", requiredMode = Schema.RequiredMode.REQUIRED)
+		List<PartyMemberGetResponse> members
 
 ) {
 }
