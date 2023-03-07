@@ -33,8 +33,8 @@ public class LocationComment extends Comment {
 
 	@Builder
 	public LocationComment(Long id, Member member, String content, String image, Long locationId,
-			PartyMember partyMember, boolean isEdited) {
-		super(id, member, content, image, isEdited);
+			PartyMember partyMember) {
+		super(id, member, content, image);
 		this.locationId = locationId;
 		this.partyMember = partyMember;
 	}
