@@ -1,6 +1,7 @@
 package org.prgrms.wumo.domain.route.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.prgrms.wumo.domain.location.model.QLocation;
 import org.prgrms.wumo.domain.route.dto.request.SortType;
@@ -36,6 +37,15 @@ public class RouteCustomRepositoryImpl implements RouteCustomRepository {
 			.orderBy(getSortType(sortType))
 			.limit(pageSize)
 			.fetch();
+	}
+
+	@Override
+	public Optional<Route> findByPartyId(long partyId) {
+		Route route = jpaQueryFactory
+			.selectFrom(qRoute)
+			.where(qRoute.party.id.eq(partyId))
+			.fetchFirst();
+		return Optional.ofNullable(route);
 	}
 
 	private BooleanExpression inRouteAndHasSearchWord(String searchWord) {

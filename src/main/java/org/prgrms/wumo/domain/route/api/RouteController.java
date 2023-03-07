@@ -41,14 +41,13 @@ public class RouteController {
 		return new ResponseEntity<>(routeService.registerRoute(routeRegisterRequest), HttpStatus.CREATED);
 	}
 
-	@GetMapping("/{routeId}")
+	@GetMapping("/{partyId}")
 	@Operation(summary = "루트 상세 조회")
 	public ResponseEntity<RouteGetResponse> getRoute(
-		//TODO routeId -> partyId로 바꾸기
-		@PathVariable @Parameter(description = "조회할 루트 아이디") long routeId,
+		@PathVariable @Parameter(description = "조회할 루트가 포함된 모임 아이디") long partyId,
 		@RequestParam("path") @Parameter(description = "접근 경로(모임에서이면 0, 공개 목록에서이면 1)") int fromPublic) {
 
-		return ResponseEntity.ok(routeService.getRoute(routeId, fromPublic));
+		return ResponseEntity.ok(routeService.getRoute(partyId, fromPublic));
 	}
 
 	@GetMapping

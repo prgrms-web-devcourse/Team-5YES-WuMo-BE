@@ -134,7 +134,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 	void get_route_in_party() throws Exception {
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/{routeId}", routeId)
+			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/{partyId}", partyId)
 			.param("path", "0"));
 
 		//then
@@ -152,7 +152,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 	void get_route_from_public_list() throws Exception {
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/{routeId}", routeId)
+			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/{partyId}", partyId)
 			.param("path", "1"));
 
 		//then
