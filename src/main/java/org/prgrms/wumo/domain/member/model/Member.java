@@ -1,5 +1,7 @@
 package org.prgrms.wumo.domain.member.model;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -52,7 +54,7 @@ public class Member extends BaseTimeEntity {
 
 	public void update(String nickname, String password, String profileImage) {
 		this.nickname = nickname;
-		this.password = new Password(password);
+		this.password = Objects.requireNonNullElse(new Password(password), this.password);
 		this.profileImage = profileImage;
 	}
 }

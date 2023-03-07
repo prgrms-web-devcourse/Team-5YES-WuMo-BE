@@ -15,12 +15,10 @@ public record MemberUpdateRequest(
 	@Schema(description = "회원 닉네임 수정 내용", example = "오예스딸기", requiredMode = Schema.RequiredMode.REQUIRED)
 	String nickname,
 
-	//TODO 비밀번호 null일경우 허용하고 관련 로직 수정하기
-	@NotBlank(message = "비밀번호는 필수 입력사항입니다.")
-	@Schema(description = "회원 비밀번호 수정 내용", example = "5yes5678", requiredMode = Schema.RequiredMode.REQUIRED)
+	@Schema(description = "회원 비밀번호 수정 내용(비어 있다면 원래 비밀번호 그대로)", example = "5yes5678", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 	String password,
 
-	@Schema(description = "회원 프로필 이미지 수정 내용", example = "https://~수정", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+	@Schema(description = "회원 프로필 이미지 수정 내용", example = "https://~", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 	String profileImage
 ) {
 }
