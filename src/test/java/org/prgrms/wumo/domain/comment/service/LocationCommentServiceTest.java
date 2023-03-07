@@ -32,7 +32,6 @@ import org.prgrms.wumo.domain.comment.repository.LocationCommentRepository;
 import org.prgrms.wumo.domain.location.model.Category;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.member.model.Member;
-import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
@@ -50,9 +49,6 @@ public class LocationCommentServiceTest {
 
 	@Mock
 	LocationCommentRepository locationCommentRepository;
-
-	@Mock
-	MemberRepository memberRepository;
 
 	@Mock
 	PartyMemberRepository partyMemberRepository;
@@ -95,10 +91,10 @@ public class LocationCommentServiceTest {
 			// Given
 			LocationCommentRegisterRequest locationCommentRegisterRequest =
 					new LocationCommentRegisterRequest(locationComment.getContent(), locationComment.getImage(),
-							locationComment.getLocationId(), locationComment.getPartyMember().getId());
+							locationComment.getLocationId(), party.getId());
 
-			given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
-			given(partyMemberRepository.findById(any(Long.class))).willReturn(Optional.of(partyMember));
+			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(
+					Optional.of(partyMember));
 			given(locationCommentRepository.save(any(LocationComment.class))).willReturn(locationComment);
 
 			// When
@@ -165,8 +161,8 @@ public class LocationCommentServiceTest {
 		@DisplayName("후보지 댓글을 수정한다.")
 		void success() {
 			// Given
-			given(partyMemberRepository.existsById(any(Long.class))).willReturn(true);
 			given(locationCommentRepository.findById(any(Long.class))).willReturn(Optional.of(locationComment));
+			given(partyMemberRepository.existsById(any(Long.class))).willReturn(true);
 			given(locationCommentRepository.save(any(LocationComment.class))).willReturn(locationComment);
 
 			LocationCommentUpdateRequest request =

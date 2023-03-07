@@ -18,8 +18,6 @@ import org.prgrms.wumo.domain.comment.dto.response.LocationCommentRegisterRespon
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentUpdateResponse;
 import org.prgrms.wumo.domain.comment.model.LocationComment;
 import org.prgrms.wumo.domain.comment.repository.LocationCommentRepository;
-import org.prgrms.wumo.domain.member.model.Member;
-import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.springframework.security.access.AccessDeniedException;
@@ -32,19 +30,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LocationCommentService {
 	private final LocationCommentRepository locationCommentRepository;
-	private final MemberRepository memberRepository;
 	private final PartyMemberRepository partyMemberRepository;
 
 	@Transactional
 	public LocationCommentRegisterResponse registerLocationComment(
 			LocationCommentRegisterRequest locationCommentRegisterRequest) {
 
-		LocationComment locationComment = toLocationComment(locationCommentRegisterRequest);
-		locationComment.setMember(getMemberEntity(getMemberId()));
+		PartyMember partyMember = getPartyMemberEntity(locationCommentRegisterRequest.partyId(), getMemberId());
 
-		locationComment.setPartyMember(
-				getPartyMemberEntity(locationCommentRegisterRequest.partyMemberId())
-		);
+		LocationComment locationComment = toLocationComment(locationCommentRegisterRequest, partyMember);
+
+		locationComment.setPartyMember(partyMember);
+		locationComment.setMember(partyMember.getMember());
 
 		return toLocationCommentRegisterResponse(
 				locationCommentRepository.save(locationComment)
@@ -69,41 +66,20 @@ public class LocationCommentService {
 			LocationCommentUpdateRequest locationCommentUpdateRequest) {
 		LocationComment locationComment = getLocationCommentEntity(locationCommentUpdateRequest.id());
 
-		checkMemberInParty(locationComment.getPartyMember().getId());
+		checkAuthorization(locationComment, getMemberId());
 
-		if (!locationComment.getMember().getId().equals(getMemberId())) {
-			throw new AccessDeniedException("댓글은 작성자만 수정할 수 있습니다.");
-		}
 		locationComment.update(locationCommentUpdateRequest);
 
 		return toLocationCommentUpdateResponse(locationCommentRepository.save(locationComment));
 	}
 
 	@Transactional
-	public void deleteLocationComment(Long locationCommentId){
+	public void deleteLocationComment(Long locationCommentId) {
 		LocationComment locationComment = getLocationCommentEntity(locationCommentId);
 
-		checkMemberInParty(locationComment.getPartyMember().getId());
-
-		if (!locationComment.getMember().getId().equals(getMemberId())) {
-			throw new AccessDeniedException("댓글은 작성자만 삭제할 수 있습니다.");
-		}
+		checkAuthorization(locationComment, getMemberId());
 
 		locationCommentRepository.deleteById(locationCommentId);
-	}
-
-	private LocationComment getLocationCommentEntity(Long locationCommentId) {
-		return locationCommentRepository.findById(locationCommentId)
-				.orElseThrow(() -> new EntityNotFoundException("존재 하지 않는 후보지 댓글입니다."));
-	}
-
-	private Member getMemberEntity(Long memberId) {
-		return memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("존재 하지 않는 회원입니다"));
-	}
-
-	private PartyMember getPartyMemberEntity(Long partyMemberId) {
-		return partyMemberRepository.findById(partyMemberId)
-				.orElseThrow(() -> new EntityNotFoundException("모임에서 역할이 존재하지 않는 회원입니다"));
 	}
 
 	private void checkMemberInParty(Long partyMemberId) {
@@ -111,4 +87,20 @@ public class LocationCommentService {
 			throw new AccessDeniedException("모임 내 회원이 아닙니다.");
 		}
 	}
+
+	private PartyMember getPartyMemberEntity(Long partyId, Long memberId) {
+		return partyMemberRepository.findByPartyIdAndMemberId(partyId, memberId)
+				.orElseThrow(() -> new EntityNotFoundException("모임 내 존재하지 않는 회원입니다."));
+	}
+
+	private LocationComment getLocationCommentEntity(Long locationCommentId) {
+		return locationCommentRepository.findById(locationCommentId)
+				.orElseThrow(() -> new EntityNotFoundException("존재 하지 않는 후보지 댓글입니다."));
+	}
+
+	private void checkAuthorization(LocationComment locationComment, Long memberId) {
+		checkMemberInParty(locationComment.getPartyMember().getId());
+		locationComment.checkAuthorization(memberId);
+	}
 }
+

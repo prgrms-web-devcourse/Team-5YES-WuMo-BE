@@ -2,6 +2,8 @@ package org.prgrms.wumo.domain.comment.model;
 
 import static lombok.AccessLevel.PROTECTED;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -16,6 +18,7 @@ import javax.persistence.Table;
 
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.global.audit.BaseTimeEntity;
+import org.springframework.security.access.AccessDeniedException;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,5 +54,11 @@ public class Comment extends BaseTimeEntity {
 
 	public void setMember(Member member) {
 		this.member = member;
+	}
+
+	public void checkAuthorization(Long memberId) {
+		if (!Objects.equals(this.member.getId(), memberId)) {
+			throw new AccessDeniedException("댓글의 수정 및 삭제는 작성자만 할 수 있습니다.");
+		}
 	}
 }

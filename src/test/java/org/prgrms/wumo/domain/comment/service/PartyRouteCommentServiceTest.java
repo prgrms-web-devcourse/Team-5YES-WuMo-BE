@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.then;
 import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteCommentGetAllResponse;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -33,12 +34,10 @@ import org.prgrms.wumo.domain.location.model.Category;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
 import org.prgrms.wumo.domain.member.model.Member;
-import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.route.model.Route;
-import org.prgrms.wumo.domain.route.repository.RouteRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -55,16 +54,10 @@ public class PartyRouteCommentServiceTest {
 	PartyRouteCommentRepository partyRouteCommentRepository;
 
 	@Mock
-	MemberRepository memberRepository;
-
-	@Mock
 	PartyMemberRepository partyMemberRepository;
 
 	@Mock
 	LocationRepository locationRepository;
-
-	@Mock
-	RouteRepository routeRepository;
 
 	// GIVEN
 	Member member;
@@ -73,14 +66,17 @@ public class PartyRouteCommentServiceTest {
 	PartyRouteComment partyRouteComment;
 	Route route;
 	Location location;
+	List<Location> locations = new ArrayList<>();
 
 	@BeforeEach
 	void beforeEach() {
 		member = getMember();
 		party = getParty();
 		location = getLocation();
+		locations.add(location);
 		partyMember = getPartyMember();
-		route = getRoute();
+		route = getRoute(locations);
+		location.addRoute(route);
 		partyRouteComment = getPartyRouteComment();
 
 		SecurityContext context = SecurityContextHolder.getContext();
@@ -92,6 +88,7 @@ public class PartyRouteCommentServiceTest {
 
 	@AfterEach
 	void afterEach() {
+		locations.clear();
 		SecurityContextHolder.clearContext();
 	}
 
@@ -103,14 +100,12 @@ public class PartyRouteCommentServiceTest {
 		void success() {
 			// Given
 			PartyRouteCommentRegisterRequest request = new PartyRouteCommentRegisterRequest(
-					1L, "모임 내 댓글", "image.png", 1L, 1L
+					"모임 내 댓글", "image.png", party.getId(), location.getId()
 			);
 
-			given(memberRepository.findById(any(Long.class))).willReturn(Optional.of(member));
+			given(locationRepository.findById(any(Long.class))).willReturn(Optional.of(location));
 			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(
 					Optional.of(partyMember));
-			given(routeRepository.findById(any(Long.class))).willReturn(Optional.of(route));
-			given(locationRepository.existsById(any(Long.class))).willReturn(true);
 			given(partyRouteCommentRepository.save(any(PartyRouteComment.class))).willReturn(partyRouteComment);
 
 			// When
@@ -217,14 +212,14 @@ public class PartyRouteCommentServiceTest {
 		void success() {
 			// Given
 			PartyRouteComment tmp = PartyRouteComment.builder()
-				.id(450L)
-				.image("image.png")
-				.content("삭제될 댓글....")
-				.locationId(location.getId())
-				.routeId(route.getId())
-				.partyMember(partyMember)
-				.member(member)
-				.build();
+					.id(450L)
+					.image("image.png")
+					.content("삭제될 댓글....")
+					.locationId(location.getId())
+					.routeId(route.getId())
+					.partyMember(partyMember)
+					.member(member)
+					.build();
 
 			given(partyMemberRepository.existsById(any(Long.class))).willReturn(true);
 			given(partyRouteCommentRepository.findById(any(Long.class))).willReturn(Optional.of(tmp));
@@ -241,14 +236,14 @@ public class PartyRouteCommentServiceTest {
 		void failedByOtherMember() {
 			// Given
 			PartyRouteComment tmp = PartyRouteComment.builder()
-				.id(450L)
-				.image("image.png")
-				.content("삭제될 댓글....")
-				.locationId(location.getId())
-				.routeId(route.getId())
-				.partyMember(partyMember)
-				.member(member)
-				.build();
+					.id(450L)
+					.image("image.png")
+					.content("삭제될 댓글....")
+					.locationId(location.getId())
+					.routeId(route.getId())
+					.partyMember(partyMember)
+					.member(member)
+					.build();
 
 			given(partyMemberRepository.existsById(any(Long.class))).willReturn(false);
 			given(partyRouteCommentRepository.findById(any(Long.class))).willReturn(Optional.of(tmp));
@@ -302,11 +297,11 @@ public class PartyRouteCommentServiceTest {
 				.build();
 	}
 
-	private Route getRoute() {
+	private Route getRoute(List<Location> locations) {
 		return Route.builder()
 				.id(1L)
 				.party(party)
-				.locations(List.of())
+				.locations(locations)
 				.build();
 	}
 
@@ -324,6 +319,8 @@ public class PartyRouteCommentServiceTest {
 				.latitude(67.89F)
 				.category(Category.DRINK)
 				.visitDate(LocalDateTime.now())
+				.route(route)
 				.build();
 	}
 }
+
