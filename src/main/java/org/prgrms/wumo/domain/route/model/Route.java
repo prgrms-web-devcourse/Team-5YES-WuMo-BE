@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.party.model.Party;
@@ -41,6 +42,9 @@ public class Route extends BaseTimeEntity {
 	@Column(name = "like_count", nullable = true, updatable = true)
 	private long likeCount;
 
+	@Transient
+	private boolean isLiking;
+
 	@Builder
 	public Route(Long id, List<Location> locations, Party party) {
 		this.id = id;
@@ -61,7 +65,7 @@ public class Route extends BaseTimeEntity {
 		this.isPublic = isPublic;
 	}
 
-	public void updateLikeCount() {
-
+	public void addIsLiking(boolean isLiking) {
+		this.isLiking = isLiking;
 	}
 }

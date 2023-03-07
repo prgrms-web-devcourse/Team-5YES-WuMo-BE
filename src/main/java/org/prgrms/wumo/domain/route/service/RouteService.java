@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.prgrms.wumo.domain.like.repository.RouteLikeRepository;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
 import org.prgrms.wumo.domain.party.model.Party;
@@ -37,6 +38,7 @@ public class RouteService {
 	private final PartyRepository partyRepository;
 	private final PartyMemberRepository partyMemberRepository;
 	private final LocationRepository locationRepository;
+	private final RouteLikeRepository routeLikeRepository;
 
 	@Transactional
 	public RouteRegisterResponse registerRoute(RouteRegisterRequest routeRegisterRequest) {
@@ -77,7 +79,9 @@ public class RouteService {
 			routeGetAllRequest.pageSize(),
 			routeGetAllRequest.sortType(),
 			routeGetAllRequest.searchWord());
+		addIsLiking(routes);
 
+		//TODO 현재 모든 목록 조회에서 같은 로직 사용중 -> util로 빼는것 고려하기
 		long lastId = -1L;
 		if (routes.size() != 0) {
 			lastId = routes.get(routes.size() - 1).getId();
@@ -96,6 +100,14 @@ public class RouteService {
 	private Route getRouteEntity(long routeId) {
 		return routeRepository.findById(routeId)
 			.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
+	}
+
+	private void addIsLiking(List<Route> routes) {
+		long memberId = getMemberId();
+		routes.forEach(
+			route -> route.addIsLiking(
+				routeLikeRepository.existsByRouteIdAndMemberId(route.getId(), memberId)
+			));
 	}
 
 	private void validateAccess(long partyId) {

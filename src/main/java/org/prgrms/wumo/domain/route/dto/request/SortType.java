@@ -1,5 +1,9 @@
 package org.prgrms.wumo.domain.route.dto.request;
 
+import java.util.Arrays;
+
+import javax.validation.ValidationException;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import lombok.Getter;
@@ -17,11 +21,9 @@ public enum SortType {
 
 	@JsonCreator
 	public static SortType from(String value) {
-		for (SortType sortType : SortType.values()) {
-			if (sortType.getValue().equals(value)) {
-				return sortType;
-			}
-		}
-		return null;
+		return Arrays.stream(SortType.values())
+			.filter(sortType -> sortType.equals(value))
+			.findFirst()
+			.orElseThrow(() -> new ValidationException("올바른 정렬 기준이 아닙니다."));
 	}
 }
