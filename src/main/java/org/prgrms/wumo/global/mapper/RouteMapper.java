@@ -55,6 +55,7 @@ public class RouteMapper {
 			.map(route -> new RouteGetAllResponse(
 				route.getId(),
 				route.getLikeCount(),
+				route.isLiking(),
 				toRouteLocationSimpleResponse(route.getLocations()),
 				route.getParty().getName(),
 				route.getParty().getStartDate(),
