@@ -18,11 +18,9 @@ import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetAllResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
-import org.prgrms.wumo.domain.party.repository.InvitationRepository;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
-import org.prgrms.wumo.global.exception.custom.PartyNotEmptyException;
 import org.prgrms.wumo.global.jwt.JwtUtil;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -39,8 +37,6 @@ public class PartyMemberService {
 	private final PartyRepository partyRepository;
 
 	private final PartyMemberRepository partyMemberRepository;
-
-	private final InvitationRepository invitationRepository;
 
 	@Transactional
 	public void registerPartyMember(
@@ -88,17 +84,9 @@ public class PartyMemberService {
 	public void deletePartyMember(Long partyId) {
 		PartyMember partyMember = getPartyMemberEntity(partyId, JwtUtil.getMemberId());
 
+		// 모임장은 탈퇴 불가능
 		if (partyMember.isLeader()) {
-			// 모임장인 경우 모임에 멤버가 본인을 제외하고 없어야만 삭제 가능
-			List<PartyMember> partyMembers = partyMemberRepository.findAllByPartyId(partyId, null, 2);
-			if (partyMembers.size() == 1 && Objects.equals(partyMembers.get(0).getId(), partyMember.getId())) {
-				invitationRepository.deleteAllByParty(partyMember.getParty());
-				partyMemberRepository.delete(partyMember);
-				partyRepository.deleteById(partyId);
-				return;
-			} else {
-				throw new PartyNotEmptyException("본인을 제외하고 모임에 가입된 회원이 없어야 합니다.");
-			}
+			throw new AccessDeniedException("모임을 생성한 회원은 탈퇴 대신 모임을 삭제해야 합니다.");
 		}
 
 		partyMemberRepository.delete(partyMember);

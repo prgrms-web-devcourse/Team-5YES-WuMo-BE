@@ -7,11 +7,12 @@ import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyRegisterResponse;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.prgrms.wumo.domain.image.repository.ImageRepository;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyGetRequest;
@@ -25,6 +26,7 @@ import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.InvitationRepository;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
+import org.prgrms.wumo.global.exception.custom.PartyNotEmptyException;
 import org.prgrms.wumo.global.jwt.JwtUtil;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -45,6 +47,8 @@ public class PartyService {
 	private final PartyMemberRepository partyMemberRepository;
 
 	private final InvitationRepository invitationRepository;
+
+	private final ImageRepository imageRepository;
 
 	@Transactional
 	public PartyRegisterResponse registerParty(PartyRegisterRequest partyRegisterRequest) {
@@ -115,9 +119,16 @@ public class PartyService {
 		PartyMember partyLeader = getPartyLeaderEntity(partyId);
 		checkAuthorization(partyLeader);
 
-		invitationRepository.deleteAllByParty(partyLeader.getParty());
-		partyMemberRepository.deleteAllByParty(partyLeader.getParty());
-		partyRepository.delete(partyLeader.getParty());
+		// 모임장인 경우 모임에 멤버가 본인을 제외하고 없어야만 삭제 가능
+		List<PartyMember> partyMembers = partyMemberRepository.findAllByPartyId(partyId, null, 2);
+		if (partyMembers.size() == 1 && Objects.equals(partyMembers.get(0).getId(), partyLeader.getId())) {
+			imageRepository.delete(partyLeader.getParty().getCoverImage());
+			invitationRepository.deleteAllByParty(partyLeader.getParty());
+			partyMemberRepository.delete(partyLeader);
+			partyRepository.deleteById(partyId);
+		} else {
+			throw new PartyNotEmptyException("본인을 제외하고 모임에 가입된 회원이 없어야 합니다.");
+		}
 	}
 
 	private Member getMemberEntity(Long memberId) {
@@ -144,12 +155,7 @@ public class PartyService {
 	private void setPartyMemberDetail(Party party) {
 		// TODO : N개의 Party에 대해 2번씩 쿼리가 나가기 때문에 개선할 필요
 		party.setTotalMembers(partyMemberRepository.countAllByParty(party));
-		party.setPartyMembers(
-				partyMemberRepository.findAllByPartyId(party.getId(), null, MEMBER_PREVIEW)
-						.stream()
-						.sorted(Comparator.comparing(PartyMember::getId))
-						.toList()
-		);
+		party.setPartyMembers(partyMemberRepository.findAllByPartyId(party.getId(), null, MEMBER_PREVIEW));
 	}
 
 }

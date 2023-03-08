@@ -34,7 +34,6 @@ import org.prgrms.wumo.domain.party.repository.InvitationRepository;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
-import org.prgrms.wumo.global.exception.custom.PartyNotEmptyException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -259,7 +258,7 @@ class PartyMemberServiceTest {
 	class DeletePartyMember {
 
 		@Test
-		@DisplayName("모임을 생성한 회원이 아니라면 구성원에서 삭제한다.")
+		@DisplayName("모임을 생성한 회원이 아니라면 모임에서 자신을 삭제한다.")
 		void successWithNotLeader() {
 			//mocking
 			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), participant.getId()))
@@ -275,51 +274,6 @@ class PartyMemberServiceTest {
 			then(partyMemberRepository)
 					.should()
 					.delete(any(PartyMember.class));
-		}
-
-		@Test
-		@DisplayName("모임을 생성한 회원이고 자신을 제외한 구성원이 없다면 구성원과 모임을 삭제한다.")
-		void successWithParticipant() {
-			//given
-			setAuthentication(leader.getId());
-
-			//mocking
-			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), leader.getId()))
-					.willReturn(Optional.of(partyLeader));
-			given(partyMemberRepository.findAllByPartyId(party.getId(), null, 2))
-					.willReturn(List.of(partyLeader));
-
-			//when
-			partyMemberService.deletePartyMember(party.getId());
-
-			//then
-			then(partyMemberRepository)
-					.should()
-					.findByPartyIdAndMemberId(party.getId(), leader.getId());
-			then(partyMemberRepository)
-					.should()
-					.delete(partyLeader);
-			then(partyRepository)
-					.should()
-					.deleteById(party.getId());
-		}
-
-		@Test
-		@DisplayName("모임을 생성한 회원이고 자신을 제외한 구성원이 있다면 예외가 발생한다.")
-		void failed() {
-			//given
-			setAuthentication(leader.getId());
-
-			//mocking
-			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), leader.getId()))
-					.willReturn(Optional.of(partyLeader));
-			given(partyMemberRepository.findAllByPartyId(party.getId(), null, 2))
-					.willReturn(List.of(partyLeader, partyParticipant));
-
-			//when
-			//then
-			Assertions.assertThrows(PartyNotEmptyException.class,
-					() -> partyMemberService.deletePartyMember(party.getId()));
 		}
 
 		@Test
@@ -350,33 +304,23 @@ class PartyMemberServiceTest {
 		}
 
 		@Test
-		@DisplayName("모임을 생성한 회원이고 구성원이 자신뿐이면 자신을 추방할 수 있다.")
-		void successSelfKickWithLeader() {
+		@DisplayName("모임을 생성한 회원은 자신을 추방할 수 없다.")
+		void failedSelfKickWithLeader() {
 			//given
 			setAuthentication(leader.getId());
 
 			//mocking
 			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), leader.getId()))
 					.willReturn(Optional.of(partyLeader));
-			given(partyMemberRepository.findAllByPartyId(party.getId(), null, 2))
-					.willReturn(List.of(partyLeader));
 
 			//when
-			partyMemberService.deletePartyMember(party.getId(), leader.getId());
-
 			//then
+			Assertions.assertThrows(AccessDeniedException.class,
+					() -> partyMemberService.deletePartyMember(party.getId(), leader.getId()));
+
 			then(partyMemberRepository)
 					.should()
 					.findByPartyIdAndMemberId(party.getId(), leader.getId());
-			then(partyMemberRepository)
-					.should()
-					.findAllByPartyId(party.getId(), null, 2);
-			then(partyMemberRepository)
-					.should()
-					.delete(any(PartyMember.class));
-			then(partyRepository)
-					.should()
-					.deleteById(party.getId());
 		}
 
 		@Test
