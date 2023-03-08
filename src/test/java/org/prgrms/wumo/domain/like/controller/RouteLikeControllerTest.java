@@ -85,6 +85,7 @@ class RouteLikeControllerTest extends MysqlTestContainer {
 		);
 		location = locationRepository.save(
 				Location.builder()
+						.memberId(member.getId())
 						.category(Category.STUDY)
 						.name("프로그래머스 대륭 서초 타워")
 						.description("그렙!!")
