@@ -202,6 +202,48 @@ class PartyMemberServiceTest {
 	}
 
 	@Nested
+	@DisplayName("getPartyMember 메소드는 조회시")
+	class GetPartyMember {
+		//given
+		PartyMemberGetRequest partyMemberGetRequest = new PartyMemberGetRequest(null, 2);
+
+		@Test
+		@DisplayName("현재 모임의 구성원 목록을 반환한다.")
+		void success() {
+			//mocking
+			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), participant.getId()))
+					.willReturn(Optional.of(partyParticipant));
+
+			//when
+			PartyMemberGetResponse partyMemberGetResponse = partyMemberService.getPartyMember(party.getId());
+
+			//then
+			assertThat(partyMemberGetResponse.memberId()).isEqualTo(participant.getId());
+			assertThat(partyMemberGetResponse.nickname()).isEqualTo(participant.getNickname());
+			assertThat(partyMemberGetResponse.role()).isEqualTo(partyParticipant.getRole());
+			assertThat(partyMemberGetResponse.profileImage()).isEqualTo(participant.getProfileImage());
+
+			then(partyMemberRepository)
+					.should()
+					.findByPartyIdAndMemberId(party.getId(), participant.getId());
+		}
+
+		@Test
+		@DisplayName("모임의 구성원이 아니라면 예외가 발생한다.")
+		void failed() {
+			//mocking
+			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), participant.getId()))
+					.willReturn(Optional.empty());
+
+			//when
+			//then
+			Assertions.assertThrows(EntityNotFoundException.class,
+					() -> partyMemberService.getPartyMember(party.getId()));
+		}
+
+	}
+
+	@Nested
 	@DisplayName("updatePartyMember 메소드는 수정시")
 	class UpdatePartyMember {
 		//given
