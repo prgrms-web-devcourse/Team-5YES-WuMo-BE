@@ -24,6 +24,7 @@ import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.exception.custom.InvalidCodeException;
 import org.prgrms.wumo.global.exception.custom.InvalidRefreshTokenException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
+import org.prgrms.wumo.global.jwt.JwtUtil;
 import org.prgrms.wumo.global.jwt.WumoJwt;
 import org.prgrms.wumo.global.repository.RedisRepository;
 import org.prgrms.wumo.global.sender.Sender;
@@ -120,9 +121,8 @@ public class MemberService {
 	}
 
 	@Transactional(readOnly = true)
-	public MemberGetResponse getMember(long memberId) {
-		validateAccess(memberId);
-		return toMemberGetResponse(getMemberEntity(memberId));
+	public MemberGetResponse getMember() {
+		return toMemberGetResponse(getMemberEntity(JwtUtil.getMemberId()));
 	}
 
 	@Transactional
