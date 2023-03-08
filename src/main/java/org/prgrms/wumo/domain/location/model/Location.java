@@ -33,6 +33,9 @@ public class Location extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "member_id", nullable = false, updatable = false, unique = false)
+	Long memberId;
+
 	@Column(name = "name", nullable = false, updatable = true, unique = false)
 	private String name;
 
@@ -75,11 +78,12 @@ public class Location extends BaseTimeEntity {
 	private Long partyId;
 
 	@Builder
-	public Location(Long id, String name, String address, String searchAddress, Float latitude, Float longitude,
+	public Location(Long id, Long memberId, String name, String address, String searchAddress, Float latitude, Float longitude,
 			String image,
 			String description,
 			LocalDateTime visitDate, int expectedCost, int spending, Category category, Route route, Long partyId) {
 		this.id = id;
+		this.memberId = memberId;
 		this.name = name;
 		this.searchAddress = searchAddress;
 		this.address = address;
