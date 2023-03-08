@@ -35,6 +35,7 @@ import org.prgrms.wumo.domain.party.dto.response.PartyGetResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
+import org.prgrms.wumo.domain.party.repository.InvitationRepository;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -53,6 +54,9 @@ class PartyServiceTest {
 
 	@Mock
 	PartyMemberRepository partyMemberRepository;
+
+	@Mock
+	InvitationRepository invitationRepository;
 
 	@InjectMocks
 	PartyService partyService;
@@ -78,7 +82,6 @@ class PartyServiceTest {
 				LocalDate.now().plusDays(1),
 				"팀 설립 기념 워크샵",
 				"https://~.jpeg",
-				"1234",
 				"총무"
 		);
 

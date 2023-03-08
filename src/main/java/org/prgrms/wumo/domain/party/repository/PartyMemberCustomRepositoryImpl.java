@@ -7,8 +7,10 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
+import org.prgrms.wumo.domain.member.model.QMember;
 import org.prgrms.wumo.domain.party.dto.request.PartyType;
 import org.prgrms.wumo.domain.party.model.PartyMember;
+import org.prgrms.wumo.domain.party.model.QParty;
 import org.prgrms.wumo.domain.party.model.QPartyMember;
 import org.springframework.stereotype.Repository;
 
@@ -25,6 +27,10 @@ public class PartyMemberCustomRepositoryImpl implements PartyMemberCustomReposit
 
 	private final QPartyMember qPartyMember = QPartyMember.partyMember;
 
+	private final QMember qMember = QMember.member;
+
+	private final QParty qParty = QParty.party;
+
 	@Override
 	public Optional<PartyMember> findByPartyIdAndIsLeader(Long partyId) {
 		return Optional.ofNullable(
@@ -34,6 +40,10 @@ public class PartyMemberCustomRepositoryImpl implements PartyMemberCustomReposit
 								eqPartyId(partyId),
 								isLeader()
 						)
+						.leftJoin(qPartyMember.party, qParty)
+						.fetchJoin()
+						.leftJoin(qPartyMember.member, qMember)
+						.fetchJoin()
 						.fetchOne()
 		);
 	}
@@ -47,6 +57,10 @@ public class PartyMemberCustomRepositoryImpl implements PartyMemberCustomReposit
 								eqPartyId(partyId),
 								eqMemberId(memberId)
 						)
+						.leftJoin(qPartyMember.party, qParty)
+						.fetchJoin()
+						.leftJoin(qPartyMember.member, qMember)
+						.fetchJoin()
 						.fetchOne()
 		);
 	}
@@ -87,6 +101,10 @@ public class PartyMemberCustomRepositoryImpl implements PartyMemberCustomReposit
 				)
 				.orderBy(qPartyMember.id.desc())
 				.limit(pageSize)
+				.leftJoin(qPartyMember.party, qParty)
+				.fetchJoin()
+				.leftJoin(qPartyMember.member, qMember)
+				.fetchJoin()
 				.fetch();
 	}
 

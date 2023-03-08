@@ -10,4 +10,6 @@ public interface InvitationRepository extends JpaRepository<Invitation, Long> {
 
 	Optional<Invitation> findTopByPartyOrderByIdDesc(Party party);
 
+	void deleteAllByParty(Party party);
+
 }

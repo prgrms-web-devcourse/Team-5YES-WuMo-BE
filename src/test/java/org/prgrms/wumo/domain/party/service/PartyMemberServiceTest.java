@@ -30,6 +30,7 @@ import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetAllResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyMemberGetResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
+import org.prgrms.wumo.domain.party.repository.InvitationRepository;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
@@ -51,6 +52,9 @@ class PartyMemberServiceTest {
 
 	@Mock
 	PartyMemberRepository partyMemberRepository;
+
+	@Mock
+	InvitationRepository invitationRepository;
 
 	@InjectMocks
 	PartyMemberService partyMemberService;
