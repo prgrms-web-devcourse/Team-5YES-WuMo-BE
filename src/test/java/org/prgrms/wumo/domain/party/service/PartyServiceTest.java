@@ -24,6 +24,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.prgrms.wumo.domain.image.repository.ImageRepository;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyGetRequest;
@@ -38,6 +39,7 @@ import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.InvitationRepository;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
+import org.prgrms.wumo.global.exception.custom.PartyNotEmptyException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -57,6 +59,9 @@ class PartyServiceTest {
 
 	@Mock
 	InvitationRepository invitationRepository;
+
+	@Mock
+	ImageRepository imageRepository;
 
 	@InjectMocks
 	PartyService partyService;
@@ -349,11 +354,13 @@ class PartyServiceTest {
 	class DeleteParty {
 
 		@Test
-		@DisplayName("식별자가 일치하는 모임을 삭제한다.")
+		@DisplayName("모임장 외 다른 회원이 없으면 모임을 삭제한다.")
 		void success() {
 			//mocking
 			given(partyMemberRepository.findByPartyIdAndIsLeader(party.getId()))
 					.willReturn(Optional.of(partyMember));
+			given(partyMemberRepository.findAllByPartyId(party.getId(), null, 2))
+					.willReturn(List.of(partyMember));
 
 			//when
 			partyService.deleteParty(party.getId());
@@ -362,9 +369,32 @@ class PartyServiceTest {
 			then(partyMemberRepository)
 					.should()
 					.findByPartyIdAndIsLeader(party.getId());
+			then(imageRepository)
+					.should()
+					.delete(party.getCoverImage());
+			then(invitationRepository)
+					.should()
+					.deleteAllByParty(party);
+			then(partyMemberRepository)
+					.should()
+					.delete(partyMember);
 			then(partyRepository)
 					.should()
-					.delete(party);
+					.deleteById(party.getId());
+		}
+
+		@Test
+		@DisplayName("모임의 다른 회원이 존재하면 예외가 발생한다.")
+		void failedWithNotEmptyParty() {
+			//mocking
+			given(partyMemberRepository.findByPartyIdAndIsLeader(party.getId()))
+					.willReturn(Optional.of(partyMember));
+			given(partyMemberRepository.findAllByPartyId(party.getId(), null, 2))
+					.willReturn(List.of(partyMember, partyMember));
+
+			//when
+			//then
+			Assertions.assertThrows(PartyNotEmptyException.class, () -> partyService.deleteParty(party.getId()));
 		}
 
 		@Test

@@ -86,8 +86,12 @@ public class ImageRepository {
 	}
 
 	private void validateHost(String imageUrl) {
-		if (!imageUrl.substring(0, imageUrl.indexOf("/")).equals(BUCKET_URL)) {
-			log.info("버킷에 저장되지 않은 이미지를 삭제 요청했습니다. ({})", imageUrl);
+		try {
+			if (!imageUrl.substring(0, imageUrl.indexOf("/")).equals(BUCKET_URL)) {
+				log.info("버킷에 저장되지 않은 이미지를 삭제 요청했습니다. ({})", imageUrl);
+			}
+		} catch (IndexOutOfBoundsException e) {
+			log.info("비정상적인 이미지 경로입니다. ({})", imageUrl);
 		}
 	}
 
