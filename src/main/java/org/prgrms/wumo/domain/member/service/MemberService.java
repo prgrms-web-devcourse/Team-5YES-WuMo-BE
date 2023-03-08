@@ -25,6 +25,7 @@ import org.prgrms.wumo.global.exception.custom.InvalidRefreshTokenException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.WumoJwt;
 import org.prgrms.wumo.global.repository.RedisRepository;
+import org.prgrms.wumo.global.sender.Sender;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,8 +41,13 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final RedisRepository redisRepository;
+	private final Sender sender;
 
-	public void checkCodeMail(String toAddress, String code) {
+	public void sendCode(String toAddress) {
+		sender.sendCode(toAddress);
+	}
+
+	public void checkCode(String toAddress, String code) {
 		if (!redisRepository.get(toAddress).equals(code)) {
 			throw new InvalidCodeException("유효하지 않은 인증 코드입니다.");
 		}
@@ -49,9 +55,12 @@ public class MemberService {
 
 	@Transactional
 	public MemberRegisterResponse registerMember(MemberRegisterRequest memberRegisterRequest) {
-		checkEmail(memberRegisterRequest.email());
+		String address = memberRegisterRequest.email();
+		checkEmail(address);
 		checkNickname(memberRegisterRequest.nickname());
+
 		Member member = memberRepository.save(toMember(memberRegisterRequest));
+		sender.sendWelcome(address);
 		return toMemberRegisterResponse(member.getId());
 	}
 

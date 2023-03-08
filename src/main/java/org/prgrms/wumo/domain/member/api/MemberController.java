@@ -13,7 +13,6 @@ import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
 import org.prgrms.wumo.domain.member.service.MemberService;
-import org.prgrms.wumo.global.sender.Sender;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,23 +37,22 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
 	private final MemberService memberService;
-	private final Sender sender;
 
 	@GetMapping("/send-code")
 	@Operation(summary = "이메일 인증코드 전송")
-	public ResponseEntity<Void> sendCodeMail(
+	public ResponseEntity<Void> sendCode(
 		@RequestParam("address") @Parameter(description = "이메일 인증을 원하는 회원의 이메일 주소") String toAddress) {
 
-		sender.sendCode(toAddress);
+		memberService.sendCode(toAddress);
 		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/check-code")
 	@Operation(summary = "이메일 인증코드 검증")
-	public ResponseEntity<Void> checkCodeMail(
+	public ResponseEntity<Void> checkCode(
 		@Valid MemberCodeCheckRequest memberCodeCheckRequest) {
 
-		memberService.checkCodeMail(memberCodeCheckRequest.address(), memberCodeCheckRequest.code());
+		memberService.checkCode(memberCodeCheckRequest.address(), memberCodeCheckRequest.code());
 		return ResponseEntity.ok().build();
 	}
 
