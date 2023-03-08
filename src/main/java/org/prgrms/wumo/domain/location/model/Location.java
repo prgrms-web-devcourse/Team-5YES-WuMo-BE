@@ -1,6 +1,7 @@
 package org.prgrms.wumo.domain.location.model;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +18,7 @@ import javax.persistence.Table;
 import org.prgrms.wumo.domain.location.dto.request.LocationUpdateRequest;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.prgrms.wumo.global.audit.BaseTimeEntity;
+import org.springframework.security.access.AccessDeniedException;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -117,5 +119,10 @@ public class Location extends BaseTimeEntity {
 
 	public void updateSpending(int spending) {
 		this.spending = spending;
+	}
+
+	public void checkAuthorization(Long memberId){
+		if (!Objects.equals(this.memberId, memberId))
+			throw new AccessDeniedException("후보지는 작성자 및 모임장만 삭제할 수 있습니다.");
 	}
 }
