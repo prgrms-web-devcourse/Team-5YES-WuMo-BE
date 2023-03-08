@@ -67,14 +67,65 @@ public class PartyMemberCustomRepositoryImpl implements PartyMemberCustomReposit
 
 	@Override
 	public List<PartyMember> findAllByPartyId(Long partyId, Long cursorId, int pageSize) {
-		return findAllByColumnId("party", partyId, cursorId, pageSize, PartyType.ALL);
+		return jpaQueryFactory
+				.selectFrom(qPartyMember)
+				.where(
+						gtPartyMemberId(cursorId),
+						eqPartyId(partyId)
+				)
+				.orderBy(qPartyMember.id.asc())
+				.limit(pageSize)
+				.leftJoin(qPartyMember.party, qParty)
+				.fetchJoin()
+				.leftJoin(qPartyMember.member, qMember)
+				.fetchJoin()
+				.fetch();
 	}
 
 	@Override
 	public List<PartyMember> findAllByMemberId(Long memberId, Long cursorId, int pageSize, PartyType partyType) {
-		return findAllByColumnId("member", memberId, cursorId, pageSize, partyType);
+		return jpaQueryFactory
+				.selectFrom(qPartyMember)
+				.where(
+						eqMemberId(memberId),
+						ltPartyMemberId(cursorId),
+						eqPartyType(partyType)
+				)
+				.orderBy(qPartyMember.party.id.desc())
+				.limit(pageSize)
+				.leftJoin(qPartyMember.party, qParty)
+				.fetchJoin()
+				.leftJoin(qPartyMember.member, qMember)
+				.fetchJoin()
+				.fetch();
 	}
 
+	@Override
+	public List<Long> countAllByPartyIdIn(List<Long> partyIds) {
+		return jpaQueryFactory
+				.select(qPartyMember.party.count())
+				.from(qPartyMember)
+				.where(qPartyMember.party.id.in(partyIds))
+				.groupBy(qPartyMember.party.id)
+				.orderBy(qPartyMember.party.id.desc())
+				.fetch();
+	}
+
+	@Override
+	public List<PartyMember> findAllByPartyIdInAndIsLeader(List<Long> partyIds) {
+		return jpaQueryFactory
+				.selectFrom(qPartyMember)
+				.where(
+						qPartyMember.party.id.in(partyIds),
+						isLeader()
+				)
+				.orderBy(qPartyMember.party.id.desc())
+				.leftJoin(qPartyMember.party, qParty)
+				.fetchJoin()
+				.leftJoin(qPartyMember.member, qMember)
+				.fetchJoin()
+				.fetch();
+	}
 
 	@Override
 	public boolean existsByPartyIdAndMemberId(Long partyId, Long memberId) {
@@ -87,29 +138,12 @@ public class PartyMemberCustomRepositoryImpl implements PartyMemberCustomReposit
 		return exist != null;
 	}
 
-	private List<PartyMember> findAllByColumnId(String column, Long columnId, Long cursorId, int pageSize, PartyType partyType) {
-		return jpaQueryFactory
-				.selectFrom(qPartyMember)
-				.where(
-						switch (column) {
-							case "party" -> eqPartyId(columnId);
-							case "member" -> eqMemberId(columnId);
-							default -> null;
-						},
-						ltPartyMemberId(cursorId),
-						eqPartyType(partyType)
-				)
-				.orderBy(qPartyMember.id.desc())
-				.limit(pageSize)
-				.leftJoin(qPartyMember.party, qParty)
-				.fetchJoin()
-				.leftJoin(qPartyMember.member, qMember)
-				.fetchJoin()
-				.fetch();
-	}
-
 	private BooleanExpression ltPartyMemberId(Long cursorId) {
 		return (cursorId != null) ? qPartyMember.id.lt(cursorId) : null;
+	}
+
+	private BooleanExpression gtPartyMemberId(Long cursorId) {
+		return (cursorId != null) ? qPartyMember.id.gt(cursorId) : null;
 	}
 
 	private BooleanExpression eqPartyId(Long partyId) {
