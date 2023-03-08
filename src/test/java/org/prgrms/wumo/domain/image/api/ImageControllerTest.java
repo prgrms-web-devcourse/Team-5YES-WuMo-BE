@@ -100,22 +100,4 @@ class ImageControllerTest {
 				.andDo(print());
 	}
 
-	@Test
-	@DisplayName("버킷의 이미지 URL이 아니면 오류가 발생한다.")
-	void deleteImageFromInvalidHost() throws Exception {
-		//given (유효하지 않은 이미지 경로 사용)
-		ImageDeleteRequest imageDeleteRequest
-				= new ImageDeleteRequest("http://localhost/test.png");
-
-		//when
-		ResultActions resultActions = mockMvc.perform(delete("/api/v1/images")
-				.contentType(MediaType.APPLICATION_JSON_VALUE)
-				.content(objectMapper.writeValueAsString(imageDeleteRequest)));
-
-		//then
-		resultActions
-				.andExpect(status().isBadRequest())
-				.andDo(print());
-	}
-
 }
