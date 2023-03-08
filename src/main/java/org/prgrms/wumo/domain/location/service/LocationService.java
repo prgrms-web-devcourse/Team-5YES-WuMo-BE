@@ -5,6 +5,7 @@ import static org.prgrms.wumo.global.mapper.LocationMapper.toLocation;
 import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationGetAllResponse;
 import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationGetResponse;
 import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationRegisterResponse;
+import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationSpendingUpdateResponse;
 import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationUpdateResponse;
 
 import java.util.List;
@@ -13,10 +14,12 @@ import javax.persistence.EntityNotFoundException;
 
 import org.prgrms.wumo.domain.location.dto.request.LocationGetAllRequest;
 import org.prgrms.wumo.domain.location.dto.request.LocationRegisterRequest;
+import org.prgrms.wumo.domain.location.dto.request.LocationSpendingUpdateRequest;
 import org.prgrms.wumo.domain.location.dto.request.LocationUpdateRequest;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetAllResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationRegisterResponse;
+import org.prgrms.wumo.domain.location.dto.response.LocationSpendingUpdateResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationUpdateResponse;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
@@ -83,6 +86,19 @@ public class LocationService {
 		checkMemberInParty(location.getPartyId(), getMemberId());
 
 		locationRepository.deleteById(locationId);
+	}
+
+	@Transactional
+	public LocationSpendingUpdateResponse updateSpending(LocationSpendingUpdateRequest locationSpendingUpdateRequest){
+		Location location = getLocationEntity(locationSpendingUpdateRequest.locationId());
+
+		checkMemberInParty(location.getPartyId(), getMemberId());
+
+		location.updateSpending(locationSpendingUpdateRequest.spending());
+
+		locationRepository.save(location);
+
+		return toLocationSpendingUpdateResponse(location.getSpending());
 	}
 
 	private Location getLocationEntity(Long locationId) {

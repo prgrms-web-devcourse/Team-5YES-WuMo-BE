@@ -110,4 +110,8 @@ public class Location extends BaseTimeEntity {
 		this.expectedCost = request.expectedCost();
 		this.description = request.description() == null ? this.getDescription() : request.description();
 	}
+
+	public void updateSpending(int spending) {
+		this.spending = spending;
+	}
 }

@@ -5,6 +5,7 @@ import org.prgrms.wumo.domain.location.dto.request.LocationRegisterRequest;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetAllResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationRegisterResponse;
+import org.prgrms.wumo.domain.location.dto.response.LocationSpendingUpdateResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationUpdateResponse;
 import org.prgrms.wumo.domain.location.model.Location;
 
@@ -65,6 +66,9 @@ public class LocationMapper {
 				location.getExpectedCost(),
 				location.getCategory()
 		);
+	}
 
+	public static LocationSpendingUpdateResponse toLocationSpendingUpdateResponse(int spending){
+		return new LocationSpendingUpdateResponse(spending);
 	}
 }

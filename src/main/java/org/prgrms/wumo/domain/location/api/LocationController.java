@@ -44,10 +44,11 @@ public class LocationController {
 		return new ResponseEntity<>(locationService.registerLocation(locationRegisterRequest), HttpStatus.CREATED);
 	}
 
+
 	@GetMapping("/{locationId}")
 	@Operation(summary = "후보지 상세 조회")
 	public ResponseEntity<LocationGetResponse> getLocation(
-			@PathVariable @Parameter(description = "조회할 후보장소 아이디") Long locationId) {
+			@PathVariable @Parameter(description = "조회할 후보지 식별자") Long locationId) {
 
 		return ResponseEntity.ok(locationService.getLocation(locationId));
 	}
@@ -64,7 +65,7 @@ public class LocationController {
 	public ResponseEntity<LocationSpendingUpdateResponse> updateSpending(
 			@RequestBody @Valid LocationSpendingUpdateRequest locationSpendingUpdateRequest
 	) {
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(locationService.updateSpending(locationSpendingUpdateRequest));
 	}
 
 	@PatchMapping
@@ -78,7 +79,7 @@ public class LocationController {
 	@DeleteMapping("/{locationId}")
 	@Operation(summary = "후보지 삭제")
 	public ResponseEntity<Void> deleteLocation(
-			@PathVariable @Parameter(description = "삭제할 후보장소 아이디") Long locationId) {
+			@PathVariable @Parameter(description = "삭제할 후보지 식별자") Long locationId) {
 
 		locationService.deleteLocation(locationId);
 		return ResponseEntity.ok().build();
