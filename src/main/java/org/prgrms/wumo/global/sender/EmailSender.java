@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class EmailSender implements Sender {
 
 	@Value("${wumo.mail}")
-	private String FromAddress;
+	private String fromAddress;
 
 	private static final String CODE_SUBJECT = "WuMo(우리들의 모임) 회원가입 이메일 인증 코드입니다.";
 	private static final String CODE_CONTENT = "회원가입 화면에 아래의 이메일 인증 코드를 입력해주세요\n";
@@ -45,6 +46,7 @@ public class EmailSender implements Sender {
 		}
 	}
 
+	@Async
 	@Override
 	public void sendWelcome(String toAddress) {
 		try {
@@ -60,7 +62,7 @@ public class EmailSender implements Sender {
 		MimeMessageHelper messageHelper = new MimeMessageHelper(message, false, "UTF-8");
 
 		messageHelper.setTo(toAddress);
-		messageHelper.setFrom(FromAddress);
+		messageHelper.setFrom(fromAddress);
 		messageHelper.setSubject(subject);
 		messageHelper.setText(content);
 

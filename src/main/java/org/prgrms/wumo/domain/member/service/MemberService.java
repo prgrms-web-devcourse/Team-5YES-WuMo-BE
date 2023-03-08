@@ -44,7 +44,7 @@ public class MemberService {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final RedisRepository redisRepository;
 	private final Sender sender;
-	private ApplicationEventPublisher applicationEventPublisher;
+	private final ApplicationEventPublisher applicationEventPublisher;
 
 	public void sendCode(String toAddress) {
 		sender.sendCode(toAddress);
