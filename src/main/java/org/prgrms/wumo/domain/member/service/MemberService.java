@@ -19,12 +19,15 @@ import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
 import org.prgrms.wumo.domain.member.model.Email;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
+import org.prgrms.wumo.global.event.MemberCreateEvent;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.exception.custom.InvalidCodeException;
 import org.prgrms.wumo.global.exception.custom.InvalidRefreshTokenException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.WumoJwt;
 import org.prgrms.wumo.global.repository.RedisRepository;
+import org.prgrms.wumo.global.sender.Sender;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,8 +43,14 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final RedisRepository redisRepository;
+	private final Sender sender;
+	private final ApplicationEventPublisher applicationEventPublisher;
 
-	public void checkCodeMail(String toAddress, String code) {
+	public void sendCode(String toAddress) {
+		sender.sendCode(toAddress);
+	}
+
+	public void checkCode(String toAddress, String code) {
 		if (!redisRepository.get(toAddress).equals(code)) {
 			throw new InvalidCodeException("유효하지 않은 인증 코드입니다.");
 		}
@@ -49,9 +58,12 @@ public class MemberService {
 
 	@Transactional
 	public MemberRegisterResponse registerMember(MemberRegisterRequest memberRegisterRequest) {
-		checkEmail(memberRegisterRequest.email());
+		String email = memberRegisterRequest.email();
+		checkEmail(email);
 		checkNickname(memberRegisterRequest.nickname());
+
 		Member member = memberRepository.save(toMember(memberRegisterRequest));
+		applicationEventPublisher.publishEvent(new MemberCreateEvent(email));
 		return toMemberRegisterResponse(member.getId());
 	}
 

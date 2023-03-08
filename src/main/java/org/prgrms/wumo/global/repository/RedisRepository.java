@@ -17,7 +17,7 @@ public class RedisRepository implements KeyValueRepository {
 	@Override
 	public void save(String key, String value, long expireSeconds) {
 		ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
-		valueOperations.set(key, value, Duration.ofSeconds(expireSeconds));
+		valueOperations.set(key, value, Duration.ofMillis(expireSeconds));
 	}
 
 	@Override

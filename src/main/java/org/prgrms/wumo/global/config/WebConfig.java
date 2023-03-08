@@ -6,8 +6,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@EnableWebMvc
 @Configuration
+@EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
 	@Value("${front.server}")
@@ -21,5 +21,4 @@ public class WebConfig implements WebMvcConfigurer {
 			.allowedHeaders("*")
 			.allowCredentials(true);
 	}
-
 }
