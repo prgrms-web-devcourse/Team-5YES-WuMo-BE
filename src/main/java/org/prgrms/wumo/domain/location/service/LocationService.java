@@ -87,6 +87,8 @@ public class LocationService {
 	public void deleteLocation(Long locationId){
 		Location location = getLocationEntity(locationId);
 
+		checkAuthorization(location, getMemberId());
+
 		locationRepository.deleteById(locationId);
 	}
 
