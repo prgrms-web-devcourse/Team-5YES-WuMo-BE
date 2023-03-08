@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 import java.util.UUID;
 
 import org.prgrms.wumo.global.exception.custom.ImageDeleteFailedException;
@@ -29,8 +28,12 @@ public class ImageRepository {
 
 	private final String BUCKET_URL;
 
-	public ImageRepository(@Value("${cloud.aws.s3.bucket:#{null}}") String bucket, AmazonS3 amazonS3) {
-		this.bucket = Objects.requireNonNull(bucket, "AWS S3 Bucket 정보를 불러오지 못했습니다.");
+	public ImageRepository(@Value("${cloud.aws.s3.bucket:#{''}}") String bucket, AmazonS3 amazonS3) {
+		if (bucket.isBlank()) {
+			log.error("AWS S3 Bucket 정보를 불러오지 못했습니다.");
+		}
+
+		this.bucket = bucket;
 		this.amazonS3 = amazonS3;
 		this.BUCKET_URL = String.format("%s.s3.%s.amazonaws.com", bucket, amazonS3.getBucketLocation(bucket));
 	}
