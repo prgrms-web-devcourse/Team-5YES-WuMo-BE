@@ -17,8 +17,9 @@ public class LocationMapper {
 		);
 	}
 
-	public static Location toLocation(LocationRegisterRequest locationRegisterRequest){
+	public static Location toLocation(LocationRegisterRequest locationRegisterRequest, Long memberId){
 		return Location.builder()
+				.memberId(memberId)
 				.name(locationRegisterRequest.name())
 				.searchAddress(locationRegisterRequest.searchAddress())
 				.address(locationRegisterRequest.address())

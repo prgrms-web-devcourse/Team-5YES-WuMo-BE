@@ -12,6 +12,7 @@ public class LocationTestUtils {
 
 	Location location1 = Location.builder()
 			.id(1L).image("http://programmers_gangnam_image.com")
+			.memberId(1L)
 			.description("이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀....")
 			.latitude(latitude1).longitude(longitude1)
 			.address("강남역 2번출구").visitDate(dayToVisit)
@@ -23,6 +24,7 @@ public class LocationTestUtils {
 
 	Location location2 = Location.builder()
 			.id(2L).image("http://grepp_image")
+			.memberId(1L)
 			.description("그렙!!")
 			.latitude(latitude1).longitude(longitude1)
 			.address("서울특별시 서초구 강남대로327 2층 프로그래머스(서초동, 대륭서초타워)")
@@ -35,6 +37,7 @@ public class LocationTestUtils {
 
 	Location location3 = Location.builder()
 			.id(3L).image("http://gang_name_station_starbucks")
+			.memberId(1L)
 			.description("하태하태 강남역 스벅 강남 R점")
 			.latitude(latitude1).longitude(longitude1)
 			.address("서울 강남구 강남대로 30로").visitDate(dayToVisit)
@@ -46,6 +49,7 @@ public class LocationTestUtils {
 
 	Location location4 = Location.builder()
 			.id(4L).image("http://four_image")
+			.memberId(1L)
 			.description("4번째 핫플")
 			.latitude(latitude1).longitude(longitude1)
 			.address("서울 강남구 강남대로 30로").visitDate(dayToVisit)
@@ -57,6 +61,7 @@ public class LocationTestUtils {
 
 	Location location5 = Location.builder()
 			.id(5L).image("http://five_image.com")
+			.memberId(1L)
 			.description("5번 째 핫풀")
 			.latitude(latitude1).longitude(longitude1)
 			.address("서울 강남구 강남대로 30로").visitDate(dayToVisit)
@@ -68,6 +73,7 @@ public class LocationTestUtils {
 
 	Location location6 = Location.builder()
 			.id(6L).image("http://six_image.com")
+			.memberId(1L)
 			.description("6번째 핫플")
 			.latitude(latitude1).longitude(longitude1)
 			.address("서울 강남구 강남대로 30로").visitDate(dayToVisit)
@@ -78,6 +84,7 @@ public class LocationTestUtils {
 			.build();
 	Location location7 = Location.builder()
 			.id(7L).image("http://seven_image")
+			.memberId(1L)
 			.description("7번째 핫플")
 			.latitude(latitude1).longitude(longitude1)
 			.address("서울 강남구 강남대로 30로").visitDate(dayToVisit)

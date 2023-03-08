@@ -229,6 +229,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 	private Location getLocationData() {
 		return Location.builder()
 			.name("오예스 찜닭")
+			.memberId(memberId)
 			.latitude(12.3456F)
 			.longitude(34.5678F)
 			.searchAddress("서귀포시")

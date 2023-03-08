@@ -204,6 +204,7 @@ public class LocationControllerTest extends MysqlTestContainer {
 		// Given
 		Location location = locationRepository.save(
 				Location.builder()
+						.memberId(member.getId())
 						.category(Category.COFFEE)
 						.visitDate(locationTestUtils.getDayToVisit())
 						.description("아인슈페너가 맛있는 곳!")
@@ -239,6 +240,7 @@ public class LocationControllerTest extends MysqlTestContainer {
 		// Given
 		Long locationId = locationRepository.save(
 				Location.builder()
+						.memberId(member.getId())
 						.category(Category.COFFEE)
 						.visitDate(locationTestUtils.getDayToVisit())
 						.description("아인슈페너가 맛있는 곳!")
@@ -272,6 +274,7 @@ public class LocationControllerTest extends MysqlTestContainer {
 		// Given
 		Location location = locationRepository.save(
 				Location.builder()
+						.memberId(member.getId())
 						.category(Category.COFFEE)
 						.visitDate(locationTestUtils.getDayToVisit())
 						.description("아인슈페너가 맛있는 곳!")

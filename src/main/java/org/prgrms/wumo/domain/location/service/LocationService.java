@@ -23,6 +23,7 @@ import org.prgrms.wumo.domain.location.dto.response.LocationSpendingUpdateRespon
 import org.prgrms.wumo.domain.location.dto.response.LocationUpdateResponse;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
+import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,10 @@ public class LocationService {
 
 	@Transactional
 	public LocationRegisterResponse registerLocation(LocationRegisterRequest locationRegisterRequest) {
-		return toLocationRegisterResponse(locationRepository.save(toLocation(locationRegisterRequest)));
+
+		checkMemberInParty(locationRegisterRequest.partyId(), getMemberId());
+
+		return toLocationRegisterResponse(locationRepository.save(toLocation(locationRegisterRequest, getMemberId())));
 	}
 
 	@Transactional(readOnly = true)
@@ -59,10 +63,10 @@ public class LocationService {
 
 	@Transactional
 	public LocationUpdateResponse updateLocation(LocationUpdateRequest locationUpdateRequest) {
-
-		checkMemberInParty(locationUpdateRequest.partyId(), getMemberId());
-
 		Location location = getLocationEntity(locationUpdateRequest.id());
+
+		checkAuthorization(location, getMemberId());
+
 		location.update(locationUpdateRequest);
 
 		locationRepository.save(location);
@@ -74,7 +78,7 @@ public class LocationService {
 	public void deleteRouteLocation(long locationId) {
 		Location location = getLocationEntity(locationId);
 
-		checkMemberInParty(location.getPartyId(), getMemberId());
+		checkAuthorization(location, getMemberId());
 
 		location.deleteRoute();
 	}
@@ -83,7 +87,7 @@ public class LocationService {
 	public void deleteLocation(Long locationId){
 		Location location = getLocationEntity(locationId);
 
-		checkMemberInParty(location.getPartyId(), getMemberId());
+		checkAuthorization(location, getMemberId());
 
 		locationRepository.deleteById(locationId);
 	}
@@ -92,7 +96,7 @@ public class LocationService {
 	public LocationSpendingUpdateResponse updateSpending(LocationSpendingUpdateRequest locationSpendingUpdateRequest){
 		Location location = getLocationEntity(locationSpendingUpdateRequest.locationId());
 
-		checkMemberInParty(location.getPartyId(), getMemberId());
+		checkAuthorization(location, getMemberId());
 
 		location.updateSpending(locationSpendingUpdateRequest.spending());
 
@@ -109,5 +113,18 @@ public class LocationService {
 	private void checkMemberInParty(Long partyId, Long memberId) {
 		if (!partyMemberRepository.existsByPartyIdAndMemberId(partyId, memberId))
 			throw new AccessDeniedException("모임에 속하지 않은 회원입니다.");
+	}
+
+	private PartyMember getPartyMemberEntity(Long partyId, Long memberId){
+		return partyMemberRepository.findByPartyIdAndMemberId(partyId, memberId)
+				.orElseThrow(() -> new EntityNotFoundException("모임 내 존재하지 않는 회원입니다."));
+	}
+
+	private void checkAuthorization(Location location, Long memberId){
+		PartyMember partyMember = getPartyMemberEntity(location.getPartyId(), memberId);
+		if (partyMember.isLeader())
+			return;
+		checkMemberInParty(location.getPartyId(), memberId);
+		location.checkAuthorization(memberId);
 	}
 }

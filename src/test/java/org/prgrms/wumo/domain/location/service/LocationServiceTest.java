@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationGetResponse;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,13 +28,18 @@ import org.prgrms.wumo.domain.location.LocationTestUtils;
 import org.prgrms.wumo.domain.location.dto.request.LocationGetAllRequest;
 import org.prgrms.wumo.domain.location.dto.request.LocationRegisterRequest;
 import org.prgrms.wumo.domain.location.dto.request.LocationSpendingUpdateRequest;
+import org.prgrms.wumo.domain.location.dto.request.LocationUpdateRequest;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetAllResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationRegisterResponse;
 import org.prgrms.wumo.domain.location.dto.response.LocationSpendingUpdateResponse;
+import org.prgrms.wumo.domain.location.dto.response.LocationUpdateResponse;
 import org.prgrms.wumo.domain.location.model.Category;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
+import org.prgrms.wumo.domain.member.model.Member;
+import org.prgrms.wumo.domain.party.model.Party;
+import org.prgrms.wumo.domain.party.model.PartyMember;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -56,8 +62,49 @@ public class LocationServiceTest {
 	// GIVEN
 	LocationTestUtils locationTestUtils = new LocationTestUtils();
 
+	Member leader, member;
+	Party party;
+	PartyMember leaderPartyMember, normalPartyMember;
+
 	@BeforeEach
 	void beforeEach() {
+		leader = Member.builder()
+				.id(1L)
+				.password("qwe12345")
+				.email("wumo@email.com")
+				.profileImage("http://profile.png")
+				.nickname("DaRamG")
+				.build();
+		member = Member.builder()
+				.id(2L)
+				.password("qwe12345")
+				.email("wumo@gmail.com")
+				.profileImage("http://profile.png")
+				.nickname("HoRangE")
+				.build();
+		party = Party.builder()
+				.id(1L)
+				.description("오예스팀 모임")
+				.coverImage("party_cover_image.png")
+				.name("오예스")
+				.endDate(LocalDateTime.now().plusDays(5))
+				.startDate(LocalDateTime.now().plusDays(2))
+				.build();
+		leaderPartyMember = PartyMember.builder()
+				.id(1L)
+				.member(leader)
+				.party(party)
+				.role("총무")
+				.isLeader(true)
+				.build();
+		normalPartyMember = PartyMember.builder()
+				.id(2L)
+				.member(member)
+				.party(party)
+				.role("총무")
+				.isLeader(false)
+				.build();
+
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
 				new UsernamePasswordAuthenticationToken(1L, null, Collections.EMPTY_LIST);
@@ -88,6 +135,7 @@ public class LocationServiceTest {
 		void registerLocationTest() {
 			// Given
 			given(locationRepository.save(any(Location.class))).willReturn(locationTestUtils.getLocation());
+			given(partyMemberRepository.existsByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(true);
 
 			// When
 			LocationRegisterResponse locationRegisterResponse =
@@ -183,7 +231,8 @@ public class LocationServiceTest {
 		@DisplayName("루트에서 후보지를 삭제할 수 있다.")
 		void deleteRouteLocationTest() {
 			given(locationRepository.findById(any(Long.class))).willReturn(Optional.of(locationTestUtils.getLocation()));
-			given(partyMemberRepository.existsByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(true);
+			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(Optional.of(
+					leaderPartyMember));
 
 			// When
 			locationService.deleteRouteLocation(locationId);
@@ -192,6 +241,50 @@ public class LocationServiceTest {
 			then(locationRepository)
 					.should()
 					.findById(any(Long.class));
+		}
+	}
+
+	@Nested
+	@DisplayName("updateLocation을 사용해서")
+	class updateLocation {
+		// GIVEN
+		Long locationId = locationTestUtils.getLocation().getId();
+		LocalDateTime dayToVisit = locationTestUtils.getDayToVisit();
+
+		LocationUpdateRequest locationUpdateRequest =
+				new LocationUpdateRequest(locationId, "changed_image.png", Category.STUDY, "변경된 상세 설명", dayToVisit, 56000,
+						1L);
+
+		@Test
+		@DisplayName("후보지의 정보를 변경할 수 있다.")
+		void success() {
+			// Given
+			given(locationRepository.findById(any(Long.class))).willReturn(Optional.of(locationTestUtils.getLocation()));
+			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(Optional.of(
+					leaderPartyMember));
+
+			LocationUpdateResponse expected =
+					new LocationUpdateResponse(locationId, "changed_image.png", "변경된 상세 설명", dayToVisit, 56000, Category.STUDY);
+
+			// When
+			LocationUpdateResponse locationUpdateResponse = locationService.updateLocation(locationUpdateRequest);
+
+			// Then
+			assertThat(locationUpdateResponse).usingRecursiveComparison().isEqualTo(expected);
+		}
+
+		@Test
+		@DisplayName(" 본인이 올린 후보지가 아니거나 모임장이 아니면 후보지를 수정할 수 없다.")
+		void failedByUnAuthorized() {
+			// Given
+			given(locationRepository.findById(any(Long.class))).willReturn(Optional.of(locationTestUtils.getLocation()));
+			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(Optional.of(
+					normalPartyMember));
+
+			// When // Then
+			assertThatThrownBy(
+					() -> locationService.updateLocation(locationUpdateRequest)
+			).isInstanceOf(AccessDeniedException.class);
 		}
 	}
 
@@ -206,7 +299,8 @@ public class LocationServiceTest {
 		void success() {
 			// Given
 			given(locationRepository.findById(any(Long.class))).willReturn(Optional.of(locationTestUtils.getLocation()));
-			given(partyMemberRepository.existsByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(true);
+			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(Optional.of(
+					leaderPartyMember));
 
 			// When
 			locationService.deleteLocation(locationId);
@@ -220,7 +314,8 @@ public class LocationServiceTest {
 		void failInvalid() {
 			// Given
 			given(locationRepository.findById(any(Long.class))).willReturn(Optional.of(locationTestUtils.getLocation()));
-			given(partyMemberRepository.existsByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(false);
+			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(Optional.of(
+					normalPartyMember));
 
 			// When // Then
 			assertThatThrownBy(
@@ -242,7 +337,8 @@ public class LocationServiceTest {
 		void success() {
 			// Given
 			given(locationRepository.findById(any(Long.class))).willReturn(Optional.of(locationTestUtils.getLocation()));
-			given(partyMemberRepository.existsByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(true);
+			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(Optional.of(
+					leaderPartyMember));
 
 			// When
 			LocationSpendingUpdateResponse locationSpendingUpdateResponse =
@@ -257,11 +353,12 @@ public class LocationServiceTest {
 		}
 
 		@Test
-		@DisplayName("본인의 모임이 아니면 실제 사용 금액을 갱신할 수 없다.")
+		@DisplayName("본인이 올린 후보지가 아니거나 모임장이 아니면 금액을 갱신할 수 없다.")
 		void failedUnAuthorized() {
 			// Given
 			given(locationRepository.findById(any(Long.class))).willReturn(Optional.of(locationTestUtils.getLocation()));
-			given(partyMemberRepository.existsByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(false);
+			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(Optional.of(
+					normalPartyMember));
 
 			// When // Then
 			assertThatThrownBy(
