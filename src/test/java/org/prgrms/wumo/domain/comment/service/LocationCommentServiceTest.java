@@ -276,6 +276,7 @@ public class LocationCommentServiceTest {
 		return Location.builder()
 				.id(1L)
 				.image("httpL//.png")
+				.memberId(member.getId())
 				.category(Category.MEAL)
 				.description("딸기 뷔페!! 드디어 예약 성공!! Must Be StrawBerry!!!")
 				.address("서울특별시 중구 을지로 30 페닌슐라 라운지 & 바")

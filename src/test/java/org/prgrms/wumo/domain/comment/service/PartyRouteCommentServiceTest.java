@@ -308,6 +308,7 @@ public class PartyRouteCommentServiceTest {
 	private Location getLocation() {
 		return Location.builder()
 				.id(1L)
+				.memberId(member.getId())
 				.partyId(party.getId())
 				.expectedCost(50000)
 				.spending(45000)

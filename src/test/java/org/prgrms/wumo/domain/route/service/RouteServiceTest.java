@@ -329,6 +329,7 @@ public class RouteServiceTest {
 	private Location getLocationData() {
 		return Location.builder()
 			.id(locationId)
+			.memberId(1L)
 			.name("오예스 찜닭")
 			.latitude(12.3456F)
 			.longitude(34.5678F)
@@ -362,6 +363,7 @@ public class RouteServiceTest {
 	private Route getPublicRouteData2() {
 		Location location = Location.builder()
 			.id(2L)
+			.memberId(1L)
 			.name("오예스 치킨")
 			.latitude(23.3456F)
 			.longitude(45.5678F)

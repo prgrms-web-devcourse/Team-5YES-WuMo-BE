@@ -109,6 +109,7 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 		location = locationRepository.save(
 				Location.builder()
 						.category(Category.COFFEE)
+						.memberId(member.getId())
 						.visitDate(LocalDateTime.now().plusDays(4))
 						.description("아인슈페너가 맛있는 곳!")
 						.name("cafe")

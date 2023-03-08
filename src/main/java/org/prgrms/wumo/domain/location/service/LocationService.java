@@ -39,7 +39,7 @@ public class LocationService {
 
 	@Transactional
 	public LocationRegisterResponse registerLocation(LocationRegisterRequest locationRegisterRequest) {
-		return toLocationRegisterResponse(locationRepository.save(toLocation(locationRegisterRequest)));
+		return toLocationRegisterResponse(locationRepository.save(toLocation(locationRegisterRequest, getMemberId())));
 	}
 
 	@Transactional(readOnly = true)
