@@ -68,46 +68,46 @@ class RouteLikeControllerTest extends MysqlTestContainer {
 	@BeforeEach
 	void setup() {
 		member = memberRepository.save(
-				Member.builder()
-						.email("ted-chang@gmail.com")
-						.password("qwe12345")
-						.nickname("테드창")
-						.build()
+			Member.builder()
+				.email("ted-chang@gmail.com")
+				.password("qwe12345")
+				.nickname("테드창")
+				.build()
 		);
 		party = partyRepository.save(
-				Party.builder()
-						.name("오예스 워크샵")
-						.startDate(LocalDateTime.now())
-						.endDate(LocalDateTime.now().plusDays(1))
-						.description("팀 설립 기념 워크샵")
-						.coverImage("https://~.jpeg")
-						.build()
+			Party.builder()
+				.name("오예스 워크샵")
+				.startDate(LocalDateTime.now())
+				.endDate(LocalDateTime.now().plusDays(1))
+				.description("팀 설립 기념 워크샵")
+				.coverImage("https://~.jpeg")
+				.build()
 		);
 		location = locationRepository.save(
-				Location.builder()
-						.memberId(member.getId())
-						.category(Category.CULTURE)
-						.name("프로그래머스 대륭 서초 타워")
-						.description("그렙!!")
-						.latitude(12.123)
-						.longitude(12.123)
-						.address("서울특별시 서초구 강남대로327 2층 프로그래머스(서초동, 대륭서초타워)")
-						.searchAddress("서울특별시")
-						.visitDate(LocalDateTime.now())
-						.image("http://grepp_image")
-						.spending(10000)
-						.expectedCost(10000)
-						.partyId(party.getId())
-						.build()
+			Location.builder()
+				.memberId(member.getId())
+				.category(Category.CULTURE)
+				.name("프로그래머스 대륭 서초 타워")
+				.description("그렙!!")
+				.latitude(12.123)
+				.longitude(12.123)
+				.address("서울특별시 서초구 강남대로327 2층 프로그래머스(서초동, 대륭서초타워)")
+				.searchAddress("서울특별시")
+				.visitDate(LocalDateTime.now())
+				.image("http://grepp_image")
+				.spending(10000)
+				.expectedCost(10000)
+				.partyId(party.getId())
+				.build()
 		);
 		route = routeRepository.save(
-				Route.builder()
-						.id(1L)
-						.locations(List.of(location))
-						.party(party)
-						.build()
+			Route.builder()
+				.id(1L)
+				.locations(List.of(location))
+				.party(party)
+				.build()
 		);
-		route.updatePublicStatus(true);
+		route.updatePublicStatus("오예스 2번째 워크샵", true);
 		route = routeRepository.save(route);
 
 		setAuthentication(member.getId());
@@ -130,8 +130,8 @@ class RouteLikeControllerTest extends MysqlTestContainer {
 
 		//then
 		resultActions
-				.andExpect(status().isCreated())
-				.andDo(print());
+			.andExpect(status().isCreated())
+			.andDo(print());
 	}
 
 	@Test
@@ -139,10 +139,10 @@ class RouteLikeControllerTest extends MysqlTestContainer {
 	void deleteRouteLike() throws Exception {
 		//given
 		routeLikeRepository.save(
-				RouteLike.builder()
-						.routeId(route.getId())
-						.memberId(member.getId())
-						.build()
+			RouteLike.builder()
+				.routeId(route.getId())
+				.memberId(member.getId())
+				.build()
 		);
 
 		//when
@@ -150,14 +150,14 @@ class RouteLikeControllerTest extends MysqlTestContainer {
 
 		//then
 		resultActions
-				.andExpect(status().isOk())
-				.andDo(print());
+			.andExpect(status().isOk())
+			.andDo(print());
 	}
 
 	private void setAuthentication(Long memberId) {
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-				new UsernamePasswordAuthenticationToken(memberId, null, Collections.emptyList());
+			new UsernamePasswordAuthenticationToken(memberId, null, Collections.emptyList());
 		context.setAuthentication(usernamePasswordAuthenticationToken);
 	}
 

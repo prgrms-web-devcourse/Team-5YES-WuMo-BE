@@ -32,6 +32,10 @@ public class Route extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "name", nullable = true, updatable = true)
+	private String name;
+
+	@Column(name = "is_public", nullable = false, updatable = true)
 	private boolean isPublic;
 
 	@OneToMany(mappedBy = "route")
@@ -48,8 +52,9 @@ public class Route extends BaseTimeEntity {
 	private boolean isLiking;
 
 	@Builder
-	public Route(Long id, List<Location> locations, Party party) {
+	public Route(Long id, String name, List<Location> locations, Party party) {
 		this.id = id;
+		this.name = name;
 		this.isPublic = false;
 		this.locations = locations;
 		this.party = party;
@@ -63,7 +68,8 @@ public class Route extends BaseTimeEntity {
 		this.locations.add(location);
 	}
 
-	public void updatePublicStatus(boolean isPublic) {
+	public void updatePublicStatus(String name, boolean isPublic) {
+		this.name = name;
 		this.isPublic = isPublic;
 	}
 

@@ -300,16 +300,16 @@ public class RouteServiceTest {
 		void success() {
 			//given
 			RouteGetAllRequest routeGetAllRequest
-					= new RouteGetAllRequest(null, 5, SortType.NEWEST, null);
+				= new RouteGetAllRequest(null, 5, SortType.NEWEST, null);
 
 			routes = List.of(getPublicRouteData2(), getPublicRouteData1());
 			List<Long> routeLikeIds = List.of(2L, 1L); // 좋아요를 눌렀다고 가정
 
 			//mocking
 			given(routeLikeRepository.findAllByMemberId(1L, null, 5))
-					.willReturn(Pair.of(routeLikeIds, routes));
+				.willReturn(Pair.of(routeLikeIds, routes));
 			given(routeLikeRepository.existsByRouteIdAndMemberId(anyLong(), anyLong()))
-					.willReturn(true);
+				.willReturn(true);
 
 			//when
 			RouteGetAllResponses result = routeService.getAllLikedRoute(routeGetAllRequest);
@@ -324,14 +324,14 @@ public class RouteServiceTest {
 		void success_empty_data() {
 			//given
 			RouteGetAllRequest routeGetAllRequest
-					= new RouteGetAllRequest(null, 5, SortType.NEWEST, null);
+				= new RouteGetAllRequest(null, 5, SortType.NEWEST, null);
 
 			routes = Collections.emptyList();
 			List<Long> routeLikeIds = Collections.emptyList(); // 좋아요를 누른 루트가 없다고 가정
 
 			//mocking
 			given(routeLikeRepository.findAllByMemberId(1L, null, 5))
-					.willReturn(Pair.of(routeLikeIds, routes));
+				.willReturn(Pair.of(routeLikeIds, routes));
 
 			//when
 			RouteGetAllResponses result = routeService.getAllLikedRoute(routeGetAllRequest);
@@ -409,7 +409,7 @@ public class RouteServiceTest {
 	//제주시에 위치한 후보지가 포함된 루트
 	private Route getPublicRouteData1() {
 		Route route = getRouteData();
-		route.updatePublicStatus(true);
+		route.updatePublicStatus("퇴사 기념 제주도 한달 살기", true);
 		return route;
 	}
 
@@ -437,7 +437,7 @@ public class RouteServiceTest {
 			}})
 			.party(getPartyData())
 			.build();
-		route.updatePublicStatus(true);
+		route.updatePublicStatus("퇴사 기념 제주도 한달 살기", true);
 		return route;
 	}
 }

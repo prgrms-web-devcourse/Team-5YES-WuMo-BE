@@ -95,9 +95,9 @@ public class RouteService {
 	@Transactional(readOnly = true)
 	public RouteGetAllResponses getAllLikedRoute(RouteGetAllRequest routeGetAllRequest) {
 		Pair<List<Long>, List<Route>> pair = routeLikeRepository.findAllByMemberId(
-				getMemberId(),
-				routeGetAllRequest.cursorId(),
-				routeGetAllRequest.pageSize());
+			getMemberId(),
+			routeGetAllRequest.cursorId(),
+			routeGetAllRequest.pageSize());
 
 		List<Route> routes = pair.getSecond();
 		addIsLiking(routes);
@@ -115,7 +115,7 @@ public class RouteService {
 	public void updateRoutePublicStatus(RouteStatusUpdateRequest routeStatusUpdateRequest) {
 		Route route = getRouteEntity(routeStatusUpdateRequest.routeId());
 		validateAccess(route.getParty().getId());
-		route.updatePublicStatus(routeStatusUpdateRequest.isPublic());
+		route.updatePublicStatus(routeStatusUpdateRequest.name(), routeStatusUpdateRequest.isPublic());
 	}
 
 	private Route getRouteEntity(long routeId) {

@@ -95,7 +95,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 
 		Route route = routeRepository.save(getRouteData(location, party));
 		routeId = route.getId();
-		route.updatePublicStatus(true);
+		route.updatePublicStatus("퇴사 기념 제주도 한달 살기", true);
 		routeRepository.save(route);
 
 		RouteLike routeLike = routeLikeRepository.save(getRouteLikeData(member, route));
@@ -211,19 +211,19 @@ public class RouteControllerTest extends MysqlTestContainer {
 
 		//when
 		ResultActions resultActions
-				= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/likes")
-				.param("cursorId", (String)null)
-				.param("pageSize", String.valueOf(pageSize))
-				.param("sortType", sortType)
-				.param("searchWord", searchWord));
+			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/likes")
+			.param("cursorId", (String)null)
+			.param("pageSize", String.valueOf(pageSize))
+			.param("sortType", sortType)
+			.param("searchWord", searchWord));
 
 		//then
 		resultActions
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.lastId").value(routeLikeId))
-				.andExpect(jsonPath("$.routes").isArray())
-				.andExpect(jsonPath("$.routes[0].routeId").value(routeId))
-				.andDo(print());
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.lastId").value(routeLikeId))
+			.andExpect(jsonPath("$.routes").isArray())
+			.andExpect(jsonPath("$.routes[0].routeId").value(routeId))
+			.andDo(print());
 	}
 
 	@Test
@@ -295,8 +295,8 @@ public class RouteControllerTest extends MysqlTestContainer {
 
 	private RouteLike getRouteLikeData(Member member, Route route) {
 		return RouteLike.builder()
-				.memberId(member.getId())
-				.routeId(route.getId())
-				.build();
+			.memberId(member.getId())
+			.routeId(route.getId())
+			.build();
 	}
 }
