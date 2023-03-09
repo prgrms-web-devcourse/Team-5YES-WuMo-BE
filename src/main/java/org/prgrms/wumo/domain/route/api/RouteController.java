@@ -58,6 +58,14 @@ public class RouteController {
 		return ResponseEntity.ok(routeService.getAllRoute(routeGetAllRequest));
 	}
 
+	@GetMapping("/likes")
+	@Operation(summary = "관심 루트 목록 조회")
+	public ResponseEntity<RouteGetAllResponses> getAllLikedRoute(
+			@Valid RouteGetAllRequest routeGetAllRequest) {
+
+		return ResponseEntity.ok(routeService.getAllLikedRoute(routeGetAllRequest));
+	}
+
 	@PatchMapping
 	@Operation(summary = "루트 공개여부 변경")
 	public ResponseEntity<Void> updateRoutePublicStatus(

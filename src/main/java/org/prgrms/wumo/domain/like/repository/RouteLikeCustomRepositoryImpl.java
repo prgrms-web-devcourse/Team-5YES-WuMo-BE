@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.prgrms.wumo.domain.like.model.QRouteLike;
+import org.prgrms.wumo.domain.route.model.QRoute;
+import org.prgrms.wumo.domain.route.model.Route;
+import org.springframework.data.util.Pair;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -28,6 +31,35 @@ public class RouteLikeCustomRepositoryImpl implements RouteLikeCustomRepository 
 	private final JdbcTemplate jdbcTemplate;
 
 	private final QRouteLike qRouteLike = QRouteLike.routeLike;
+
+	private final QRoute qRoute = QRoute.route;
+
+	@Override
+	public Pair<List<Long>, List<Route>> findAllByMemberId(Long memberId, Long cursorId, int pageSize) {
+		List<Tuple> tuples = jpaQueryFactory
+				.select(qRouteLike.id, qRoute)
+				.from(qRouteLike)
+				.where(
+						ltRouteLikeId(cursorId),
+						eqMemberId(memberId),
+						isPublic()
+				)
+				.orderBy(qRouteLike.id.desc())
+				.limit(pageSize)
+				.leftJoin(qRoute)
+				.on(qRouteLike.routeId.eq(qRoute.id))
+				.fetch();
+
+		List<Long> routeLikeIds = tuples.stream()
+				.map(tuple -> tuple.get(0, Long.class))
+				.toList();
+
+		List<Route> routes = tuples.stream()
+				.map(tuple -> tuple.get(1, Route.class))
+				.toList();
+
+		return Pair.of(routeLikeIds, routes);
+	}
 
 	@Override
 	public Map<Long, Long> countAllByRouteId(Long cursorId, int batchSize) {
@@ -70,6 +102,18 @@ public class RouteLikeCustomRepositoryImpl implements RouteLikeCustomRepository 
 
 	private BooleanExpression gtRouteId(Long cursorId) {
 		return (cursorId != null) ? qRouteLike.routeId.gt(cursorId) : null;
+	}
+
+	private BooleanExpression eqMemberId(Long memberId) {
+		return qRouteLike.memberId.eq(memberId);
+	}
+
+	private BooleanExpression ltRouteLikeId(Long cursorId) {
+		return (cursorId != null) ? qRouteLike.id.lt(cursorId) : null;
+	}
+
+	private BooleanExpression isPublic() {
+		return qRoute.isPublic.eq(true);
 	}
 
 }

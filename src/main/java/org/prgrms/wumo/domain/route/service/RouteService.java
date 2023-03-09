@@ -24,6 +24,7 @@ import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.prgrms.wumo.domain.route.repository.RouteRepository;
+import org.springframework.data.util.Pair;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,6 +87,25 @@ public class RouteService {
 		long lastId = -1L;
 		if (routes.size() != 0) {
 			lastId = routes.get(routes.size() - 1).getId();
+		}
+
+		return toRouteGetAllResponses(routes, lastId);
+	}
+
+	@Transactional(readOnly = true)
+	public RouteGetAllResponses getAllLikedRoute(RouteGetAllRequest routeGetAllRequest) {
+		Pair<List<Long>, List<Route>> pair = routeLikeRepository.findAllByMemberId(
+				getMemberId(),
+				routeGetAllRequest.cursorId(),
+				routeGetAllRequest.pageSize());
+
+		List<Route> routes = pair.getSecond();
+		addIsLiking(routes);
+
+		long lastId = -1L;
+		List<Long> routeLikeIds = pair.getFirst();
+		if (routeLikeIds.size() != 0) {
+			lastId = routeLikeIds.get(routeLikeIds.size() - 1);
 		}
 
 		return toRouteGetAllResponses(routes, lastId);
