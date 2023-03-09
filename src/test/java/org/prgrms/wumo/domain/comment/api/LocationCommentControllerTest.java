@@ -19,8 +19,11 @@ import org.junit.jupiter.api.Test;
 import org.prgrms.wumo.MysqlTestContainer;
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentUpdateRequest;
+import org.prgrms.wumo.domain.comment.dto.request.ReplyCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.model.LocationComment;
+import org.prgrms.wumo.domain.comment.model.ReplyComment;
 import org.prgrms.wumo.domain.comment.repository.LocationCommentRepository;
+import org.prgrms.wumo.domain.comment.repository.ReplyCommentRepository;
 import org.prgrms.wumo.domain.location.model.Category;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
@@ -70,19 +73,23 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 	@Autowired
 	LocationCommentRepository locationCommentRepository;
 
+	@Autowired
+	ReplyCommentRepository replyCommentRepository;
+
 	// GIVEN
 	Member member;
 	Party party;
 	PartyMember partyMember;
 	Location location;
 	LocationComment locationComment;
+	ReplyComment replyComment;
 
 	@BeforeEach
 	void beforeEach() {
 		member = memberRepository.save(
 				Member.builder()
 						.password("qwe12345")
-						.email("member@email.com")
+						.email("memberr@email.com")
 						.nickname("nickname")
 						.build()
 		);
@@ -134,6 +141,14 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 						.build()
 		);
 
+		replyComment = replyCommentRepository.save(
+				ReplyComment.builder()
+						.member(member)
+						.commentId(locationComment.getId())
+						.content("대댓글!!!!!")
+						.build()
+		);
+
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
 				new UsernamePasswordAuthenticationToken(member.getId(), null, Collections.EMPTY_LIST);
@@ -143,6 +158,7 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 
 	@AfterEach
 	void afterEach() {
+		replyCommentRepository.deleteById(replyComment.getId());
 		locationCommentRepository.deleteById(locationComment.getId());
 		locationRepository.deleteById(location.getId());
 		partyMemberRepository.deleteById(partyMember.getId());
@@ -269,5 +285,31 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 		resultActions
 				.andExpect(status().isOk())
 				.andDo(print());
+	}
+
+	@Test
+	@DisplayName(" 후보지 댓글에 대댓글을 작성할 수 있다.")
+	void registerReplyComment() throws Exception {
+		// Given
+		ReplyCommentRegisterRequest replyCommentRegisterRequest =
+				new ReplyCommentRegisterRequest(locationComment.getId(), "대댓글!!");
+
+		// When
+		ResultActions resultActions =
+				mockMvc.perform(
+						post("/api/v1/location-comments/replies")
+								.contentType(MediaType.APPLICATION_JSON_VALUE)
+								.characterEncoding("UTF-8")
+								.content(
+										objectMapper.writeValueAsString(replyCommentRegisterRequest)
+								)
+				);
+
+		// Then
+		resultActions
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.id").isNotEmpty())
+				.andDo(print());
+
 	}
 }
