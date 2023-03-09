@@ -39,7 +39,7 @@ public class Route extends BaseTimeEntity {
 	private boolean isPublic;
 
 	@OneToMany(mappedBy = "route")
-	@OrderBy(value = "visitDate DESC")
+	@OrderBy(value = "visitDate ASC")
 	private List<Location> locations;
 
 	@OneToOne
