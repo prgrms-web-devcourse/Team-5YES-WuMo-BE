@@ -21,10 +21,10 @@ public record LocationGetResponse(
 		String address,
 
 		@Schema(description = "후보지 위도", example = "34.567890", requiredMode = Schema.RequiredMode.REQUIRED)
-		Float latitude,
+		Double latitude,
 
 		@Schema(description = "후보지 경도", example = "123.567890", requiredMode = Schema.RequiredMode.REQUIRED)
-		Float longitude,
+		Double longitude,
 
 		@Schema(description = "후보지 이미지", example = "https://~", requiredMode = Schema.RequiredMode.REQUIRED)
 		String image,

@@ -6,8 +6,8 @@ import org.prgrms.wumo.domain.location.model.Category;
 import org.prgrms.wumo.domain.location.model.Location;
 
 public class LocationTestUtils {
-	final float longitude1 = 127.028f;
-	final float latitude1 = 37.497f;
+	final double longitude1 = 127.028f;
+	final double latitude1 = 37.497f;
 	LocalDateTime dayToVisit = LocalDateTime.now().plusDays(10);
 
 	Location location1 = Location.builder()
@@ -17,7 +17,7 @@ public class LocationTestUtils {
 			.latitude(latitude1).longitude(longitude1)
 			.address("강남역 2번출구").visitDate(dayToVisit)
 			.searchAddress("서울특별시")
-			.category(Category.STUDY).name("프로그래머스 강남 교육장")
+			.category(Category.CULTURE).name("프로그래머스 강남 교육장")
 			.spending(3000).expectedCost(4000)
 			.partyId(1L)
 			.build();
@@ -30,7 +30,7 @@ public class LocationTestUtils {
 			.address("서울특별시 서초구 강남대로327 2층 프로그래머스(서초동, 대륭서초타워)")
 			.searchAddress("서울특별시")
 			.visitDate(dayToVisit)
-			.category(Category.STUDY).name("프로그래머스 대륭 서초 타워")
+			.category(Category.CULTURE).name("프로그래머스 대륭 서초 타워")
 			.spending(2000).expectedCost(5000)
 			.partyId(1L)
 			.build();
@@ -102,11 +102,11 @@ public class LocationTestUtils {
 		return location1;
 	}
 
-	public Float getLatitude1() {
+	public Double getLatitude1() {
 		return latitude1;
 	}
 
-	public Float getLongitude1() {
+	public Double getLongitude1() {
 		return longitude1;
 	}
 
