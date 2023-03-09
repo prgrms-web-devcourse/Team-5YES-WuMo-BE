@@ -66,8 +66,6 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 
 	private PartyMember partyLeader;
 
-	private PartyMember partyParticipant;
-
 	@BeforeEach
 	void setup() {
 		leader = memberRepository.save(
@@ -153,6 +151,7 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 				.andExpect(jsonPath("$.members[0].nickname").value(leader.getNickname()))
 				.andExpect(jsonPath("$.members[0].role").value(partyLeader.getRole()))
 				.andExpect(jsonPath("$.members[0].profileImage").value(leader.getProfileImage()))
+				.andExpect(jsonPath("$.members[0].isLeader").value(partyLeader.isLeader()))
 				.andExpect(jsonPath("$.lastId").isNotEmpty())
 				.andDo(print());
 	}
@@ -173,6 +172,7 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 				.andExpect(jsonPath("$.nickname").value(leader.getNickname()))
 				.andExpect(jsonPath("$.role").value(partyLeader.getRole()))
 				.andExpect(jsonPath("$.profileImage").value(leader.getProfileImage()))
+				.andExpect(jsonPath("$.isLeader").value(partyLeader.isLeader()))
 				.andDo(print());
 	}
 
@@ -202,13 +202,7 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 	@DisplayName("모임 생성자는 구성원을 추방할 수 있다.")
 	void deletePartyMemberWithLeader() throws Exception {
 		//given
-		partyParticipant = partyMemberRepository.save(
-				PartyMember.builder()
-						.member(participant)
-						.party(party)
-						.role("요리사")
-						.build()
-		);
+		partyMemberRepository.save(getPartyParticipant());
 		setAuthentication(leader.getId());
 
 		//when
@@ -224,13 +218,7 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 	@DisplayName("모임에서 탈퇴할 수 있다.")
 	void deletePartyMember() throws Exception {
 		//given
-		partyParticipant = partyMemberRepository.save(
-				PartyMember.builder()
-						.member(participant)
-						.party(party)
-						.role("요리사")
-						.build()
-		);
+		partyMemberRepository.save(getPartyParticipant());
 
 		//when
 		ResultActions resultActions = mockMvc.perform(delete("/api/v1/parties/{partyId}/members", party.getId()));
@@ -251,8 +239,18 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 	private PartyMemberRegisterRequest getPartyMemberRegisterRequest() {
 		return new PartyMemberRegisterRequest("운전기사");
 	}
+
 	private PartyMemberUpdateRequest getPartyMemberUpdateRequest() {
 		return new PartyMemberUpdateRequest("드라이버");
+	}
+
+	private PartyMember getPartyParticipant() {
+		return PartyMember.builder()
+				.member(participant)
+				.party(party)
+				.role("요리사")
+				.isLeader(false)
+				.build();
 	}
 
 }

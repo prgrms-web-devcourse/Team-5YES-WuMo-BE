@@ -15,7 +15,10 @@ public record PartyMemberGetResponse(
 		String role,
 
 		@Schema(description = "프로필 이미지", example = "https://~.jpeg", requiredMode = Schema.RequiredMode.REQUIRED)
-		String profileImage
+		String profileImage,
+
+		@Schema(description = "모임장 여부", example = "true", requiredMode = Schema.RequiredMode.REQUIRED)
+		boolean isLeader
 
 ) {
 }
