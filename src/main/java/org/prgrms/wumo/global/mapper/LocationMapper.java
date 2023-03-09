@@ -1,5 +1,6 @@
 package org.prgrms.wumo.global.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.prgrms.wumo.domain.location.dto.request.LocationRegisterRequest;
 import org.prgrms.wumo.domain.location.dto.response.LocationGetAllResponse;
@@ -34,7 +35,7 @@ public class LocationMapper {
 				.build();
 	}
 
-	public static LocationGetResponse toLocationGetResponse(Location location){
+	public static LocationGetResponse toLocationGetResponse(Location location, boolean isEditable){
 		return new LocationGetResponse(
 				location.getId(),
 				location.getName(),
@@ -48,13 +49,20 @@ public class LocationMapper {
 				location.getExpectedCost(),
 				location.getSpending(),
 				location.getCategory(),
-				location.getRoute() == null ? null : location.getRoute().getId()
+				location.getRoute() == null ? null : location.getRoute().getId(),
+				isEditable
 		);
 	}
 
-	public static LocationGetAllResponse toLocationGetAllResponse(List<Location> locations, Long lastId){
+	public static LocationGetAllResponse toLocationGetAllResponse(List<Location> locations, List<Boolean> isEditables, Long lastId){
+
+		List<LocationGetResponse> locationGetResponses = new ArrayList<>();
+		for (int i = 0; i < locations.size(); i++) {
+			locationGetResponses.add(toLocationGetResponse(locations.get(i), isEditables.get(i)));
+		}
+
 		return new LocationGetAllResponse(
-				locations.stream().map(LocationMapper::toLocationGetResponse).toList(), lastId
+				locationGetResponses, lastId
 		);
 	}
 

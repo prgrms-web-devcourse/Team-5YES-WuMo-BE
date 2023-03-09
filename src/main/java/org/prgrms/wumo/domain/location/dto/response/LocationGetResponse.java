@@ -45,6 +45,9 @@ public record LocationGetResponse(
 		Category category,
 
 		@Schema(description = "(후보지가 루트라면) 루트번호", example = "1", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-		Long routeId
+		Long routeId,
+
+		@Schema(description = "후보지 수정 및 삭제 가능 여부" , example = "true", requiredMode = Schema.RequiredMode.REQUIRED)
+		boolean isEditable
 ) {
 }
