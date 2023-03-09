@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.dto.request.PartyRouteCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.dto.request.ReplyCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentGetResponse;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentRegisterResponse;
@@ -12,8 +13,10 @@ import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetAllRespon
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentUpdateResponse;
+import org.prgrms.wumo.domain.comment.dto.response.ReplyCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.model.LocationComment;
 import org.prgrms.wumo.domain.comment.model.PartyRouteComment;
+import org.prgrms.wumo.domain.comment.model.ReplyComment;
 import org.prgrms.wumo.domain.party.model.PartyMember;
 
 public class CommentMapper {
@@ -23,7 +26,8 @@ public class CommentMapper {
 		);
 	}
 
-	public static LocationComment toLocationComment(LocationCommentRegisterRequest locationCommentRegisterRequest, PartyMember partyMember) {
+	public static LocationComment toLocationComment(LocationCommentRegisterRequest locationCommentRegisterRequest,
+			PartyMember partyMember) {
 		return LocationComment.builder()
 				.locationId(locationCommentRegisterRequest.locationId())
 				.content(locationCommentRegisterRequest.content())
@@ -105,6 +109,19 @@ public class CommentMapper {
 				partyRouteComment.getId(),
 				partyRouteComment.getContent(),
 				partyRouteComment.getImage()
+		);
+	}
+
+	public static ReplyComment toReplyComment(ReplyCommentRegisterRequest replyCommentRegisterRequest) {
+		return ReplyComment.builder()
+				.commentId(replyCommentRegisterRequest.commentId())
+				.content(replyCommentRegisterRequest.content())
+				.build();
+	}
+
+	public static ReplyCommentRegisterResponse toReplyCommentRegisterResponse(ReplyComment replyComment) {
+		return new ReplyCommentRegisterResponse(
+				replyComment.getId()
 		);
 	}
 }
