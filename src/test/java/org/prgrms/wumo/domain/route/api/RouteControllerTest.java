@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.prgrms.wumo.MysqlTestContainer;
+import org.prgrms.wumo.domain.like.model.RouteLike;
+import org.prgrms.wumo.domain.like.repository.RouteLikeRepository;
 import org.prgrms.wumo.domain.location.model.Category;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
@@ -51,6 +53,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 	private long locationId;
 	private long partyMemberId;
 	private long routeId;
+	private long routeLikeId;
 
 	@Autowired
 	MockMvc mockMvc;
@@ -73,6 +76,9 @@ public class RouteControllerTest extends MysqlTestContainer {
 	@Autowired
 	RouteRepository routeRepository;
 
+	@Autowired
+	RouteLikeRepository routeLikeRepository;
+
 	@BeforeEach
 	void setup() {
 		Member member = memberRepository.save(getMemberData());
@@ -92,6 +98,9 @@ public class RouteControllerTest extends MysqlTestContainer {
 		route.updatePublicStatus(true);
 		routeRepository.save(route);
 
+		RouteLike routeLike = routeLikeRepository.save(getRouteLikeData(member, route));
+		routeLikeId = routeLike.getId();
+
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
 			new UsernamePasswordAuthenticationToken(memberId, null, Collections.EMPTY_LIST);
@@ -101,6 +110,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 
 	@AfterEach
 	void tearDown() {
+		routeLikeRepository.deleteById(routeLikeId);
 		routeRepository.deleteById(routeId);
 		partyMemberRepository.deleteById(partyMemberId);
 		locationRepository.deleteById(locationId);
@@ -169,7 +179,6 @@ public class RouteControllerTest extends MysqlTestContainer {
 	@DisplayName("공개된 루트 목록을 조회 한다")
 	void get_all_route() throws Exception {
 		//given
-		Long cursorId = null;
 		int pageSize = 5;
 		String sortType = "NEWEST";
 		String searchWord = null;
@@ -189,6 +198,32 @@ public class RouteControllerTest extends MysqlTestContainer {
 			.andExpect(jsonPath("$.routes").isArray())
 			.andExpect(jsonPath("$.routes[0].routeId").value(routeId))
 			.andDo(print());
+	}
+
+	@Test
+	@DisplayName("관심 루트 목록을 조회 한다")
+	void get_all_liked_route() throws Exception {
+		//given
+		Long cursorId = null;
+		int pageSize = 5;
+		String sortType = "NEWEST";
+		String searchWord = null;
+
+		//when
+		ResultActions resultActions
+				= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/likes")
+				.param("cursorId", (String)null)
+				.param("pageSize", String.valueOf(pageSize))
+				.param("sortType", sortType)
+				.param("searchWord", searchWord));
+
+		//then
+		resultActions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.lastId").value(routeId))
+				.andExpect(jsonPath("$.routes").isArray())
+				.andExpect(jsonPath("$.routes[0].routeId").value(routeId))
+				.andDo(print());
 	}
 
 	@Test
@@ -256,5 +291,12 @@ public class RouteControllerTest extends MysqlTestContainer {
 			.locations(List.of(location))
 			.party(party)
 			.build();
+	}
+
+	private RouteLike getRouteLikeData(Member member, Route route) {
+		return RouteLike.builder()
+				.memberId(member.getId())
+				.routeId(route.getId())
+				.build();
 	}
 }
