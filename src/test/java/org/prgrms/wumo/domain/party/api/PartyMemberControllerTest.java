@@ -134,7 +134,7 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 	}
 
 	@Test
-	@DisplayName("특정 모임의 구성원을 조회할 수 있다.")
+	@DisplayName("특정 모임의 구성원 목록을 조회할 수 있다.")
 	void getAllPartyMembers() throws Exception {
 		//given
 		setAuthentication(leader.getId());
@@ -154,6 +154,25 @@ class PartyMemberControllerTest extends MysqlTestContainer {
 				.andExpect(jsonPath("$.members[0].role").value(partyLeader.getRole()))
 				.andExpect(jsonPath("$.members[0].profileImage").value(leader.getProfileImage()))
 				.andExpect(jsonPath("$.lastId").isNotEmpty())
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("모임 내 자신의 정보를 조회할 수 있다.")
+	void getPartyMember() throws Exception {
+		//given
+		setAuthentication(leader.getId());
+
+		//when
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/parties/{partyId}/members/me", party.getId()));
+
+		//then
+		resultActions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.memberId").value(leader.getId()))
+				.andExpect(jsonPath("$.nickname").value(leader.getNickname()))
+				.andExpect(jsonPath("$.role").value(partyLeader.getRole()))
+				.andExpect(jsonPath("$.profileImage").value(leader.getProfileImage()))
 				.andDo(print());
 	}
 

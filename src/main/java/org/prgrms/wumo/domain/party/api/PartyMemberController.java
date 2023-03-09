@@ -43,12 +43,20 @@ public class PartyMemberController {
 	}
 
 	@GetMapping("/{partyId}/members")
-	@Operation(summary = "모임 구성원 조회")
+	@Operation(summary = "모임 구성원 목록 조회")
 	public ResponseEntity<PartyMemberGetAllResponse> getAllPartyMembers(
 			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId,
 			@Valid PartyMemberGetRequest partyMemberGetRequest
 	) {
 		return ResponseEntity.ok(partyMemberService.getAllPartyMembers(partyId, partyMemberGetRequest));
+	}
+
+	@GetMapping("/{partyId}/members/me")
+	@Operation(summary = "모임 내 개인정보 조회")
+	public ResponseEntity<PartyMemberGetResponse> getPartyMember(
+			@PathVariable @Parameter(description = "모임 식별자", required = true) Long partyId
+	) {
+		return ResponseEntity.ok(partyMemberService.getPartyMember(partyId));
 	}
 
 	@PatchMapping("/{partyId}/members")

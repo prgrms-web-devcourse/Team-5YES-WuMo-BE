@@ -72,6 +72,11 @@ public class PartyMemberService {
 		return toPartyMemberGetAllResponse(totalMembers, partyMembers, lastId);
 	}
 
+	@Transactional(readOnly = true)
+	public PartyMemberGetResponse getPartyMember(Long partyId) {
+		return toPartyMemberGetResponse(getPartyMemberEntity(partyId, JwtUtil.getMemberId()));
+	}
+
 	@Transactional
 	public PartyMemberGetResponse updatePartyMember(Long partyId, PartyMemberUpdateRequest partyMemberUpdateRequest) {
 		PartyMember partyMember = getPartyMemberEntity(partyId, JwtUtil.getMemberId());
