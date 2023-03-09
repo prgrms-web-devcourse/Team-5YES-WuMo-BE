@@ -27,11 +27,11 @@ public record LocationRegisterRequest(
 
 		@NotNull(message = "위도는 필수 입력사항입니다.")
 		@Schema(description = "후보지 위도", example = "34.566", requiredMode = Schema.RequiredMode.REQUIRED)
-		Float latitude,
+		Double latitude,
 
 		@NotNull(message = "경도는 필수 입력사항입니다.")
 		@Schema(description = "후보지 경도", example = "123.56", requiredMode = Schema.RequiredMode.REQUIRED)
-		Float longitude,
+		Double longitude,
 
 		@NotBlank(message = "이미지는 필수 입력사항입니다.")
 		@Schema(description = "후보지 이미지", example = "https://~", requiredMode = Schema.RequiredMode.REQUIRED)

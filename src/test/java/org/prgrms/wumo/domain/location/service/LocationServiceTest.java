@@ -126,7 +126,7 @@ public class LocationServiceTest {
 				"프로그래머스 강남 교육장", "서울특별시", "강남역 2번출구"
 				, locationTestUtils.getLatitude1(), locationTestUtils.getLongitude1(),
 				"http://programmers_gangnam_image.com"
-				, Category.STUDY, "이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀...."
+				, Category.CULTURE, "이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀...."
 				, locationTestUtils.getDayToVisit(), 4000, 1L
 		);
 
@@ -252,7 +252,7 @@ public class LocationServiceTest {
 		LocalDateTime dayToVisit = locationTestUtils.getDayToVisit();
 
 		LocationUpdateRequest locationUpdateRequest =
-				new LocationUpdateRequest(locationId, "changed_image.png", Category.STUDY, "변경된 상세 설명", dayToVisit, 56000,
+				new LocationUpdateRequest(locationId, "changed_image.png", Category.CULTURE, "변경된 상세 설명", dayToVisit, 56000,
 						1L);
 
 		@Test
@@ -264,7 +264,7 @@ public class LocationServiceTest {
 					leaderPartyMember));
 
 			LocationUpdateResponse expected =
-					new LocationUpdateResponse(locationId, "changed_image.png", "변경된 상세 설명", dayToVisit, 56000, Category.STUDY);
+					new LocationUpdateResponse(locationId, "changed_image.png", "변경된 상세 설명", dayToVisit, 56000, Category.CULTURE);
 
 			// When
 			LocationUpdateResponse locationUpdateResponse = locationService.updateLocation(locationUpdateRequest);

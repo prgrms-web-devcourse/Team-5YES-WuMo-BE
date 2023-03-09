@@ -316,9 +316,9 @@ public class PartyRouteCommentServiceTest {
 				.address("경기도 고양시 일산서구")
 				.name("내 집")
 				.description("언제 와도 좋은 서윗한 내 집")
-				.longitude(12.34F)
-				.latitude(67.89F)
-				.category(Category.DRINK)
+				.longitude(12.34)
+				.latitude(67.89)
+				.category(Category.DRINKING)
 				.visitDate(LocalDateTime.now())
 				.route(route)
 				.build();

@@ -48,10 +48,10 @@ public class Location extends BaseTimeEntity {
 	private String address;
 
 	@Column(name = "latitude", nullable = false, updatable = true, unique = false)
-	private Float latitude;
+	private Double latitude;
 
 	@Column(name = "longitude", nullable = false, updatable = true, unique = false)
-	private Float longitude;
+	private Double longitude;
 
 	@Column(name = "image_url", nullable = false, updatable = true, unique = false)
 	private String image;
@@ -80,7 +80,7 @@ public class Location extends BaseTimeEntity {
 	private Long partyId;
 
 	@Builder
-	public Location(Long id, Long memberId, String name, String address, String searchAddress, Float latitude, Float longitude,
+	public Location(Long id, Long memberId, String name, String address, String searchAddress, Double latitude, Double longitude,
 			String image,
 			String description,
 			LocalDateTime visitDate, int expectedCost, int spending, Category category, Route route, Long partyId) {

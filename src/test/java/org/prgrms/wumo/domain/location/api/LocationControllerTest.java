@@ -130,7 +130,7 @@ public class LocationControllerTest extends MysqlTestContainer {
 				locationTestUtils.getLatitude1(),
 				locationTestUtils.getLongitude1(),
 				"http://programmers_gangnam_image.com",
-				Category.STUDY,
+				Category.CULTURE,
 				"이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀....",
 				locationTestUtils.getDayToVisit(),
 				4000,
@@ -211,8 +211,8 @@ public class LocationControllerTest extends MysqlTestContainer {
 						.name("cafe")
 						.searchAddress("고양시")
 						.address("경기도 고양시 일산서구")
-						.latitude(12.34F)
-						.longitude(34.56F)
+						.latitude(12.34)
+						.longitude(34.56)
 						.partyId(party.getId())
 						.expectedCost(4000)
 						.spending(3500)
@@ -247,8 +247,8 @@ public class LocationControllerTest extends MysqlTestContainer {
 						.name("cafe")
 						.searchAddress("고양시")
 						.address("경기도 고양시 일산서구")
-						.latitude(12.34F)
-						.longitude(34.56F)
+						.latitude(12.34)
+						.longitude(34.56)
 						.partyId(party.getId())
 						.expectedCost(4000)
 						.spending(3500)
@@ -281,8 +281,8 @@ public class LocationControllerTest extends MysqlTestContainer {
 						.name("cafe")
 						.searchAddress("고양시")
 						.address("경기도 고양시 일산서구")
-						.latitude(12.34F)
-						.longitude(34.56F)
+						.latitude(12.34)
+						.longitude(34.56)
 						.partyId(party.getId())
 						.expectedCost(4000)
 						.spending(3500)
