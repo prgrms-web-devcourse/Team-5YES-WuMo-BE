@@ -7,6 +7,7 @@ import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteCommentReg
 import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteCommentUpdateResponse;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -62,10 +63,14 @@ public class PartyRouteCommentService {
 				partyRouteCommentRepository.findAllByLocationId(partyRouteCommentGetAllRequest.cursorId(),
 						partyRouteCommentGetAllRequest.pageSize(), partyRouteCommentGetAllRequest.locationId());
 
+		List<Boolean> isEditables = partyRouteComments.stream()
+				.map(partyRouteComment -> getIsEditable(partyRouteComment, getMemberId()))
+				.toList();
+
 		long lastId = (partyRouteComments.size()) > 0 ?
 				partyRouteComments.get(partyRouteComments.size() - 1).getId() : -1L;
 
-		return toPartyRouteCommentGetAllResponse(partyRouteComments, lastId);
+		return toPartyRouteCommentGetAllResponse(partyRouteComments, isEditables, lastId);
 	}
 
 	@Transactional
@@ -113,6 +118,10 @@ public class PartyRouteCommentService {
 	private void checkAuthorization(PartyRouteComment partyRouteComment, Long memberId) {
 		checkMemberInParty(partyRouteComment.getPartyMember().getId());
 		partyRouteComment.checkAuthorization(memberId);
+	}
+
+	private boolean getIsEditable(PartyRouteComment partyRouteComment, Long memberId) {
+		return Objects.equals(partyRouteComment.getMember().getId(), memberId);
 	}
 }
 
