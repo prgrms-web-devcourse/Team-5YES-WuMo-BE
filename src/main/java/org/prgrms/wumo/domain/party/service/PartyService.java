@@ -3,6 +3,7 @@ package org.prgrms.wumo.domain.party.service;
 import static org.prgrms.wumo.global.mapper.PartyMapper.toParty;
 import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyGetAllResponse;
 import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyGetDetailResponse;
+import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyMember;
 import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyRegisterResponse;
 
 import java.time.LocalDateTime;
@@ -56,12 +57,7 @@ public class PartyService {
 
 		// 모임장 저장
 		Member member = getMemberEntity(JwtUtil.getMemberId());
-		PartyMember partyLeader = PartyMember.builder()
-				.member(member)
-				.party(party)
-				.role(partyRegisterRequest.role())
-				.isLeader(true)
-				.build();
+		PartyMember partyLeader = toPartyMember(member, party, partyRegisterRequest.role(), true);
 		partyMemberRepository.save(partyLeader);
 
 		return toPartyRegisterResponse(party);

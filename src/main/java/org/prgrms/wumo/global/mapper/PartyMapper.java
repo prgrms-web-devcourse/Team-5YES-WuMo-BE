@@ -76,7 +76,7 @@ public class PartyMapper {
 				.member(member)
 				.party(party)
 				.role(role)
-				.isLeader(false)
+				.isLeader(isLeader)
 				.build();
 	}
 
@@ -92,7 +92,8 @@ public class PartyMapper {
 				partyMember.getMember().getId(),
 				partyMember.getMember().getNickname(),
 				partyMember.getRole(),
-				partyMember.getMember().getProfileImage()
+				partyMember.getMember().getProfileImage(),
+				partyMember.isLeader()
 		);
 	}
 

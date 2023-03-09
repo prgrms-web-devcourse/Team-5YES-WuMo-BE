@@ -204,9 +204,6 @@ class PartyMemberServiceTest {
 	@Nested
 	@DisplayName("getPartyMember 메소드는 조회시")
 	class GetPartyMember {
-		//given
-		PartyMemberGetRequest partyMemberGetRequest = new PartyMemberGetRequest(null, 2);
-
 		@Test
 		@DisplayName("현재 모임의 구성원 목록을 반환한다.")
 		void success() {
@@ -222,6 +219,7 @@ class PartyMemberServiceTest {
 			assertThat(partyMemberGetResponse.nickname()).isEqualTo(participant.getNickname());
 			assertThat(partyMemberGetResponse.role()).isEqualTo(partyParticipant.getRole());
 			assertThat(partyMemberGetResponse.profileImage()).isEqualTo(participant.getProfileImage());
+			assertThat(partyMemberGetResponse.isLeader()).isEqualTo(false);
 
 			then(partyMemberRepository)
 					.should()
