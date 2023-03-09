@@ -7,6 +7,7 @@ import static org.prgrms.wumo.global.mapper.CommentMapper.toLocationCommentRegis
 import static org.prgrms.wumo.global.mapper.CommentMapper.toLocationCommentUpdateResponse;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -55,10 +56,14 @@ public class LocationCommentService {
 				locationCommentRepository.findAllByLocationId(locationCommentGetAllRequest.locationId(),
 						locationCommentGetAllRequest.cursorId(), locationCommentGetAllRequest.pageSize());
 
+		List<Boolean> isEditables = locationComments.stream()
+				.map(locationComment -> getIsEditable(locationComment, getMemberId()))
+				.toList();
+
 		long lastId = (locationComments.size()) > 0 ?
 				locationComments.get(locationComments.size() - 1).getId() : -1L;
 
-		return toLocationCommentGetAllResponse(locationComments, lastId);
+		return toLocationCommentGetAllResponse(locationComments, isEditables, lastId);
 	}
 
 	@Transactional
@@ -101,6 +106,10 @@ public class LocationCommentService {
 	private void checkAuthorization(LocationComment locationComment, Long memberId) {
 		checkMemberInParty(locationComment.getPartyMember().getId());
 		locationComment.checkAuthorization(memberId);
+	}
+
+	private boolean getIsEditable(LocationComment locationComment, Long memberId) {
+		return Objects.equals(locationComment.getMember().getId(), memberId);
 	}
 }
 

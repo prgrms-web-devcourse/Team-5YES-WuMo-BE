@@ -28,6 +28,9 @@ public record LocationCommentGetResponse(
 		LocalDateTime createdAt,
 
 		@Schema(description = "댓글 수정 시간", example = "2023-03-03T14:03:23", requiredMode = Schema.RequiredMode.REQUIRED)
-		LocalDateTime updatedAt
+		LocalDateTime updatedAt,
+
+		@Schema(description = "댓글 수정 및 삭제 가능 여부", example = "true", requiredMode = Schema.RequiredMode.REQUIRED)
+		boolean isEditable
 ) {
 }

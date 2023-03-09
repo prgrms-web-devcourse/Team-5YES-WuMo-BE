@@ -1,5 +1,6 @@
 package org.prgrms.wumo.global.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentRegisterRequest;
@@ -23,7 +24,8 @@ public class CommentMapper {
 		);
 	}
 
-	public static LocationComment toLocationComment(LocationCommentRegisterRequest locationCommentRegisterRequest, PartyMember partyMember) {
+	public static LocationComment toLocationComment(LocationCommentRegisterRequest locationCommentRegisterRequest,
+			PartyMember partyMember) {
 		return LocationComment.builder()
 				.locationId(locationCommentRegisterRequest.locationId())
 				.content(locationCommentRegisterRequest.content())
@@ -32,7 +34,8 @@ public class CommentMapper {
 				.build();
 	}
 
-	public static LocationCommentGetResponse toLocationCommentGetResponse(LocationComment locationComment) {
+	public static LocationCommentGetResponse toLocationCommentGetResponse(LocationComment locationComment,
+			boolean isEditable) {
 		return new LocationCommentGetResponse(
 				locationComment.getId(),
 				locationComment.getMember().getNickname(),
@@ -41,15 +44,22 @@ public class CommentMapper {
 				locationComment.getContent(),
 				locationComment.getImage(),
 				locationComment.getCreatedAt(),
-				locationComment.getUpdatedAt()
+				locationComment.getUpdatedAt(),
+				isEditable
 		);
 	}
 
 	public static LocationCommentGetAllResponse toLocationCommentGetAllResponse(
-			List<LocationComment> locationComments, Long lastId
+			List<LocationComment> locationComments, List<Boolean> isEditables, Long lastId
 	) {
+
+		List<LocationCommentGetResponse> locationCommentGetResponses = new ArrayList<>();
+		for (int i = 0; i < locationComments.size(); i++) {
+			locationCommentGetResponses.add(toLocationCommentGetResponse(locationComments.get(i), isEditables.get(i)));
+		}
+
 		return new LocationCommentGetAllResponse(
-				locationComments.stream().map(CommentMapper::toLocationCommentGetResponse).toList(),
+				locationCommentGetResponses,
 				lastId
 		);
 	}
@@ -79,7 +89,8 @@ public class CommentMapper {
 				.build();
 	}
 
-	public static PartyRouteCommentGetResponse toPartyRouteCommentGetResponse(PartyRouteComment partyRouteComment) {
+	public static PartyRouteCommentGetResponse toPartyRouteCommentGetResponse(PartyRouteComment partyRouteComment,
+			boolean isEditable) {
 		return new PartyRouteCommentGetResponse(
 				partyRouteComment.getId(),
 				partyRouteComment.getMember().getNickname(),
@@ -88,14 +99,19 @@ public class CommentMapper {
 				partyRouteComment.getContent(),
 				partyRouteComment.getImage(),
 				partyRouteComment.getCreatedAt(),
-				partyRouteComment.getUpdatedAt()
+				partyRouteComment.getUpdatedAt(),
+				isEditable
 		);
 	}
 
 	public static PartyRouteCommentGetAllResponse toPartyRouteCommentGetAllResponse(
-			List<PartyRouteComment> partyRouteComments, long lastId) {
+			List<PartyRouteComment> partyRouteComments, List<Boolean> isEditables, long lastId) {
+		List<PartyRouteCommentGetResponse> partyRouteCommentGetResponses = new ArrayList<>();
+		for (int i = 0; i < partyRouteComments.size(); i++) {
+			partyRouteCommentGetResponses.add(toPartyRouteCommentGetResponse(partyRouteComments.get(i), isEditables.get(i)));
+		}
 		return new PartyRouteCommentGetAllResponse(
-				partyRouteComments.stream().map(CommentMapper::toPartyRouteCommentGetResponse).toList(),
+				partyRouteCommentGetResponses,
 				lastId
 		);
 	}
