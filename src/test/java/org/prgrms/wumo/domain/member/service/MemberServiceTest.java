@@ -38,7 +38,6 @@ import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.WumoJwt;
 import org.prgrms.wumo.global.repository.RedisRepository;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -238,29 +237,20 @@ public class MemberServiceTest {
 		Member member = getMemberData(email, nickname, password);
 
 		@Test
-		@DisplayName("내 정보 요청이면 응답한다")
+		@DisplayName("내 정보를 응답한다")
 		void success() {
 			//mocking
 			given(memberRepository.findById(anyLong()))
 				.willReturn(Optional.of(member));
 
 			//when
-			MemberGetResponse result = memberService.getMember(memberId);
+			MemberGetResponse result = memberService.getMember();
 
 			//then
 			assertThat(result.nickname()).isEqualTo(member.getNickname());
 			then(memberRepository)
 				.should()
 				.findById(anyLong());
-		}
-
-		@Test
-		@DisplayName("다른 유저의 정보 요청이면 예외가 발생한다")
-		void fail_not_me() {
-			//when, then
-			assertThatThrownBy(() -> memberService.getMember(2L))
-				.isInstanceOf(AccessDeniedException.class)
-				.hasMessage("잘못된 접근입니다.");
 		}
 	}
 

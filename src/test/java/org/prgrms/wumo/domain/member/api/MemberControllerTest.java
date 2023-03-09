@@ -116,34 +116,12 @@ public class MemberControllerTest extends MysqlTestContainer {
 			.andExpect(status().isNoContent());
 	}
 
-	// @Test
-	// @DisplayName("로그인을 한다")
-	// void login_member() throws Exception {
-	// 	//given
-	// 	MemberLoginRequest memberLoginRequest
-	// 		= new MemberLoginRequest("taehee@gmail.com", "qwe12345");
-	//
-	// 	//when
-	// 	ResultActions resultActions
-	// 		= mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/members/login")
-	// 		.contentType(MediaType.APPLICATION_JSON_VALUE)
-	// 		.content(objectMapper.writeValueAsString(memberLoginRequest)));
-	//
-	// 	//then
-	// 	resultActions
-	// 		.andExpect(status().isOk())
-	// 		.andExpect(jsonPath("$.grantType").isNotEmpty())
-	// 		.andExpect(jsonPath("$.accessToken").isNotEmpty())
-	// 		.andExpect(jsonPath("$.refreshToken").isNotEmpty())
-	// 		.andDo(print());
-	// }
-
 	@Test
 	@DisplayName("내 정보를 조회한다")
 	void get_member() throws Exception {
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/members/{memberId}", memberId));
+			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/members"));
 
 		//then
 		resultActions
