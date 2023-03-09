@@ -40,6 +40,7 @@ import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.prgrms.wumo.domain.route.repository.RouteRepository;
+import org.springframework.data.util.Pair;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -281,6 +282,59 @@ public class RouteServiceTest {
 
 			//when
 			RouteGetAllResponses result = routeService.getAllRoute(routeGetAllRequest);
+
+			//then
+			assertThat(result.routes()).hasSize(0);
+			assertThat(result.lastId()).isEqualTo(-1);
+		}
+	}
+
+	@Nested
+	@DisplayName("getAllLikedRoute 메소드는 관심 루트 조회 요청 시 ")
+	class GetAllLikedRoute {
+		//given
+		List<Route> routes;
+
+		@Test
+		@DisplayName("관심 루트 목록을 최근에 좋아요를 누른 순으로 반환한다")
+		void success() {
+			//given
+			RouteGetAllRequest routeGetAllRequest
+					= new RouteGetAllRequest(null, 5, SortType.NEWEST, null);
+
+			routes = List.of(getPublicRouteData2(), getPublicRouteData1());
+			List<Long> routeLikeIds = List.of(2L, 1L); // 좋아요를 눌렀다고 가정
+
+			//mocking
+			given(routeLikeRepository.findAllByMemberId(1L, null, 5))
+					.willReturn(Pair.of(routeLikeIds, routes));
+			given(routeLikeRepository.existsByRouteIdAndMemberId(anyLong(), anyLong()))
+					.willReturn(true);
+
+			//when
+			RouteGetAllResponses result = routeService.getAllLikedRoute(routeGetAllRequest);
+
+			//then
+			assertThat(result.routes()).hasSize(2);
+			assertThat(result.lastId()).isEqualTo(1);
+		}
+
+		@Test
+		@DisplayName("조건에 만족하는 데이터가 없을 경우 빈 리스트를 반환한다")
+		void success_empty_data() {
+			//given
+			RouteGetAllRequest routeGetAllRequest
+					= new RouteGetAllRequest(null, 5, SortType.NEWEST, null);
+
+			routes = Collections.emptyList();
+			List<Long> routeLikeIds = Collections.emptyList(); // 좋아요를 누른 루트가 없다고 가정
+
+			//mocking
+			given(routeLikeRepository.findAllByMemberId(1L, null, 5))
+					.willReturn(Pair.of(routeLikeIds, routes));
+
+			//when
+			RouteGetAllResponses result = routeService.getAllLikedRoute(routeGetAllRequest);
 
 			//then
 			assertThat(result.routes()).hasSize(0);
