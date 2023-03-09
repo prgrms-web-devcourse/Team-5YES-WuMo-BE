@@ -75,11 +75,11 @@ class PartyServiceTest {
 	@BeforeEach
 	void setUp() {
 		member = Member.builder()
-			.id(1L)
-			.email("5yes@gmail.com")
-			.nickname("오예스오리지널")
-			.password("qwe12345")
-			.build();
+				.id(1L)
+				.email("5yes@gmail.com")
+				.nickname("오예스오리지널")
+				.password("qwe12345")
+				.build();
 
 		partyRegisterRequest = new PartyRegisterRequest(
 				"오예스 워크샵",
@@ -175,9 +175,9 @@ class PartyServiceTest {
 			//mocking
 			given(partyMemberRepository.findAllByMemberId(member.getId(), null, 1, PartyType.ALL))
 					.willReturn(List.of(partyMember));
-			given(partyMemberRepository.countAllByParty(party))
-					.willReturn(1L);
-			given(partyMemberRepository.findAllByPartyId(party.getId(), null, 3))
+			given(partyMemberRepository.countAllByPartyIdIn(List.of(party.getId())))
+					.willReturn(List.of(1L));
+			given(partyMemberRepository.findAllByPartyIdInAndIsLeader(List.of(party.getId())))
 					.willReturn(List.of(partyMember));
 
 			//when
@@ -185,6 +185,7 @@ class PartyServiceTest {
 
 			//then
 			assertThat(partyGetAllResponse.party()).isNotEmpty();
+			assertThat(partyGetAllResponse.party().get(0).totalMembers()).isEqualTo(1L);
 			assertThat(partyGetAllResponse.party().get(0).members()).isNotEmpty();
 
 			then(partyMemberRepository)
@@ -192,10 +193,10 @@ class PartyServiceTest {
 					.findAllByMemberId(member.getId(), null, 1, PartyType.ALL);
 			then(partyMemberRepository)
 					.should()
-					.countAllByParty(party);
+					.countAllByPartyIdIn(List.of(party.getId()));
 			then(partyMemberRepository)
 					.should()
-					.findAllByPartyId(party.getId(), null, 3);
+					.findAllByPartyIdInAndIsLeader(List.of(party.getId()));
 		}
 
 		@Test
@@ -231,7 +232,7 @@ class PartyServiceTest {
 					.willReturn(Optional.of(party));
 			given(partyMemberRepository.countAllByParty(party))
 					.willReturn(1L);
-			given(partyMemberRepository.findAllByPartyId(party.getId(), null, 3))
+			given(partyMemberRepository.findAllByPartyIdInAndIsLeader(List.of(party.getId())))
 					.willReturn(List.of(partyMember));
 
 			//when
@@ -255,7 +256,7 @@ class PartyServiceTest {
 					.countAllByParty(party);
 			then(partyMemberRepository)
 					.should()
-					.findAllByPartyId(party.getId(), null, 3);
+					.findAllByPartyIdInAndIsLeader(List.of(party.getId()));
 		}
 
 		@Test

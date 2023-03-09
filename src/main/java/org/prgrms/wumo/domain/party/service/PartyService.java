@@ -38,8 +38,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PartyService {
 
-	private static final int MEMBER_PREVIEW = 3;
-
 	private final MemberRepository memberRepository;
 
 	private final PartyRepository partyRepository;
@@ -77,12 +75,12 @@ public class PartyService {
 				partyGetRequest.pageSize(),
 				partyGetRequest.partyType()
 		);
+		setPartyDetail(partyMembers);
 
 		long lastId = (partyMembers.size() > 0) ? partyMembers.get(partyMembers.size() - 1).getId() : -1L;
 
 		List<Party> parties = partyMembers.stream()
 				.map(PartyMember::getParty)
-				.peek(this::setPartyMemberDetail)
 				.toList();
 
 		return toPartyGetAllResponse(parties, lastId);
@@ -91,7 +89,7 @@ public class PartyService {
 	@Transactional(readOnly = true)
 	public PartyGetResponse getParty(Long partyId) {
 		Party party = getPartyEntity(partyId);
-		setPartyMemberDetail(party);
+		setPartyDetail(party);
 
 		return toPartyGetDetailResponse(party);
 	}
@@ -109,7 +107,7 @@ public class PartyService {
 				partyUpdateRequest.description(),
 				partyUpdateRequest.coverImage()
 		);
-		setPartyMemberDetail(party);
+		setPartyDetail(party);
 
 		return toPartyGetDetailResponse(partyRepository.save(party));
 	}
@@ -152,10 +150,25 @@ public class PartyService {
 		}
 	}
 
-	private void setPartyMemberDetail(Party party) {
-		// TODO : N개의 Party에 대해 2번씩 쿼리가 나가기 때문에 개선할 필요
+	// 모임 다건에 대해 세부 정보를 설정
+	private void setPartyDetail(List<PartyMember> partyMembers) {
+		List<Long> partyIds = partyMembers.stream()
+				.map(partyMember -> partyMember.getParty().getId())
+				.toList();
+		List<Long> totalMembers = partyMemberRepository.countAllByPartyIdIn(partyIds);
+		List<PartyMember> partyLeaders = partyMemberRepository.findAllByPartyIdInAndIsLeader(partyIds);
+
+		for (int i = 0; i < partyMembers.size(); i++) {
+			Party party = partyMembers.get(i).getParty();
+			party.setTotalMembers(totalMembers.get(i));
+			party.setPartyMembers(List.of(partyLeaders.get(i)));
+		}
+	}
+
+	// 모임 단건에 대해 세부 정보를 설정
+	private void setPartyDetail(Party party) {
 		party.setTotalMembers(partyMemberRepository.countAllByParty(party));
-		party.setPartyMembers(partyMemberRepository.findAllByPartyId(party.getId(), null, MEMBER_PREVIEW));
+		party.setPartyMembers(partyMemberRepository.findAllByPartyIdInAndIsLeader(List.of(party.getId())));
 	}
 
 }
