@@ -220,7 +220,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 		//then
 		resultActions
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.lastId").value(routeId))
+				.andExpect(jsonPath("$.lastId").value(routeLikeId))
 				.andExpect(jsonPath("$.routes").isArray())
 				.andExpect(jsonPath("$.routes[0].routeId").value(routeId))
 				.andDo(print());
