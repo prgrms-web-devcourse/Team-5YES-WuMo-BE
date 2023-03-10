@@ -48,10 +48,6 @@ public class ReplyComment extends BaseTimeEntity {
 		this.content = content;
 	}
 
-	public void setMember(Member member) {
-		this.member = member;
-	}
-
 	public void checkAuthorization(Long memberId) {
 		if (!Objects.equals(this.member.getId(), memberId)) {
 			throw new AccessDeniedException("대댓글은 작성자만 수정 및 삭제가 가능합니다.");

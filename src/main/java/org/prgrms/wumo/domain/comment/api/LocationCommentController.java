@@ -1,21 +1,13 @@
 package org.prgrms.wumo.domain.comment.api;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
 import javax.validation.Valid;
-
-import lombok.RequiredArgsConstructor;
 
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentGetAllRequest;
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.dto.request.LocationCommentUpdateRequest;
-import org.prgrms.wumo.domain.comment.dto.request.ReplyCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.dto.response.LocationCommentUpdateResponse;
-import org.prgrms.wumo.domain.comment.dto.response.ReplyCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.service.LocationCommentService;
 import org.prgrms.wumo.domain.comment.service.ReplyCommentService;
 import org.springframework.http.HttpStatus;
@@ -28,6 +20,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
@@ -70,14 +67,5 @@ public class LocationCommentController {
 
 		locationCommentService.deleteLocationComment(locationCommentId);
 		return ResponseEntity.ok().build();
-	}
-
-	@PostMapping("/replies")
-	@Operation(summary = "후보지 댓글에 대댓글 작성")
-	public ResponseEntity<ReplyCommentRegisterResponse> registerReplyComment(
-			@RequestBody @Valid ReplyCommentRegisterRequest replyCommentRegisterRequest
-	) {
-		return new ResponseEntity<>(replyCommentService.registerReplyComment(replyCommentRegisterRequest),
-				HttpStatus.CREATED);
 	}
 }
