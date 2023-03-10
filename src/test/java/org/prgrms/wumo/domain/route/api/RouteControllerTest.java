@@ -103,7 +103,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-			new UsernamePasswordAuthenticationToken(memberId, null, Collections.EMPTY_LIST);
+				new UsernamePasswordAuthenticationToken(memberId, null, Collections.EMPTY_LIST);
 
 		context.setAuthentication(usernamePasswordAuthenticationToken);
 	}
@@ -124,19 +124,19 @@ public class RouteControllerTest extends MysqlTestContainer {
 	void register_route() throws Exception {
 		//given
 		RouteRegisterRequest routeRegisterRequest
-			= new RouteRegisterRequest(null, locationId, partyId);
+				= new RouteRegisterRequest(null, locationId, partyId);
 
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/routes")
-			.contentType(MediaType.APPLICATION_JSON_VALUE)
-			.content(objectMapper.writeValueAsString(routeRegisterRequest)));
+				= mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/routes")
+				.contentType(MediaType.APPLICATION_JSON_VALUE)
+				.content(objectMapper.writeValueAsString(routeRegisterRequest)));
 
 		//then
 		resultActions
-			.andExpect(status().isCreated())
-			.andExpect(jsonPath("$.id").isNotEmpty())
-			.andDo(print());
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.id").isNotEmpty())
+				.andDo(print());
 	}
 
 	@Test
@@ -144,17 +144,17 @@ public class RouteControllerTest extends MysqlTestContainer {
 	void get_route_in_party() throws Exception {
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/{partyId}", partyId)
-			.param("path", "0"));
+				= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/{partyId}", partyId)
+				.param("path", "0"));
 
 		//then
 		resultActions
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.id").value(routeId))
-			.andExpect(jsonPath("$.isPublic").value(true))
-			.andExpect(jsonPath("$.locations").isArray())
-			.andExpect(jsonPath("$.partyId").value(partyId))
-			.andDo(print());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(routeId))
+				.andExpect(jsonPath("$.isPublic").value(true))
+				.andExpect(jsonPath("$.locations").isArray())
+				.andExpect(jsonPath("$.partyId").value(partyId))
+				.andDo(print());
 	}
 
 	@Test
@@ -162,17 +162,17 @@ public class RouteControllerTest extends MysqlTestContainer {
 	void get_route_from_public_list() throws Exception {
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/{partyId}", partyId)
-			.param("path", "1"));
+				= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/{partyId}", partyId)
+				.param("path", "1"));
 
 		//then
 		resultActions
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.id").value(routeId))
-			.andExpect(jsonPath("$.isPublic").isNotEmpty())
-			.andExpect(jsonPath("$.locations").isArray())
-			.andExpect(jsonPath("$.partyId").value(partyId))
-			.andDo(print());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(routeId))
+				.andExpect(jsonPath("$.isPublic").isNotEmpty())
+				.andExpect(jsonPath("$.locations").isArray())
+				.andExpect(jsonPath("$.partyId").value(partyId))
+				.andDo(print());
 	}
 
 	@Test
@@ -185,19 +185,19 @@ public class RouteControllerTest extends MysqlTestContainer {
 
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes")
-			.param("cursorId", (String)null)
-			.param("pageSize", String.valueOf(pageSize))
-			.param("sortType", sortType)
-			.param("searchWord", searchWord));
+				= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes")
+				.param("cursorId", (String)null)
+				.param("pageSize", String.valueOf(pageSize))
+				.param("sortType", sortType)
+				.param("searchWord", searchWord));
 
 		//then
 		resultActions
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.lastId").value(routeId))
-			.andExpect(jsonPath("$.routes").isArray())
-			.andExpect(jsonPath("$.routes[0].routeId").value(routeId))
-			.andDo(print());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.lastId").value(routeId))
+				.andExpect(jsonPath("$.routes").isArray())
+				.andExpect(jsonPath("$.routes[0].routeId").value(routeId))
+				.andDo(print());
 	}
 
 	@Test
@@ -211,19 +211,19 @@ public class RouteControllerTest extends MysqlTestContainer {
 
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/likes")
-			.param("cursorId", (String)null)
-			.param("pageSize", String.valueOf(pageSize))
-			.param("sortType", sortType)
-			.param("searchWord", searchWord));
+				= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/routes/likes")
+				.param("cursorId", (String)null)
+				.param("pageSize", String.valueOf(pageSize))
+				.param("sortType", sortType)
+				.param("searchWord", searchWord));
 
 		//then
 		resultActions
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.lastId").value(routeLikeId))
-			.andExpect(jsonPath("$.routes").isArray())
-			.andExpect(jsonPath("$.routes[0].routeId").value(routeId))
-			.andDo(print());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.lastId").value(routeLikeId))
+				.andExpect(jsonPath("$.routes").isArray())
+				.andExpect(jsonPath("$.routes[0].routeId").value(routeId))
+				.andDo(print());
 	}
 
 	@Test
@@ -231,72 +231,72 @@ public class RouteControllerTest extends MysqlTestContainer {
 	void update_route_public_status() throws Exception {
 		//given
 		RouteStatusUpdateRequest routeStatusUpdateRequest
-			= new RouteStatusUpdateRequest(routeId, true, "퇴사 기념 여행");
+				= new RouteStatusUpdateRequest(routeId, true, "퇴사 기념 여행");
 
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.patch("/api/v1/routes")
-			.contentType(MediaType.APPLICATION_JSON_VALUE)
-			.content(objectMapper.writeValueAsString(routeStatusUpdateRequest)));
+				= mockMvc.perform(MockMvcRequestBuilders.patch("/api/v1/routes")
+				.contentType(MediaType.APPLICATION_JSON_VALUE)
+				.content(objectMapper.writeValueAsString(routeStatusUpdateRequest)));
 
 		//then
 		resultActions
-			.andExpect(status().isOk());
+				.andExpect(status().isOk());
 	}
 
 	private Member getMemberData() {
 		return Member.builder()
-			.email("taehee@gmail.com")
-			.nickname("태희")
-			.password("qwe12345")
-			.build();
+				.email("taehee@gmail.com")
+				.nickname("태희")
+				.password("qwe12345")
+				.build();
 	}
 
 	private Party getPartyData() {
 		return Party.builder()
-			.name("제주도 한달 살기")
-			.coverImage("http://~~~.png")
-			.startDate(LocalDateTime.now())
-			.endDate(LocalDateTime.now().plusDays(1))
-			.build();
+				.name("제주도 한달 살기")
+				.coverImage("http://~~~.png")
+				.startDate(LocalDateTime.now())
+				.endDate(LocalDateTime.now().plusDays(1))
+				.build();
 	}
 
 	private Location getLocationData() {
 		return Location.builder()
-			.name("오예스 찜닭")
-			.memberId(memberId)
-			.latitude(12.3456)
-			.longitude(34.5678)
-			.searchAddress("서귀포시")
-			.address("제주특별자치도 서귀포시 서귀동")
-			.image("http://~~~.png")
-			.visitDate(LocalDateTime.now().plusDays(10))
-			.category(Category.MEAL)
-			.expectedCost(40000)
-			.partyId(partyId)
-			.build();
+				.name("오예스 찜닭")
+				.memberId(memberId)
+				.latitude(12.3456)
+				.longitude(34.5678)
+				.searchAddress("서귀포시")
+				.address("제주특별자치도 서귀포시 서귀동")
+				.image("http://~~~.png")
+				.visitDate(LocalDateTime.now().plusDays(10))
+				.category(Category.MEAL)
+				.expectedCost(40000)
+				.partyId(partyId)
+				.build();
 	}
 
 	private PartyMember getPartyMemberData(Member member, Party party) {
 		return PartyMember.builder()
-			.member(member)
-			.party(party)
-			.role("총무")
-			.isLeader(true)
-			.build();
+				.member(member)
+				.party(party)
+				.role("총무")
+				.isLeader(true)
+				.build();
 	}
 
 	private Route getRouteData(Location location, Party party) {
 		return Route.builder()
-			.locations(List.of(location))
-			.party(party)
-			.build();
+				.locations(List.of(location))
+				.party(party)
+				.build();
 	}
 
 	private RouteLike getRouteLikeData(Member member, Route route) {
 		return RouteLike.builder()
-			.memberId(member.getId())
-			.routeId(route.getId())
-			.build();
+				.memberId(member.getId())
+				.routeId(route.getId())
+				.build();
 	}
 }
