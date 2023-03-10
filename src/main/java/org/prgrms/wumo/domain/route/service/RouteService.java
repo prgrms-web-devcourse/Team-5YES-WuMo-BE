@@ -44,16 +44,8 @@ public class RouteService {
 
 	@Transactional
 	public RouteRegisterResponse registerRoute(RouteRegisterRequest routeRegisterRequest) {
-		Party party = partyRepository.findById(routeRegisterRequest.partyId())
-				.orElseThrow(() -> new EntityNotFoundException(
-						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.PARTY.name())
-				));
-		Location location = locationRepository.findById(routeRegisterRequest.locationId())
-				.orElseThrow(() -> new EntityNotFoundException(
-						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.LOCATION.name())
-				));
-
-		validateAccess(party.getId());
+		Party party = getPartyEntity(routeRegisterRequest.partyId());
+		Location location = getLocationEntity(routeRegisterRequest.locationId());
 
 		if (routeRegisterRequest.routeId() == null) {
 			Route route = routeRepository.save(toRoute(location, party));
@@ -69,10 +61,7 @@ public class RouteService {
 
 	@Transactional(readOnly = true)
 	public RouteGetResponse getRoute(long partyId, int fromPublic) {
-		Route route = routeRepository.findByPartyId(partyId)
-				.orElseThrow(() -> new EntityNotFoundException(
-						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.ROUTE.name())
-				));
+		Route route = getRouteEntityByParty(partyId);
 
 		if (fromPublic == 0) {
 			validateAccess(route.getParty().getId());
@@ -87,16 +76,11 @@ public class RouteService {
 				routeGetAllRequest.cursorId(),
 				routeGetAllRequest.pageSize(),
 				routeGetAllRequest.sortType(),
-				routeGetAllRequest.searchWord());
+				routeGetAllRequest.searchWord()
+		);
 		addIsLiking(routes);
 
-		//TODO 현재 모든 목록 조회에서 같은 로직 사용중 -> util로 빼는것 고려하기
-		long lastId = -1L;
-		if (routes.size() != 0) {
-			lastId = routes.get(routes.size() - 1).getId();
-		}
-
-		return toRouteGetAllResponses(routes, lastId);
+		return toRouteGetAllResponses(routes, getRouteLastId(routes));
 	}
 
 	@Transactional(readOnly = true)
@@ -104,40 +88,23 @@ public class RouteService {
 		Pair<List<Long>, List<Route>> pair = routeLikeRepository.findAllByMemberId(
 				getMemberId(),
 				routeGetAllRequest.cursorId(),
-				routeGetAllRequest.pageSize());
+				routeGetAllRequest.pageSize()
+		);
 
-		List<Route> routes = pair.getSecond();
-		addIsLiking(routes);
-
-		long lastId = -1L;
 		List<Long> routeLikeIds = pair.getFirst();
-		if (routeLikeIds.size() != 0) {
-			lastId = routeLikeIds.get(routeLikeIds.size() - 1);
-		}
+		List<Route> routes = pair.getSecond();
 
-		return toRouteGetAllResponses(routes, lastId);
+		return toRouteGetAllResponses(routes, getRouteLikeLastId(routeLikeIds));
 	}
 
 	@Transactional
 	public void updateRoutePublicStatus(RouteStatusUpdateRequest routeStatusUpdateRequest) {
 		Route route = getRouteEntity(routeStatusUpdateRequest.routeId());
 		validateAccess(route.getParty().getId());
-		route.updatePublicStatus(routeStatusUpdateRequest.name(), routeStatusUpdateRequest.isPublic());
-	}
-
-	private Route getRouteEntity(long routeId) {
-		return routeRepository.findById(routeId)
-				.orElseThrow(() -> new EntityNotFoundException(
-						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.ROUTE.name())
-				));
-	}
-
-	private void addIsLiking(List<Route> routes) {
-		long memberId = getMemberId();
-		routes.forEach(
-				route -> route.addIsLiking(
-						routeLikeRepository.existsByRouteIdAndMemberId(route.getId(), memberId)
-				));
+		route.updatePublicStatus(
+				routeStatusUpdateRequest.name(),
+				routeStatusUpdateRequest.isPublic()
+		);
 	}
 
 	private void validateAccess(long partyId) {
@@ -148,5 +115,57 @@ public class RouteService {
 
 	private boolean isNotPartyMember(long partyId) {
 		return !partyMemberRepository.existsByPartyIdAndMemberId(partyId, getMemberId());
+	}
+
+	private void addIsLiking(List<Route> routes) {
+		long memberId = getMemberId();
+		routes.forEach(
+				route -> route.addIsLiking(
+						routeLikeRepository.existsByRouteIdAndMemberId(route.getId(), memberId)
+				));
+	}
+
+	private long getRouteLastId(List<Route> routes) {
+		long lastId = -1L;
+		if (routes.size() != 0) {
+			lastId = routes.get(routes.size() - 1).getId();
+		}
+		return lastId;
+	}
+
+	private long getRouteLikeLastId(List<Long> routeLikeIds) {
+		long lastId = -1L;
+		if (routeLikeIds.size() != 0) {
+			lastId = routeLikeIds.get(routeLikeIds.size() - 1);
+		}
+		return lastId;
+	}
+
+	private Route getRouteEntity(long routeId) {
+		return routeRepository.findById(routeId)
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.ROUTE.name())
+				));
+	}
+
+	private Party getPartyEntity(long partyId) {
+		return partyRepository.findById(partyId)
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.PARTY.name())
+				));
+	}
+
+	private Location getLocationEntity(long locationId) {
+		return locationRepository.findById(locationId)
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.LOCATION.name())
+				));
+	}
+
+	private Route getRouteEntityByParty(long partyId) {
+		return routeRepository.findByPartyId(partyId)
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.ROUTE.name())
+				));
 	}
 }
