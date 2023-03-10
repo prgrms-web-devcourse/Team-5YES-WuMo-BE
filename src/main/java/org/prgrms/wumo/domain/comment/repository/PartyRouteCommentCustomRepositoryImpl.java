@@ -22,9 +22,9 @@ public class PartyRouteCommentCustomRepositoryImpl implements PartyRouteCommentC
 				.selectFrom(qPartyRouteComment)
 				.where(
 						eqLocationId(locationId),
-						gtPartyRouteCommentId(cursorId)
+						ltPartyRouteCommentId(cursorId)
 				)
-				.orderBy(qPartyRouteComment.id.asc())
+				.orderBy(qPartyRouteComment.id.desc())
 				.limit(pageSize)
 				.fetch();
 	}
@@ -35,5 +35,9 @@ public class PartyRouteCommentCustomRepositoryImpl implements PartyRouteCommentC
 
 	private BooleanExpression gtPartyRouteCommentId(Long cursorId){
 		return (cursorId != null) ? qPartyRouteComment.id.gt(cursorId) : null;
+	}
+
+	private BooleanExpression ltPartyRouteCommentId(Long cursorId){
+		return (cursorId != null) ? qPartyRouteComment.id.lt(cursorId) : null;
 	}
 }
