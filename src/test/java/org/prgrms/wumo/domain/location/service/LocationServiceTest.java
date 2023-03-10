@@ -157,6 +157,8 @@ public class LocationServiceTest {
 		void getOneLocationTest() {
 			// Given
 			given(locationRepository.findById(1L)).willReturn(Optional.of(locationTestUtils.getLocation()));
+			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(
+					Optional.of(leaderPartyMember));
 
 			// When
 			LocationGetResponse locationGetResponse =
@@ -164,7 +166,7 @@ public class LocationServiceTest {
 
 			// Then
 			assertThat(locationGetResponse).usingRecursiveComparison()
-					.isEqualTo(toLocationGetResponse(locationTestUtils.getLocation()));
+					.isEqualTo(toLocationGetResponse(locationTestUtils.getLocation(), true));
 		}
 
 		@Test
@@ -205,6 +207,8 @@ public class LocationServiceTest {
 
 			given(locationRepository.findByPartyId(1L, 5, 1L))
 					.willReturn(partyId1Locations);
+			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(
+					Optional.of(leaderPartyMember));
 
 			// When
 			LocationGetAllResponse locationGetAllResponse = locationService.getAllLocation(locationGetAllRequest);
@@ -213,10 +217,10 @@ public class LocationServiceTest {
 			assertThat(locationGetAllResponse.locations().size()).isEqualTo(5);
 			for (int i = 0; i < 4; i++) {
 				assertThat(locationGetAllResponse.locations().get(i)).usingRecursiveComparison()
-						.isEqualTo(toLocationGetResponse(locationTestUtils.getLocations().get(i)));
+						.isEqualTo(toLocationGetResponse(locationTestUtils.getLocations().get(i), true));
 			}
 			assertThat(locationGetAllResponse.locations().get(4)).usingRecursiveComparison()
-					.isEqualTo(toLocationGetResponse(locationTestUtils.getLocations().get(5)));
+					.isEqualTo(toLocationGetResponse(locationTestUtils.getLocations().get(5), true));
 		}
 
 	}

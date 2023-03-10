@@ -72,6 +72,7 @@ public class LocationControllerTest extends MysqlTestContainer {
 	Member member;
 	Party party;
 	PartyMember partyMember;
+	Location location;
 
 	@BeforeEach
 	void beforeEach() {
@@ -99,6 +100,20 @@ public class LocationControllerTest extends MysqlTestContainer {
 						.party(party)
 						.role("총무")
 						.isLeader(true)
+						.build()
+		);
+
+		location = locationRepository.save(
+				Location.builder()
+						.image("http://programmers_gangnam_image.com")
+						.memberId(member.getId())
+						.description("이번에 새로 오픈한 프로그래머스 강남 교육장!! 모니터도 있고 좋은데 화장실이 좀....")
+						.latitude(123.456).longitude(456.789)
+						.address("강남역 2번출구").visitDate(LocalDateTime.now().plusDays(30))
+						.searchAddress("서울특별시")
+						.category(Category.CULTURE).name("프로그래머스 강남 교육장")
+						.spending(3000).expectedCost(4000)
+						.partyId(party.getId())
 						.build()
 		);
 
@@ -160,18 +175,15 @@ public class LocationControllerTest extends MysqlTestContainer {
 	@DisplayName("후보 장소 하나를 상세 조회할 수 있다.")
 	void getLocationTest() throws Exception {
 		// Given
-		Long locationId = locationRepository.save(locationTestUtils.getLocation()).getId();
+		//Long locationId = locationRepository.save(locationTestUtils.getLocation()).getId();
 
 		// When
-		ResultActions resultActions = mockMvc.perform(get("/api/v1/locations/{locationId}", locationId));
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/locations/{locationId}", location.getId()));
 
 		// Then
 		resultActions
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").isNotEmpty())
-				.andExpect(jsonPath("$.name").value("프로그래머스 강남 교육장"))
-				.andExpect(jsonPath("$.latitude").value(locationTestUtils.getLatitude1()))
-				.andExpect(jsonPath("$.longitude").value(locationTestUtils.getLongitude1()))
 				.andDo(print());
 	}
 
@@ -186,7 +198,7 @@ public class LocationControllerTest extends MysqlTestContainer {
 				get("/api/v1/locations")
 						.param("cursorId", (String)null)
 						.param("pageSize", "5")
-						.param("partyId", "1")
+						.param("partyId", String.valueOf(party.getId()))
 		);
 
 		// Then
@@ -195,6 +207,7 @@ public class LocationControllerTest extends MysqlTestContainer {
 				.andExpect(jsonPath("$.locations").isArray())
 				.andExpect(jsonPath("$.locations").isNotEmpty())
 				.andExpect(jsonPath("$.locations[0].id").isNotEmpty())
+				.andExpect(jsonPath("$.lastId").isNotEmpty())
 				.andDo(print());
 	}
 

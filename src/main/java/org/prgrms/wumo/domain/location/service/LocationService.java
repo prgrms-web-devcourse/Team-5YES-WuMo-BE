@@ -9,6 +9,7 @@ import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationSpendingUpd
 import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationUpdateResponse;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -48,17 +49,19 @@ public class LocationService {
 
 	@Transactional(readOnly = true)
 	public LocationGetResponse getLocation(Long locationId) {
-		return toLocationGetResponse(getLocationEntity(locationId));
+		Location location = getLocationEntity(locationId);
+		return toLocationGetResponse(location, getIsEditable(location, getMemberId()));
 	}
 
 	@Transactional(readOnly = true)
 	public LocationGetAllResponse getAllLocation(LocationGetAllRequest locationGetAllRequest) {
 		List<Location> locations = locationRepository.findByPartyId(locationGetAllRequest.cursorId(),
 				locationGetAllRequest.pageSize(), locationGetAllRequest.partyId());
+		List<Boolean> isEditables = locations.stream().map((location) -> getIsEditable(location, getMemberId())).toList();
 
 		long lastId = locations.size() > 0 ? locations.get(locations.size() - 1).getId() : -1L;
 
-		return toLocationGetAllResponse(locations, lastId);
+		return toLocationGetAllResponse(locations, isEditables, lastId);
 	}
 
 	@Transactional
@@ -84,7 +87,7 @@ public class LocationService {
 	}
 
 	@Transactional
-	public void deleteLocation(Long locationId){
+	public void deleteLocation(Long locationId) {
 		Location location = getLocationEntity(locationId);
 
 		checkAuthorization(location, getMemberId());
@@ -93,7 +96,7 @@ public class LocationService {
 	}
 
 	@Transactional
-	public LocationSpendingUpdateResponse updateSpending(LocationSpendingUpdateRequest locationSpendingUpdateRequest){
+	public LocationSpendingUpdateResponse updateSpending(LocationSpendingUpdateRequest locationSpendingUpdateRequest) {
 		Location location = getLocationEntity(locationSpendingUpdateRequest.locationId());
 
 		checkAuthorization(location, getMemberId());
@@ -115,16 +118,21 @@ public class LocationService {
 			throw new AccessDeniedException("모임에 속하지 않은 회원입니다.");
 	}
 
-	private PartyMember getPartyMemberEntity(Long partyId, Long memberId){
+	private PartyMember getPartyMemberEntity(Long partyId, Long memberId) {
 		return partyMemberRepository.findByPartyIdAndMemberId(partyId, memberId)
 				.orElseThrow(() -> new EntityNotFoundException("모임 내 존재하지 않는 회원입니다."));
 	}
 
-	private void checkAuthorization(Location location, Long memberId){
+	private void checkAuthorization(Location location, Long memberId) {
 		PartyMember partyMember = getPartyMemberEntity(location.getPartyId(), memberId);
 		if (partyMember.isLeader())
 			return;
 		checkMemberInParty(location.getPartyId(), memberId);
 		location.checkAuthorization(memberId);
+	}
+
+	private boolean getIsEditable(Location location, Long memberId) {
+		PartyMember partyMember = getPartyMemberEntity(location.getPartyId(), memberId);
+		return Objects.equals(location.getMemberId(), memberId) || partyMember.isLeader();
 	}
 }
