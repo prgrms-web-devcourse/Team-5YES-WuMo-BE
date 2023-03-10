@@ -24,6 +24,7 @@ import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.prgrms.wumo.domain.route.repository.RouteRepository;
+import org.prgrms.wumo.global.exception.ExceptionMessage;
 import org.springframework.data.util.Pair;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -43,11 +44,8 @@ public class RouteService {
 
 	@Transactional
 	public RouteRegisterResponse registerRoute(RouteRegisterRequest routeRegisterRequest) {
-		Party party = partyRepository.findById(routeRegisterRequest.partyId())
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 모임이 없습니다."));
-		Location location = locationRepository.findById(routeRegisterRequest.locationId())
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 후보지가 없습니다."));
-
+		Party party = getPartyEntity(routeRegisterRequest.partyId());
+		Location location = getLocationEntity(routeRegisterRequest.locationId());
 		validateAccess(party.getId());
 
 		if (routeRegisterRequest.routeId() == null) {
@@ -64,8 +62,7 @@ public class RouteService {
 
 	@Transactional(readOnly = true)
 	public RouteGetResponse getRoute(long partyId, int fromPublic) {
-		Route route = routeRepository.findByPartyId(partyId)
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
+		Route route = getRouteEntityByParty(partyId);
 
 		if (fromPublic == 0) {
 			validateAccess(route.getParty().getId());
@@ -80,16 +77,11 @@ public class RouteService {
 				routeGetAllRequest.cursorId(),
 				routeGetAllRequest.pageSize(),
 				routeGetAllRequest.sortType(),
-				routeGetAllRequest.searchWord());
+				routeGetAllRequest.searchWord()
+		);
 		addIsLiking(routes);
 
-		//TODO 현재 모든 목록 조회에서 같은 로직 사용중 -> util로 빼는것 고려하기
-		long lastId = -1L;
-		if (routes.size() != 0) {
-			lastId = routes.get(routes.size() - 1).getId();
-		}
-
-		return toRouteGetAllResponses(routes, lastId);
+		return toRouteGetAllResponses(routes, getRouteLastId(routes));
 	}
 
 	@Transactional(readOnly = true)
@@ -97,30 +89,33 @@ public class RouteService {
 		Pair<List<Long>, List<Route>> pair = routeLikeRepository.findAllByMemberId(
 				getMemberId(),
 				routeGetAllRequest.cursorId(),
-				routeGetAllRequest.pageSize());
+				routeGetAllRequest.pageSize()
+		);
 
-		List<Route> routes = pair.getSecond();
-		addIsLiking(routes);
-
-		long lastId = -1L;
 		List<Long> routeLikeIds = pair.getFirst();
-		if (routeLikeIds.size() != 0) {
-			lastId = routeLikeIds.get(routeLikeIds.size() - 1);
-		}
+		List<Route> routes = pair.getSecond();
 
-		return toRouteGetAllResponses(routes, lastId);
+		return toRouteGetAllResponses(routes, getRouteLikeLastId(routeLikeIds));
 	}
 
 	@Transactional
 	public void updateRoutePublicStatus(RouteStatusUpdateRequest routeStatusUpdateRequest) {
 		Route route = getRouteEntity(routeStatusUpdateRequest.routeId());
 		validateAccess(route.getParty().getId());
-		route.updatePublicStatus(routeStatusUpdateRequest.name(), routeStatusUpdateRequest.isPublic());
+		route.updatePublicStatus(
+				routeStatusUpdateRequest.name(),
+				routeStatusUpdateRequest.isPublic()
+		);
 	}
 
-	private Route getRouteEntity(long routeId) {
-		return routeRepository.findById(routeId)
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
+	private void validateAccess(long partyId) {
+		if (isNotPartyMember(partyId)) {
+			throw new AccessDeniedException(ExceptionMessage.WRONG_ACCESS.name());
+		}
+	}
+
+	private boolean isNotPartyMember(long partyId) {
+		return !partyMemberRepository.existsByPartyIdAndMemberId(partyId, getMemberId());
 	}
 
 	private void addIsLiking(List<Route> routes) {
@@ -131,13 +126,47 @@ public class RouteService {
 				));
 	}
 
-	private void validateAccess(long partyId) {
-		if (isNotPartyMember(partyId)) {
-			throw new AccessDeniedException("잘못된 접근입니다.");
+	private long getRouteLastId(List<Route> routes) {
+		long lastId = -1L;
+		if (routes.size() != 0) {
+			lastId = routes.get(routes.size() - 1).getId();
 		}
+		return lastId;
 	}
 
-	private boolean isNotPartyMember(long partyId) {
-		return !partyMemberRepository.existsByPartyIdAndMemberId(partyId, getMemberId());
+	private long getRouteLikeLastId(List<Long> routeLikeIds) {
+		long lastId = -1L;
+		if (routeLikeIds.size() != 0) {
+			lastId = routeLikeIds.get(routeLikeIds.size() - 1);
+		}
+		return lastId;
+	}
+
+	private Route getRouteEntity(long routeId) {
+		return routeRepository.findById(routeId)
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.ROUTE.name())
+				));
+	}
+
+	private Party getPartyEntity(long partyId) {
+		return partyRepository.findById(partyId)
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.PARTY.name())
+				));
+	}
+
+	private Location getLocationEntity(long locationId) {
+		return locationRepository.findById(locationId)
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.LOCATION.name())
+				));
+	}
+
+	private Route getRouteEntityByParty(long partyId) {
+		return routeRepository.findByPartyId(partyId)
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.ROUTE.name())
+				));
 	}
 }
