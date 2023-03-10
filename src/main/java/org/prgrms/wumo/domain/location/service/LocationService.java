@@ -99,7 +99,7 @@ public class LocationService {
 	public LocationSpendingUpdateResponse updateSpending(LocationSpendingUpdateRequest locationSpendingUpdateRequest) {
 		Location location = getLocationEntity(locationSpendingUpdateRequest.locationId());
 
-		checkAuthorization(location, getMemberId());
+		checkMemberInParty(location.getPartyId(), getMemberId());
 
 		location.updateSpending(locationSpendingUpdateRequest.spending());
 
@@ -110,7 +110,7 @@ public class LocationService {
 
 	private Location getLocationEntity(Long locationId) {
 		return locationRepository.findById(locationId)
-				.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 후보 장소입니다"));
+				.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 후보지입니다"));
 	}
 
 	private void checkMemberInParty(Long partyId, Long memberId) {

@@ -80,7 +80,8 @@ public class Location extends BaseTimeEntity {
 	private Long partyId;
 
 	@Builder
-	public Location(Long id, Long memberId, String name, String address, String searchAddress, Double latitude, Double longitude,
+	public Location(Long id, Long memberId, String name, String address, String searchAddress, Double latitude,
+			Double longitude,
 			String image,
 			String description,
 			LocalDateTime visitDate, int expectedCost, int spending, Category category, Route route, Long partyId) {
@@ -121,8 +122,9 @@ public class Location extends BaseTimeEntity {
 		this.spending = spending;
 	}
 
-	public void checkAuthorization(Long memberId){
-		if (!Objects.equals(this.memberId, memberId))
-			throw new AccessDeniedException("후보지는 작성자 및 모임장만 삭제할 수 있습니다.");
+	public void checkAuthorization(Long memberId) {
+		if (!Objects.equals(this.memberId, memberId)) {
+			throw new AccessDeniedException("후보지는 작성자 및 모임장만 수정 및 삭제할 수 있습니다.");
+		}
 	}
 }

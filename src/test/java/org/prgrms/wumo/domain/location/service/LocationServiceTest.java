@@ -341,8 +341,7 @@ public class LocationServiceTest {
 		void success() {
 			// Given
 			given(locationRepository.findById(any(Long.class))).willReturn(Optional.of(locationTestUtils.getLocation()));
-			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(Optional.of(
-					leaderPartyMember));
+			given(partyMemberRepository.existsByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(true);
 
 			// When
 			LocationSpendingUpdateResponse locationSpendingUpdateResponse =
@@ -357,12 +356,11 @@ public class LocationServiceTest {
 		}
 
 		@Test
-		@DisplayName("본인이 올린 후보지가 아니거나 모임장이 아니면 금액을 갱신할 수 없다.")
+		@DisplayName("모임의 외부인은 실제 사용 금액을 갱신할 수 없다.")
 		void failedUnAuthorized() {
 			// Given
 			given(locationRepository.findById(any(Long.class))).willReturn(Optional.of(locationTestUtils.getLocation()));
-			given(partyMemberRepository.findByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(Optional.of(
-					normalPartyMember));
+			given(partyMemberRepository.existsByPartyIdAndMemberId(any(Long.class), any(Long.class))).willReturn(false);
 
 			// When // Then
 			assertThatThrownBy(
