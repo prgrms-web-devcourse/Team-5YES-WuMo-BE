@@ -40,7 +40,7 @@ public class MemberController {
 	@GetMapping("/send-code")
 	@Operation(summary = "이메일 인증코드 전송")
 	public ResponseEntity<Void> sendCode(
-		@RequestParam("address") @Parameter(description = "이메일 인증을 원하는 회원의 이메일 주소") String toAddress) {
+			@RequestParam("address") @Parameter(description = "이메일 인증을 원하는 회원의 이메일 주소") String toAddress) {
 
 		memberService.sendCode(toAddress);
 		return ResponseEntity.ok().build();
@@ -49,7 +49,7 @@ public class MemberController {
 	@GetMapping("/check-code")
 	@Operation(summary = "이메일 인증코드 검증")
 	public ResponseEntity<Void> checkCode(
-		@Valid MemberCodeCheckRequest memberCodeCheckRequest) {
+			@Valid MemberCodeCheckRequest memberCodeCheckRequest) {
 
 		memberService.checkCode(memberCodeCheckRequest.address(), memberCodeCheckRequest.code());
 		return ResponseEntity.ok().build();
@@ -58,7 +58,7 @@ public class MemberController {
 	@PostMapping("/signup")
 	@Operation(summary = "회원가입")
 	public ResponseEntity<MemberRegisterResponse> registerMember(
-		@RequestBody @Valid MemberRegisterRequest memberRegisterRequest) {
+			@RequestBody @Valid MemberRegisterRequest memberRegisterRequest) {
 
 		return new ResponseEntity<>(memberService.registerMember(memberRegisterRequest), HttpStatus.CREATED);
 	}
@@ -66,25 +66,25 @@ public class MemberController {
 	@GetMapping("/check-email")
 	@Operation(summary = "이메일 중복체크")
 	public ResponseEntity<Void> checkEmail(
-		@Valid MemberEmailCheckRequest memberEmailCheckRequest) {
+			@Valid MemberEmailCheckRequest memberEmailCheckRequest) {
 
 		memberService.checkEmail(memberEmailCheckRequest.email());
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/check-nickname")
 	@Operation(summary = "닉네임 중복체크")
 	public ResponseEntity<Void> checkNickname(
-		@Valid MemberNicknameCheckRequest memberNicknameCheckRequest) {
+			@Valid MemberNicknameCheckRequest memberNicknameCheckRequest) {
 
 		memberService.checkNickname(memberNicknameCheckRequest.nickname());
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/login")
 	@Operation(summary = "로그인")
 	public ResponseEntity<MemberLoginResponse> loginMember(
-		@RequestBody @Valid MemberLoginRequest memberLoginRequest) {
+			@RequestBody @Valid MemberLoginRequest memberLoginRequest) {
 
 		return ResponseEntity.ok(memberService.loginMember(memberLoginRequest));
 	}
@@ -100,7 +100,7 @@ public class MemberController {
 	@PostMapping("/reissue")
 	@Operation(summary = "토큰 재발급")
 	public ResponseEntity<MemberLoginResponse> reissueMember(
-		@RequestBody @Valid MemberReissueRequest memberReissueRequest
+			@RequestBody @Valid MemberReissueRequest memberReissueRequest
 	) {
 
 		return ResponseEntity.ok(memberService.reissueMember(memberReissueRequest));
@@ -116,7 +116,7 @@ public class MemberController {
 	@PatchMapping
 	@Operation(summary = "내 정보 수정")
 	public ResponseEntity<MemberGetResponse> updateMember(
-		@RequestBody @Valid MemberUpdateRequest memberUpdateRequest) {
+			@RequestBody @Valid MemberUpdateRequest memberUpdateRequest) {
 
 		return ResponseEntity.ok(memberService.updateMember(memberUpdateRequest));
 	}

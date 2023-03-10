@@ -16,7 +16,6 @@ import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
-import org.prgrms.wumo.domain.member.model.Email;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.global.event.MemberCreateEvent;
@@ -84,8 +83,8 @@ public class MemberService {
 
 	@Transactional
 	public MemberLoginResponse loginMember(MemberLoginRequest memberLoginRequest) {
-		Member member = memberRepository.findByEmail(new Email(memberLoginRequest.email()))
-			.orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
+		Member member = memberRepository.findByEmail(memberLoginRequest.email())
+				.orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
 
 		if (member.isNotValidPassword(memberLoginRequest.password())) {
 			throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
@@ -132,9 +131,9 @@ public class MemberService {
 
 		Member member = getMemberEntity(memberId);
 		member.update(
-			memberUpdateRequest.nickname(),
-			memberUpdateRequest.password(),
-			memberUpdateRequest.profileImage()
+				memberUpdateRequest.nickname(),
+				memberUpdateRequest.password(),
+				memberUpdateRequest.profileImage()
 		);
 		return toMemberGetResponse(memberRepository.save(member));
 	}
@@ -142,16 +141,16 @@ public class MemberService {
 	private WumoJwt getWumoJwt(String memberId) {
 		WumoJwt wumoJwt = jwtTokenProvider.generateToken(memberId);
 		redisRepository.save(
-			memberId,
-			wumoJwt.getRefreshToken(),
-			jwtTokenProvider.getRefreshTokenExpireSeconds()
+				memberId,
+				wumoJwt.getRefreshToken(),
+				jwtTokenProvider.getRefreshTokenExpireSeconds()
 		);
 		return wumoJwt;
 	}
 
 	private Member getMemberEntity(long memberId) {
 		return memberRepository.findById(memberId)
-			.orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
 	}
 
 	private void validateAccess(long memberId) {
@@ -161,7 +160,7 @@ public class MemberService {
 	}
 
 	private boolean checkEmailDuplicate(String email) {
-		return memberRepository.existsByEmail(new Email(email));
+		return memberRepository.existsByEmail(email);
 	}
 
 	private boolean checkNicknameDuplicate(String nickname) {

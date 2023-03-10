@@ -53,7 +53,7 @@ public class MemberControllerTest extends MysqlTestContainer {
 
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-			new UsernamePasswordAuthenticationToken(memberId, null, Collections.EMPTY_LIST);
+				new UsernamePasswordAuthenticationToken(memberId, null, Collections.EMPTY_LIST);
 
 		context.setAuthentication(usernamePasswordAuthenticationToken);
 	}
@@ -69,19 +69,19 @@ public class MemberControllerTest extends MysqlTestContainer {
 	void register_member() throws Exception {
 		//given
 		MemberRegisterRequest memberRegisterRequest
-			= new MemberRegisterRequest("5yes@gmail.com", "오예스", "qwe12345");
+				= new MemberRegisterRequest("5yes@gmail.com", "오예스", "qwe12345");
 
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/members/signup")
-			.contentType(MediaType.APPLICATION_JSON_VALUE)
-			.content(objectMapper.writeValueAsString(memberRegisterRequest)));
+				= mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/members/signup")
+				.contentType(MediaType.APPLICATION_JSON_VALUE)
+				.content(objectMapper.writeValueAsString(memberRegisterRequest)));
 
 		//then
 		resultActions
-			.andExpect(status().isCreated())
-			.andExpect(jsonPath("$.id").isNotEmpty())
-			.andDo(print());
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.id").isNotEmpty())
+				.andDo(print());
 	}
 
 	@Test
@@ -92,12 +92,12 @@ public class MemberControllerTest extends MysqlTestContainer {
 
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/members/check-email")
-			.param("email", email));
+				= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/members/check-email")
+				.param("email", email));
 
 		//then
 		resultActions
-			.andExpect(status().isNoContent());
+				.andExpect(status().isOk());
 	}
 
 	@Test
@@ -108,12 +108,12 @@ public class MemberControllerTest extends MysqlTestContainer {
 
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/members/check-nickname")
-			.param("nickname", nickname));
+				= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/members/check-nickname")
+				.param("nickname", nickname));
 
 		//then
 		resultActions
-			.andExpect(status().isNoContent());
+				.andExpect(status().isOk());
 	}
 
 	@Test
@@ -121,16 +121,16 @@ public class MemberControllerTest extends MysqlTestContainer {
 	void get_member() throws Exception {
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/members"));
+				= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/members"));
 
 		//then
 		resultActions
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.id").value(memberId))
-			.andExpect(jsonPath("$.email").value("taehee@gmail.com"))
-			.andExpect(jsonPath("$.nickname").value("태희"))
-			.andExpect(jsonPath("$.profileImage").isEmpty())
-			.andDo(print());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(memberId))
+				.andExpect(jsonPath("$.email").value("taehee@gmail.com"))
+				.andExpect(jsonPath("$.nickname").value("태희"))
+				.andExpect(jsonPath("$.profileImage").isEmpty())
+				.andDo(print());
 	}
 
 	@Test
@@ -138,28 +138,28 @@ public class MemberControllerTest extends MysqlTestContainer {
 	void update_member() throws Exception {
 		//given
 		MemberUpdateRequest memberUpdateRequest
-			= new MemberUpdateRequest(memberId, "태희수정", "asd67890", null);
+				= new MemberUpdateRequest(memberId, "태희수정", "asd67890", null);
 
 		//when
 		ResultActions resultActions
-			= mockMvc.perform(MockMvcRequestBuilders.patch("/api/v1/members")
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(memberUpdateRequest)));
+				= mockMvc.perform(MockMvcRequestBuilders.patch("/api/v1/members")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(memberUpdateRequest)));
 
 		//then
 		resultActions
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.id").value(memberId))
-			.andExpect(jsonPath("$.nickname").value("태희수정"))
-			.andExpect(jsonPath("$.profileImage").isEmpty())
-			.andDo(print());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(memberId))
+				.andExpect(jsonPath("$.nickname").value("태희수정"))
+				.andExpect(jsonPath("$.profileImage").isEmpty())
+				.andDo(print());
 	}
 
 	private Member getMemberData() {
 		return Member.builder()
-			.email("taehee@gmail.com")
-			.nickname("태희")
-			.password("qwe12345")
-			.build();
+				.email("taehee@gmail.com")
+				.nickname("태희")
+				.password("qwe12345")
+				.build();
 	}
 }
