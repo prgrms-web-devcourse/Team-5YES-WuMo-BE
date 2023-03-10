@@ -22,9 +22,9 @@ public class LocationCommentCustomRepositoryImpl implements LocationCommentCusto
 				.selectFrom(qLocationComment)
 				.where(
 						eqLocationId(locationId),
-						gtLocationCommentId(cursorId)
+						ltLocationCommentId(cursorId)
 				)
-				.orderBy(qLocationComment.id.asc())
+				.orderBy(qLocationComment.id.desc())
 				.limit(pageSize)
 				.fetch();
 	}
@@ -35,5 +35,9 @@ public class LocationCommentCustomRepositoryImpl implements LocationCommentCusto
 
 	private BooleanExpression gtLocationCommentId(Long cursorId){
 		return (cursorId != null) ? qLocationComment.id.gt(cursorId) : null;
+	}
+
+	private BooleanExpression ltLocationCommentId(Long cursorId){
+		return (cursorId != null) ? qLocationComment.id.lt(cursorId) : null;
 	}
 }
