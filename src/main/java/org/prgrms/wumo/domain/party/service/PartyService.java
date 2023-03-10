@@ -84,10 +84,10 @@ public class PartyService {
 
 	@Transactional(readOnly = true)
 	public PartyGetResponse getParty(Long partyId) {
-		Party party = getPartyEntity(partyId);
-		setPartyDetail(party);
+		PartyMember partyMember = getPartyMemberEntity(partyId, JwtUtil.getMemberId());
+		setPartyDetail(partyMember.getParty());
 
-		return toPartyGetDetailResponse(party);
+		return toPartyGetDetailResponse(partyMember.getParty());
 	}
 
 	@Transactional
@@ -130,14 +130,14 @@ public class PartyService {
 				.orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
 	}
 
-	private Party getPartyEntity(Long partyId) {
-		return partyRepository.findById(partyId)
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 모임이 없습니다."));
-	}
-
 	private PartyMember getPartyLeaderEntity(Long partyId) {
 		return partyMemberRepository.findByPartyIdAndIsLeader(partyId)
 				.orElseThrow(() -> new EntityNotFoundException("일치하는 모임이 없습니다."));
+	}
+
+	private PartyMember getPartyMemberEntity(Long partyId, Long memberId) {
+		return partyMemberRepository.findByPartyIdAndMemberId(partyId, memberId)
+				.orElseThrow(() -> new EntityNotFoundException("해당 모임에 가입된 회원이 아닙니다."));
 	}
 
 	private void checkAuthorization(PartyMember partyMember) {

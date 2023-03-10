@@ -228,8 +228,8 @@ class PartyServiceTest {
 		@DisplayName("모임의 상세 정보를 반환한다.")
 		void success() {
 			//mocking
-			given(partyRepository.findById(party.getId()))
-					.willReturn(Optional.of(party));
+			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), member.getId()))
+					.willReturn(Optional.of(partyMember));
 			given(partyMemberRepository.countAllByParty(party))
 					.willReturn(1L);
 			given(partyMemberRepository.findAllByPartyIdInAndIsLeader(List.of(party.getId())))
@@ -248,9 +248,9 @@ class PartyServiceTest {
 			assertThat(myParty.totalMembers()).isEqualTo(1L);
 			assertThat(myParty.members()).isNotEmpty();
 
-			then(partyRepository)
+			then(partyMemberRepository)
 					.should()
-					.findById(party.getId());
+					.findByPartyIdAndMemberId(party.getId(), member.getId());
 			then(partyMemberRepository)
 					.should()
 					.countAllByParty(party);
@@ -260,10 +260,10 @@ class PartyServiceTest {
 		}
 
 		@Test
-		@DisplayName("존재하지 않는 모임이면 예외가 발생한다.")
+		@DisplayName("모임 구성원이 아니라면 예외가 발생한다.")
 		void failed() {
 			//mocking
-			given(partyRepository.findById(party.getId()))
+			given(partyMemberRepository.findByPartyIdAndMemberId(party.getId(), member.getId()))
 					.willReturn(Optional.empty());
 
 			//when
