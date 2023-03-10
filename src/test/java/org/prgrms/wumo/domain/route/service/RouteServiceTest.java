@@ -309,8 +309,6 @@ public class RouteServiceTest {
 			//mocking
 			given(routeLikeRepository.findAllByMemberId(1L, null, 5))
 					.willReturn(Pair.of(routeLikeIds, routes));
-			given(routeLikeRepository.existsByRouteIdAndMemberId(anyLong(), anyLong()))
-					.willReturn(true);
 
 			//when
 			RouteGetAllResponses result = routeService.getAllLikedRoute(routeGetAllRequest);
