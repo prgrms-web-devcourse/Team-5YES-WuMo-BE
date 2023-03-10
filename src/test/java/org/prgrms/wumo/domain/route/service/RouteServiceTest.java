@@ -40,6 +40,7 @@ import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.prgrms.wumo.domain.route.repository.RouteRepository;
+import org.prgrms.wumo.global.exception.ExceptionMessage;
 import org.springframework.data.util.Pair;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -76,7 +77,7 @@ public class RouteServiceTest {
 	void setUp() {
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-			new UsernamePasswordAuthenticationToken(1L, null, Collections.EMPTY_LIST);
+				new UsernamePasswordAuthenticationToken(1L, null, Collections.EMPTY_LIST);
 
 		context.setAuthentication(usernamePasswordAuthenticationToken);
 	}
@@ -99,17 +100,17 @@ public class RouteServiceTest {
 		void success_not_first_register() {
 			//given
 			RouteRegisterRequest routeRegisterRequest
-				= new RouteRegisterRequest(routeId, locationId, partyId);
+					= new RouteRegisterRequest(routeId, locationId, partyId);
 
 			//mocking
 			given(routeRepository.findById(anyLong()))
-				.willReturn(Optional.of(route));
+					.willReturn(Optional.of(route));
 			given(partyRepository.findById(anyLong()))
-				.willReturn(Optional.of(party));
+					.willReturn(Optional.of(party));
 			given(locationRepository.findById(anyLong()))
-				.willReturn(Optional.of(location));
+					.willReturn(Optional.of(location));
 			given(partyMemberRepository.existsByPartyIdAndMemberId(anyLong(), anyLong()))
-				.willReturn(true);
+					.willReturn(true);
 
 			//when
 			RouteRegisterResponse routeRegisterResponse = routeService.registerRoute(routeRegisterRequest);
@@ -117,8 +118,8 @@ public class RouteServiceTest {
 			//then
 			assertThat(routeRegisterResponse.id()).isEqualTo(routeId);
 			then(routeRepository)
-				.should()
-				.findById(anyLong());
+					.should()
+					.findById(anyLong());
 		}
 
 		@Test
@@ -126,17 +127,17 @@ public class RouteServiceTest {
 		void success_first_register() {
 			//given
 			RouteRegisterRequest routeRegisterRequest
-				= new RouteRegisterRequest(null, locationId, partyId);
+					= new RouteRegisterRequest(null, locationId, partyId);
 
 			//mocking
 			given(routeRepository.save(any(Route.class)))
-				.willReturn(route);
+					.willReturn(route);
 			given(partyRepository.findById(anyLong()))
-				.willReturn(Optional.of(party));
+					.willReturn(Optional.of(party));
 			given(locationRepository.findById(anyLong()))
-				.willReturn(Optional.of(location));
+					.willReturn(Optional.of(location));
 			given(partyMemberRepository.existsByPartyIdAndMemberId(anyLong(), anyLong()))
-				.willReturn(true);
+					.willReturn(true);
 
 			//when
 			RouteRegisterResponse routeRegisterResponse = routeService.registerRoute(routeRegisterRequest);
@@ -144,8 +145,8 @@ public class RouteServiceTest {
 			//then
 			assertThat(routeRegisterResponse.id()).isEqualTo(routeId);
 			then(routeRepository)
-				.should()
-				.save(any(Route.class));
+					.should()
+					.save(any(Route.class));
 		}
 
 		@Test
@@ -153,20 +154,20 @@ public class RouteServiceTest {
 		void fail_not_party_member() {
 			//given
 			RouteRegisterRequest routeRegisterRequest
-				= new RouteRegisterRequest(routeId, locationId, partyId);
+					= new RouteRegisterRequest(routeId, locationId, partyId);
 
 			//mocking
 			given(partyRepository.findById(anyLong()))
-				.willReturn(Optional.of(party));
+					.willReturn(Optional.of(party));
 			given(locationRepository.findById(anyLong()))
-				.willReturn(Optional.of(location));
+					.willReturn(Optional.of(location));
 			given(partyMemberRepository.existsByPartyIdAndMemberId(anyLong(), anyLong()))
-				.willReturn(false);
+					.willReturn(false);
 
 			//when, then
 			assertThatThrownBy(() -> routeService.registerRoute(routeRegisterRequest))
-				.isInstanceOf(AccessDeniedException.class)
-				.hasMessage("잘못된 접근입니다.");
+					.isInstanceOf(AccessDeniedException.class)
+					.hasMessage(ExceptionMessage.WRONG_ACCESS.name());
 		}
 	}
 
@@ -184,12 +185,12 @@ public class RouteServiceTest {
 
 			//mocking
 			given(routeRepository.findByPartyId(anyLong()))
-				.willReturn(Optional.of(route));
+					.willReturn(Optional.of(route));
 
 			//when, then
 			assertThatThrownBy(() -> routeService.getRoute(partyId, isPublic))
-				.isInstanceOf(AccessDeniedException.class)
-				.hasMessage("잘못된 접근입니다.");
+					.isInstanceOf(AccessDeniedException.class)
+					.hasMessage(ExceptionMessage.WRONG_ACCESS.name());
 		}
 
 		@Test
@@ -201,7 +202,7 @@ public class RouteServiceTest {
 
 			//mocking
 			given(routeRepository.findByPartyId(anyLong()))
-				.willReturn(Optional.of(route));
+					.willReturn(Optional.of(route));
 
 			//when
 			RouteGetResponse result = routeService.getRoute(partyId, isPublic);
@@ -210,8 +211,8 @@ public class RouteServiceTest {
 			assertThat(result.partyId()).isEqualTo(partyId);
 			assertThat(result.locations()).hasSize(1);
 			then(routeRepository)
-				.should()
-				.findByPartyId(anyLong());
+					.should()
+					.findByPartyId(anyLong());
 		}
 	}
 
@@ -226,15 +227,15 @@ public class RouteServiceTest {
 		void success() {
 			//given
 			RouteGetAllRequest routeGetAllRequest
-				= new RouteGetAllRequest(3L, 5, SortType.NEWEST, null);
+					= new RouteGetAllRequest(3L, 5, SortType.NEWEST, null);
 
 			routes = List.of(getPublicRouteData2(), getPublicRouteData1());
 
 			//mocking
 			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), any(SortType.class), any()))
-				.willReturn(routes);
+					.willReturn(routes);
 			given(routeLikeRepository.existsByRouteIdAndMemberId(anyLong(), anyLong()))
-				.willReturn(true);
+					.willReturn(true);
 
 			//when
 			RouteGetAllResponses result = routeService.getAllRoute(routeGetAllRequest);
@@ -249,15 +250,15 @@ public class RouteServiceTest {
 		void success_search() {
 			//given
 			RouteGetAllRequest routeGetAllRequest
-				= new RouteGetAllRequest(3L, 5, SortType.NEWEST, "제주");
+					= new RouteGetAllRequest(3L, 5, SortType.NEWEST, "제주");
 
 			routes = List.of(getPublicRouteData1());
 
 			//mocking
 			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), any(SortType.class), anyString()))
-				.willReturn(routes);
+					.willReturn(routes);
 			given(routeLikeRepository.existsByRouteIdAndMemberId(anyLong(), anyLong()))
-				.willReturn(true);
+					.willReturn(true);
 
 			//when
 			RouteGetAllResponses result = routeService.getAllRoute(routeGetAllRequest);
@@ -272,13 +273,13 @@ public class RouteServiceTest {
 		void success_empty_data() {
 			//given
 			RouteGetAllRequest routeGetAllRequest
-				= new RouteGetAllRequest(3L, 5, SortType.NEWEST, "부산광역시");
+					= new RouteGetAllRequest(3L, 5, SortType.NEWEST, "부산광역시");
 
 			routes = Collections.emptyList();
 
 			//mocking
 			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), any(SortType.class), anyString()))
-				.willReturn(routes);
+					.willReturn(routes);
 
 			//when
 			RouteGetAllResponses result = routeService.getAllRoute(routeGetAllRequest);
@@ -300,16 +301,16 @@ public class RouteServiceTest {
 		void success() {
 			//given
 			RouteGetAllRequest routeGetAllRequest
-				= new RouteGetAllRequest(null, 5, SortType.NEWEST, null);
+					= new RouteGetAllRequest(null, 5, SortType.NEWEST, null);
 
 			routes = List.of(getPublicRouteData2(), getPublicRouteData1());
 			List<Long> routeLikeIds = List.of(2L, 1L); // 좋아요를 눌렀다고 가정
 
 			//mocking
 			given(routeLikeRepository.findAllByMemberId(1L, null, 5))
-				.willReturn(Pair.of(routeLikeIds, routes));
+					.willReturn(Pair.of(routeLikeIds, routes));
 			given(routeLikeRepository.existsByRouteIdAndMemberId(anyLong(), anyLong()))
-				.willReturn(true);
+					.willReturn(true);
 
 			//when
 			RouteGetAllResponses result = routeService.getAllLikedRoute(routeGetAllRequest);
@@ -324,14 +325,14 @@ public class RouteServiceTest {
 		void success_empty_data() {
 			//given
 			RouteGetAllRequest routeGetAllRequest
-				= new RouteGetAllRequest(null, 5, SortType.NEWEST, null);
+					= new RouteGetAllRequest(null, 5, SortType.NEWEST, null);
 
 			routes = Collections.emptyList();
 			List<Long> routeLikeIds = Collections.emptyList(); // 좋아요를 누른 루트가 없다고 가정
 
 			//mocking
 			given(routeLikeRepository.findAllByMemberId(1L, null, 5))
-				.willReturn(Pair.of(routeLikeIds, routes));
+					.willReturn(Pair.of(routeLikeIds, routes));
 
 			//when
 			RouteGetAllResponses result = routeService.getAllLikedRoute(routeGetAllRequest);
@@ -347,7 +348,7 @@ public class RouteServiceTest {
 	class UpdateRoutePublicStatus {
 		//given
 		RouteStatusUpdateRequest routeStatusUpdateRequest
-			= new RouteStatusUpdateRequest(routeId, true, "퇴사 기념 여행");
+				= new RouteStatusUpdateRequest(routeId, true, "퇴사 기념 여행");
 
 		Route route = getRouteData();
 
@@ -356,54 +357,54 @@ public class RouteServiceTest {
 		void success() {
 			//mocking
 			given(routeRepository.findById(anyLong()))
-				.willReturn(Optional.of(route));
+					.willReturn(Optional.of(route));
 			given(partyMemberRepository.existsByPartyIdAndMemberId(anyLong(), anyLong()))
-				.willReturn(true);
+					.willReturn(true);
 
 			//when
 			routeService.updateRoutePublicStatus(routeStatusUpdateRequest);
 
 			//then
 			then(routeRepository)
-				.should()
-				.findById(anyLong());
+					.should()
+					.findById(anyLong());
 		}
 	}
 
 	private Party getPartyData() {
 		return Party.builder()
-			.id(partyId)
-			.name("제주도 한달 살기")
-			.coverImage("http://~~~.png")
-			.startDate(LocalDateTime.now())
-			.endDate(LocalDateTime.now().plusDays(1))
-			.build();
+				.id(partyId)
+				.name("제주도 한달 살기")
+				.coverImage("http://~~~.png")
+				.startDate(LocalDateTime.now())
+				.endDate(LocalDateTime.now().plusDays(1))
+				.build();
 	}
 
 	private Location getLocationData() {
 		return Location.builder()
-			.id(locationId)
-			.memberId(1L)
-			.name("오예스 찜닭")
-			.latitude(12.3456)
-			.longitude(34.5678)
-			.address("제주특별자치도 서귀포시 서귀동")
-			.image("http://~~~.png")
-			.visitDate(LocalDateTime.now().plusDays(10))
-			.category(Category.MEAL)
-			.expectedCost(40000)
-			.partyId(partyId)
-			.build();
+				.id(locationId)
+				.memberId(1L)
+				.name("오예스 찜닭")
+				.latitude(12.3456)
+				.longitude(34.5678)
+				.address("제주특별자치도 서귀포시 서귀동")
+				.image("http://~~~.png")
+				.visitDate(LocalDateTime.now().plusDays(10))
+				.category(Category.MEAL)
+				.expectedCost(40000)
+				.partyId(partyId)
+				.build();
 	}
 
 	private Route getRouteData() {
 		return Route.builder()
-			.id(routeId)
-			.locations(new ArrayList<>() {{
-				add(getLocationData());
-			}})
-			.party(getPartyData())
-			.build();
+				.id(routeId)
+				.locations(new ArrayList<>() {{
+					add(getLocationData());
+				}})
+				.party(getPartyData())
+				.build();
 	}
 
 	//제주시에 위치한 후보지가 포함된 루트
@@ -416,27 +417,27 @@ public class RouteServiceTest {
 	//서울특별시에 위치한 후보지가 포함된 루트
 	private Route getPublicRouteData2() {
 		Location location = Location.builder()
-			.id(2L)
-			.memberId(1L)
-			.name("오예스 치킨")
-			.latitude(23.3456)
-			.longitude(45.5678)
-			.address("서울특별시 강남구 테헤란로")
-			.searchAddress("서울특별시")
-			.image("http://~~~.png")
-			.visitDate(LocalDateTime.now().plusDays(5))
-			.category(Category.MEAL)
-			.expectedCost(50000)
-			.partyId(2L)
-			.build();
+				.id(2L)
+				.memberId(1L)
+				.name("오예스 치킨")
+				.latitude(23.3456)
+				.longitude(45.5678)
+				.address("서울특별시 강남구 테헤란로")
+				.searchAddress("서울특별시")
+				.image("http://~~~.png")
+				.visitDate(LocalDateTime.now().plusDays(5))
+				.category(Category.MEAL)
+				.expectedCost(50000)
+				.partyId(2L)
+				.build();
 
 		Route route = Route.builder()
-			.id(2L)
-			.locations(new ArrayList<>() {{
-				add(location);
-			}})
-			.party(getPartyData())
-			.build();
+				.id(2L)
+				.locations(new ArrayList<>() {{
+					add(location);
+				}})
+				.party(getPartyData())
+				.build();
 		route.updatePublicStatus("퇴사 기념 제주도 한달 살기", true);
 		return route;
 	}
