@@ -3,7 +3,12 @@ spring:
     active: prod
     group:
       prod:
-        - prod
+        - environment
+        - db
+        - security
+        - aws
+        - redis
+        - sender
       local:
         - local
 
