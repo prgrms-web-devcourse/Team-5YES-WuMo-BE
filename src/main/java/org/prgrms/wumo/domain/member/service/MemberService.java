@@ -16,7 +16,6 @@ import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
-import org.prgrms.wumo.domain.member.model.Email;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.global.event.MemberCreateEvent;
@@ -161,7 +160,7 @@ public class MemberService {
 	}
 
 	private boolean checkEmailDuplicate(String email) {
-		return memberRepository.existsByEmail(new Email(email));
+		return memberRepository.existsByEmail(email);
 	}
 
 	private boolean checkNicknameDuplicate(String nickname) {

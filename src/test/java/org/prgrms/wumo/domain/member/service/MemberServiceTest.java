@@ -30,7 +30,6 @@ import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
-import org.prgrms.wumo.domain.member.model.Email;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
@@ -120,7 +119,7 @@ public class MemberServiceTest {
 		@DisplayName("이미 가입된 이메일이라면 예외가 발생한다")
 		void fail_with_exist_emil() {
 			//mocking
-			given(memberRepository.existsByEmail(any(Email.class)))
+			given(memberRepository.existsByEmail(anyString()))
 					.willReturn(true);
 
 			//when, then
