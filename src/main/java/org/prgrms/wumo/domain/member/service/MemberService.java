@@ -19,6 +19,7 @@ import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.global.event.MemberCreateEvent;
+import org.prgrms.wumo.global.exception.ExceptionMessage;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.exception.custom.InvalidCodeException;
 import org.prgrms.wumo.global.exception.custom.InvalidRefreshTokenException;
@@ -84,7 +85,9 @@ public class MemberService {
 	@Transactional
 	public MemberLoginResponse loginMember(MemberLoginRequest memberLoginRequest) {
 		Member member = memberRepository.findByEmail(memberLoginRequest.email())
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.MEMBER.name())
+				));
 
 		if (member.isNotValidPassword(memberLoginRequest.password())) {
 			throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
@@ -150,12 +153,14 @@ public class MemberService {
 
 	private Member getMemberEntity(long memberId) {
 		return memberRepository.findById(memberId)
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.MEMBER.name())
+				));
 	}
 
 	private void validateAccess(long memberId) {
 		if (!isValidAccess(memberId)) {
-			throw new AccessDeniedException("잘못된 접근입니다.");
+			throw new AccessDeniedException(ExceptionMessage.WRONG_ACCESS.name());
 		}
 	}
 
