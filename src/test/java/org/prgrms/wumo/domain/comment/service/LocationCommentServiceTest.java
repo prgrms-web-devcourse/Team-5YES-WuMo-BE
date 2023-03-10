@@ -134,11 +134,12 @@ public class LocationCommentServiceTest {
 					.build();
 
 			List<LocationComment> locationComments = List.of(locationComment2, locationComment3);
+			List<Boolean> isEditables = List.of(true, true);
 
 			LocationCommentGetAllRequest locationCommentGetAllRequest =
 					new LocationCommentGetAllRequest(null, 2, 2L);
 
-			LocationCommentGetAllResponse expected = toLocationCommentGetAllResponse(locationComments, 3L);
+			LocationCommentGetAllResponse expected = toLocationCommentGetAllResponse(locationComments, isEditables, 3L);
 
 			given(locationCommentRepository.findAllByLocationId(2L, null, 2))
 					.willReturn(locationComments);

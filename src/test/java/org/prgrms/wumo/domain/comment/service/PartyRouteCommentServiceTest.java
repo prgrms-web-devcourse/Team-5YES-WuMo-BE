@@ -145,9 +145,11 @@ public class PartyRouteCommentServiceTest {
 					.member(member)
 					.build();
 
+			List<Boolean> isEditables = List.of(true, true);
+
 			List<PartyRouteComment> partyRouteComments = List.of(partyRouteComment2, partyRouteComment3);
 			PartyRouteCommentGetAllRequest request = new PartyRouteCommentGetAllRequest(null, 2, 2L);
-			PartyRouteCommentGetAllResponse expected = toPartyRouteCommentGetAllResponse(partyRouteComments, 3L);
+			PartyRouteCommentGetAllResponse expected = toPartyRouteCommentGetAllResponse(partyRouteComments, isEditables, 3L);
 
 			// When
 			given(partyRouteCommentRepository.findAllByLocationId(null, 2, 2L))
