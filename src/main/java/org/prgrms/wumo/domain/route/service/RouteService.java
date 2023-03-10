@@ -24,6 +24,7 @@ import org.prgrms.wumo.domain.route.dto.response.RouteGetResponse;
 import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.prgrms.wumo.domain.route.repository.RouteRepository;
+import org.prgrms.wumo.global.exception.ExceptionMessage;
 import org.springframework.data.util.Pair;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -44,9 +45,13 @@ public class RouteService {
 	@Transactional
 	public RouteRegisterResponse registerRoute(RouteRegisterRequest routeRegisterRequest) {
 		Party party = partyRepository.findById(routeRegisterRequest.partyId())
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 모임이 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.PARTY.name())
+				));
 		Location location = locationRepository.findById(routeRegisterRequest.locationId())
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 후보지가 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.LOCATION.name())
+				));
 
 		validateAccess(party.getId());
 
@@ -65,7 +70,9 @@ public class RouteService {
 	@Transactional(readOnly = true)
 	public RouteGetResponse getRoute(long partyId, int fromPublic) {
 		Route route = routeRepository.findByPartyId(partyId)
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.ROUTE.name())
+				));
 
 		if (fromPublic == 0) {
 			validateAccess(route.getParty().getId());
@@ -120,7 +127,9 @@ public class RouteService {
 
 	private Route getRouteEntity(long routeId) {
 		return routeRepository.findById(routeId)
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.ROUTE.name())
+				));
 	}
 
 	private void addIsLiking(List<Route> routes) {
@@ -133,7 +142,7 @@ public class RouteService {
 
 	private void validateAccess(long partyId) {
 		if (isNotPartyMember(partyId)) {
-			throw new AccessDeniedException("잘못된 접근입니다.");
+			throw new AccessDeniedException(ExceptionMessage.WRONG_ACCESS.name());
 		}
 	}
 
