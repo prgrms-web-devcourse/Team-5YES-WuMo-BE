@@ -1,0 +1,9 @@
+jwt:
+  header: ${JWT_HEADER}
+  issuer: ${JWT_ISSUER}
+  secret-key: ${JWT_SECRET_KEY}
+  access-token-expire-seconds: ${JWT_ACCESS_TOKEN_EXPIRE_SECONDS}
+  refresh-token-expire-seconds: ${JWT_REFRESH_TOKEN_EXPIRE_SECONDS}
+
+front:
+  server: "https://5yes-wumo.vercel.app/"
