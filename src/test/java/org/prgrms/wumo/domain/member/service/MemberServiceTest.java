@@ -32,6 +32,7 @@ import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
+import org.prgrms.wumo.global.exception.ExceptionMessage;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.WumoJwt;
@@ -203,7 +204,7 @@ public class MemberServiceTest {
 			//when, then
 			assertThatThrownBy(() -> memberService.loginMember(memberLoginRequest))
 					.isInstanceOf(EntityNotFoundException.class)
-					.hasMessage("일치하는 회원이 없습니다.");
+					.hasMessage(String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.MEMBER.name()));
 		}
 
 		@Test
