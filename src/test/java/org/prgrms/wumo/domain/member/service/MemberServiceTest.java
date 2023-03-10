@@ -66,7 +66,7 @@ public class MemberServiceTest {
 	void setUp() {
 		SecurityContext context = SecurityContextHolder.getContext();
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-			new UsernamePasswordAuthenticationToken(1L, null, Collections.EMPTY_LIST);
+				new UsernamePasswordAuthenticationToken(1L, null, Collections.EMPTY_LIST);
 
 		context.setAuthentication(usernamePasswordAuthenticationToken);
 	}
@@ -85,7 +85,7 @@ public class MemberServiceTest {
 		String password = "qwe12345";
 
 		MemberRegisterRequest memberRegisterRequest
-			= new MemberRegisterRequest(email, nickname, password);
+				= new MemberRegisterRequest(email, nickname, password);
 
 		Member member = getMemberData(email, nickname, password);
 
@@ -94,7 +94,7 @@ public class MemberServiceTest {
 		void success() {
 			//mocking
 			given(memberRepository.save(any(Member.class)))
-				.willReturn(member);
+					.willReturn(member);
 
 			//when
 			MemberRegisterResponse result = memberService.registerMember(memberRegisterRequest);
@@ -102,8 +102,8 @@ public class MemberServiceTest {
 			//then
 			assertThat(result.id()).isEqualTo(1L);
 			then(memberRepository)
-				.should()
-				.save(any(Member.class));
+					.should()
+					.save(any(Member.class));
 		}
 	}
 
@@ -114,19 +114,19 @@ public class MemberServiceTest {
 		String email = "5yes@gmail.com";
 
 		MemberEmailCheckRequest memberEmailCheckRequest
-			= new MemberEmailCheckRequest(email);
+				= new MemberEmailCheckRequest(email);
 
 		@Test
 		@DisplayName("이미 가입된 이메일이라면 예외가 발생한다")
 		void fail_with_exist_emil() {
 			//mocking
 			given(memberRepository.existsByEmail(any(Email.class)))
-				.willReturn(true);
+					.willReturn(true);
 
 			//when, then
 			assertThatThrownBy(() -> memberService.checkEmail(memberEmailCheckRequest.email()))
-				.isInstanceOf(DuplicateException.class)
-				.hasMessage("이메일이 중복됩니다.");
+					.isInstanceOf(DuplicateException.class)
+					.hasMessage("이메일이 중복됩니다.");
 		}
 	}
 
@@ -137,19 +137,19 @@ public class MemberServiceTest {
 		String nickname = "오예스";
 
 		MemberNicknameCheckRequest memberNicknameCheckRequest
-			= new MemberNicknameCheckRequest(nickname);
+				= new MemberNicknameCheckRequest(nickname);
 
 		@Test
 		@DisplayName("이미 사용중인 닉네임이라면 예외가 발생한다")
 		void fail_with_exist_emil() {
 			//mocking
 			given(memberRepository.existsByNickname(anyString()))
-				.willReturn(true);
+					.willReturn(true);
 
 			//when, then
 			assertThatThrownBy(() -> memberService.checkNickname(memberNicknameCheckRequest.nickname()))
-				.isInstanceOf(DuplicateException.class)
-				.hasMessage("닉네임이 중복됩니다.");
+					.isInstanceOf(DuplicateException.class)
+					.hasMessage("닉네임이 중복됩니다.");
 		}
 	}
 
@@ -162,24 +162,24 @@ public class MemberServiceTest {
 		String password = "qwe12345";
 
 		MemberLoginRequest memberLoginRequest
-			= new MemberLoginRequest(email, password);
+				= new MemberLoginRequest(email, password);
 
 		Member member = getMemberData(email, nickname, password);
 
 		WumoJwt wumoJwt = WumoJwt.builder()
-			.grantType("grant type")
-			.accessToken("access token")
-			.refreshToken("refresh token")
-			.build();
+				.grantType("grant type")
+				.accessToken("access token")
+				.refreshToken("refresh token")
+				.build();
 
 		@Test
 		@DisplayName("성공하면 jwt token을 반환한다")
 		void success() {
 			//mocking
-			given(memberRepository.findByEmail(any(Email.class)))
-				.willReturn(Optional.of(member));
+			given(memberRepository.findByEmail(anyString()))
+					.willReturn(Optional.of(member));
 			given(jwtTokenProvider.generateToken(anyString()))
-				.willReturn(wumoJwt);
+					.willReturn(wumoJwt);
 
 			//when
 			MemberLoginResponse result = memberService.loginMember(memberLoginRequest);
@@ -187,24 +187,24 @@ public class MemberServiceTest {
 			//then
 			assertThat(result).usingRecursiveComparison().isEqualTo(wumoJwt);
 			then(memberRepository)
-				.should()
-				.findByEmail(any(Email.class));
+					.should()
+					.findByEmail(anyString());
 			then(jwtTokenProvider)
-				.should()
-				.generateToken(anyString());
+					.should()
+					.generateToken(anyString());
 		}
 
 		@Test
 		@DisplayName("이메일이 일치하지 않으면 예외가 발생한다")
 		void fail_not_match_email() {
 			//mocking
-			given(memberRepository.findByEmail(any(Email.class)))
-				.willReturn(Optional.ofNullable(null));
+			given(memberRepository.findByEmail(anyString()))
+					.willReturn(Optional.ofNullable(null));
 
 			//when, then
 			assertThatThrownBy(() -> memberService.loginMember(memberLoginRequest))
-				.isInstanceOf(EntityNotFoundException.class)
-				.hasMessage("일치하는 회원이 없습니다.");
+					.isInstanceOf(EntityNotFoundException.class)
+					.hasMessage("일치하는 회원이 없습니다.");
 		}
 
 		@Test
@@ -213,15 +213,15 @@ public class MemberServiceTest {
 			//mocking
 			String wrongPassword = "asd12345";
 			MemberLoginRequest wrongMemberLoginRequest
-				= new MemberLoginRequest(email, wrongPassword);
+					= new MemberLoginRequest(email, wrongPassword);
 
-			given(memberRepository.findByEmail(any(Email.class)))
-				.willReturn(Optional.of(member));
+			given(memberRepository.findByEmail(anyString()))
+					.willReturn(Optional.of(member));
 
 			//when, then
 			assertThatThrownBy(() -> memberService.loginMember(wrongMemberLoginRequest))
-				.isInstanceOf(BadCredentialsException.class)
-				.hasMessage("비밀번호가 일치하지 않습니다.");
+					.isInstanceOf(BadCredentialsException.class)
+					.hasMessage("비밀번호가 일치하지 않습니다.");
 		}
 	}
 
@@ -241,7 +241,7 @@ public class MemberServiceTest {
 		void success() {
 			//mocking
 			given(memberRepository.findById(anyLong()))
-				.willReturn(Optional.of(member));
+					.willReturn(Optional.of(member));
 
 			//when
 			MemberGetResponse result = memberService.getMember();
@@ -249,8 +249,8 @@ public class MemberServiceTest {
 			//then
 			assertThat(result.nickname()).isEqualTo(member.getNickname());
 			then(memberRepository)
-				.should()
-				.findById(anyLong());
+					.should()
+					.findById(anyLong());
 		}
 	}
 
@@ -266,7 +266,7 @@ public class MemberServiceTest {
 		String passwordAfter = "asd56789";
 
 		MemberUpdateRequest memberUpdateRequest
-			= new MemberUpdateRequest(1L, nicknameAfter, passwordAfter, null);
+				= new MemberUpdateRequest(1L, nicknameAfter, passwordAfter, null);
 
 		Member memberBefore = getMemberData(email, nicknameBefore, passwordBefore);
 		Member memberAfter = getMemberData(email, nicknameAfter, passwordAfter);
@@ -276,9 +276,9 @@ public class MemberServiceTest {
 		void success() {
 			//mocking
 			given(memberRepository.findById(anyLong()))
-				.willReturn(Optional.of(memberBefore));
+					.willReturn(Optional.of(memberBefore));
 			given(memberRepository.save(any(Member.class)))
-				.willReturn(memberAfter);
+					.willReturn(memberAfter);
 
 			//when
 			MemberGetResponse result = memberService.updateMember(memberUpdateRequest);
@@ -286,20 +286,20 @@ public class MemberServiceTest {
 			//then
 			assertThat(result.nickname()).isEqualTo(nicknameAfter);
 			then(memberRepository)
-				.should()
-				.findById(anyLong());
+					.should()
+					.findById(anyLong());
 			then(memberRepository)
-				.should()
-				.save(any(Member.class));
+					.should()
+					.save(any(Member.class));
 		}
 	}
 
 	private Member getMemberData(String email, String nickname, String password) {
 		return Member.builder()
-			.id(1L)
-			.email(email)
-			.nickname(nickname)
-			.password(password)
-			.build();
+				.id(1L)
+				.email(email)
+				.nickname(nickname)
+				.password(password)
+				.build();
 	}
 }

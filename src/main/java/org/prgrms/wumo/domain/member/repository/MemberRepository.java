@@ -5,11 +5,13 @@ import java.util.Optional;
 import org.prgrms.wumo.domain.member.model.Email;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 	boolean existsByEmail(Email email);
 
 	boolean existsByNickname(String nickname);
 
-	Optional<Member> findByEmail(Email email);
+	@Query(value = "select m from Member m where m.email.email = :email")
+	Optional<Member> findByEmail(String email);
 }
