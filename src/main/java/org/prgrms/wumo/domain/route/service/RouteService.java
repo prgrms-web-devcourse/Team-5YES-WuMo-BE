@@ -46,6 +46,7 @@ public class RouteService {
 	public RouteRegisterResponse registerRoute(RouteRegisterRequest routeRegisterRequest) {
 		Party party = getPartyEntity(routeRegisterRequest.partyId());
 		Location location = getLocationEntity(routeRegisterRequest.locationId());
+		validateAccess(party.getId());
 
 		if (routeRegisterRequest.routeId() == null) {
 			Route route = routeRepository.save(toRoute(location, party));
