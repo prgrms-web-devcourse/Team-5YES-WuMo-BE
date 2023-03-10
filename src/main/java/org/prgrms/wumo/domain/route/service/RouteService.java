@@ -44,9 +44,9 @@ public class RouteService {
 	@Transactional
 	public RouteRegisterResponse registerRoute(RouteRegisterRequest routeRegisterRequest) {
 		Party party = partyRepository.findById(routeRegisterRequest.partyId())
-			.orElseThrow(() -> new EntityNotFoundException("일치하는 모임이 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException("일치하는 모임이 없습니다."));
 		Location location = locationRepository.findById(routeRegisterRequest.locationId())
-			.orElseThrow(() -> new EntityNotFoundException("일치하는 후보지가 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException("일치하는 후보지가 없습니다."));
 
 		validateAccess(party.getId());
 
@@ -65,7 +65,7 @@ public class RouteService {
 	@Transactional(readOnly = true)
 	public RouteGetResponse getRoute(long partyId, int fromPublic) {
 		Route route = routeRepository.findByPartyId(partyId)
-			.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
 
 		if (fromPublic == 0) {
 			validateAccess(route.getParty().getId());
@@ -77,10 +77,10 @@ public class RouteService {
 	@Transactional(readOnly = true)
 	public RouteGetAllResponses getAllRoute(RouteGetAllRequest routeGetAllRequest) {
 		List<Route> routes = routeRepository.findAllByCursorAndSearchWord(
-			routeGetAllRequest.cursorId(),
-			routeGetAllRequest.pageSize(),
-			routeGetAllRequest.sortType(),
-			routeGetAllRequest.searchWord());
+				routeGetAllRequest.cursorId(),
+				routeGetAllRequest.pageSize(),
+				routeGetAllRequest.sortType(),
+				routeGetAllRequest.searchWord());
 		addIsLiking(routes);
 
 		//TODO 현재 모든 목록 조회에서 같은 로직 사용중 -> util로 빼는것 고려하기
@@ -115,20 +115,20 @@ public class RouteService {
 	public void updateRoutePublicStatus(RouteStatusUpdateRequest routeStatusUpdateRequest) {
 		Route route = getRouteEntity(routeStatusUpdateRequest.routeId());
 		validateAccess(route.getParty().getId());
-		route.updatePublicStatus(routeStatusUpdateRequest.isPublic());
+		route.updatePublicStatus(routeStatusUpdateRequest.name(), routeStatusUpdateRequest.isPublic());
 	}
 
 	private Route getRouteEntity(long routeId) {
 		return routeRepository.findById(routeId)
-			.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
 	}
 
 	private void addIsLiking(List<Route> routes) {
 		long memberId = getMemberId();
 		routes.forEach(
-			route -> route.addIsLiking(
-				routeLikeRepository.existsByRouteIdAndMemberId(route.getId(), memberId)
-			));
+				route -> route.addIsLiking(
+						routeLikeRepository.existsByRouteIdAndMemberId(route.getId(), memberId)
+				));
 	}
 
 	private void validateAccess(long partyId) {

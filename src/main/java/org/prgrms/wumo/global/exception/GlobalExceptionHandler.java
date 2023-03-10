@@ -23,41 +23,41 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler({
-		InvalidRefreshTokenException.class
+			InvalidRefreshTokenException.class
 	})
 	public ResponseEntity<ExceptionResponse> handleRefreshTokenException(RuntimeException runtimeException) {
 		log.info("exception : " + runtimeException);
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-			.body(new ExceptionResponse(runtimeException.getMessage()));
+				.body(new ExceptionResponse(runtimeException.getMessage()));
 	}
 
 	@ExceptionHandler({
-		AccessDeniedException.class
+			AccessDeniedException.class
 	})
 	public ResponseEntity<ExceptionResponse> handleAccessException(RuntimeException runtimeException) {
 		log.info("exception : " + runtimeException);
 		return ResponseEntity.status(HttpStatus.FORBIDDEN)
-			.body(new ExceptionResponse(runtimeException.getMessage()));
+				.body(new ExceptionResponse(runtimeException.getMessage()));
 	}
 
 	@ExceptionHandler({
-		DuplicateException.class
+			DuplicateException.class
 	})
 	public ResponseEntity<ExceptionResponse> handleDuplicateException(RuntimeException runtimeException) {
 		log.info("exception : " + runtimeException);
 		return ResponseEntity.status(HttpStatus.CONFLICT)
-			.body(new ExceptionResponse(runtimeException.getMessage()));
+				.body(new ExceptionResponse(runtimeException.getMessage()));
 	}
 
 	@ExceptionHandler({
-		ImageUploadFailedException.class, IllegalArgumentException.class, ImageDeleteFailedException.class,
-		EntityNotFoundException.class, PartyNotEmptyException.class, ExpiredInvitationException.class,
-		MailSendException.class, InvalidCodeException.class
+			ImageUploadFailedException.class, IllegalArgumentException.class, ImageDeleteFailedException.class,
+			EntityNotFoundException.class, PartyNotEmptyException.class, ExpiredInvitationException.class,
+			MailSendException.class, InvalidCodeException.class
 	})
 	public ResponseEntity<ExceptionResponse> handleException(RuntimeException runtimeException) {
 		log.info("exception : " + runtimeException);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-			.body(new ExceptionResponse(runtimeException.getMessage()));
+				.body(new ExceptionResponse(runtimeException.getMessage()));
 	}
 
 }

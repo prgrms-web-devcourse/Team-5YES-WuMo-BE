@@ -30,21 +30,21 @@ public class RouteCustomRepositoryImpl implements RouteCustomRepository {
 
 		//TODO join해서 내가 좋아요 눌렀는지 여부까지 가져올 수 있을지
 		return jpaQueryFactory
-			.selectFrom(qRoute)
-			.where(inRouteAndHasSearchWord(searchWord),
-				ltRouteId(cursorId),
-				isPublic())
-			.orderBy(getSortType(sortType))
-			.limit(pageSize)
-			.fetch();
+				.selectFrom(qRoute)
+				.where(inRouteAndHasSearchWord(searchWord),
+						ltRouteId(cursorId),
+						isPublic())
+				.orderBy(getSortType(sortType))
+				.limit(pageSize)
+				.fetch();
 	}
 
 	@Override
 	public Optional<Route> findByPartyId(long partyId) {
 		Route route = jpaQueryFactory
-			.selectFrom(qRoute)
-			.where(qRoute.party.id.eq(partyId))
-			.fetchFirst();
+				.selectFrom(qRoute)
+				.where(qRoute.party.id.eq(partyId))
+				.fetchFirst();
 		return Optional.ofNullable(route);
 	}
 
@@ -54,11 +54,11 @@ public class RouteCustomRepositoryImpl implements RouteCustomRepository {
 		}
 
 		return JPAExpressions
-			.selectFrom(qLocation)
-			.where(
-				qLocation.route.eq(qRoute),
-				qLocation.address.startsWith(searchWord))
-			.exists();
+				.selectFrom(qLocation)
+				.where(
+						qLocation.route.eq(qRoute),
+						qLocation.address.startsWith(searchWord))
+				.exists();
 	}
 
 	private BooleanExpression ltRouteId(Long cursorId) {

@@ -107,7 +107,7 @@ class RouteLikeControllerTest extends MysqlTestContainer {
 						.party(party)
 						.build()
 		);
-		route.updatePublicStatus(true);
+		route.updatePublicStatus("오예스 2번째 워크샵", true);
 		route = routeRepository.save(route);
 
 		setAuthentication(member.getId());
