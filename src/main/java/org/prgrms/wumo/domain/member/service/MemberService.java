@@ -10,6 +10,7 @@ import static org.prgrms.wumo.global.mapper.MemberMapper.toMemberRegisterRespons
 import javax.persistence.EntityNotFoundException;
 
 import org.prgrms.wumo.domain.member.dto.request.MemberLoginRequest;
+import org.prgrms.wumo.domain.member.dto.request.MemberPasswordUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberReissueRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
@@ -84,14 +85,8 @@ public class MemberService {
 
 	@Transactional
 	public MemberLoginResponse loginMember(MemberLoginRequest memberLoginRequest) {
-		Member member = memberRepository.findByEmail(memberLoginRequest.email())
-				.orElseThrow(() -> new EntityNotFoundException(
-						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.MEMBER.name())
-				));
-
-		if (member.isNotValidPassword(memberLoginRequest.password())) {
-			throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
-		}
+		Member member = getMemberEntityByEmail(memberLoginRequest.email());
+		validatePassword(member, memberLoginRequest.password());
 
 		String memberId = String.valueOf(member.getId());
 		WumoJwt wumoJwt = getWumoJwt(memberId);
@@ -135,10 +130,22 @@ public class MemberService {
 		Member member = getMemberEntity(memberId);
 		member.update(
 				memberUpdateRequest.nickname(),
-				memberUpdateRequest.password(),
 				memberUpdateRequest.profileImage()
 		);
 		return toMemberGetResponse(memberRepository.save(member));
+	}
+
+	@Transactional
+	public void updateMemberPassword(MemberPasswordUpdateRequest memberPasswordUpdateRequest) {
+		Member member = getMemberEntity(getMemberId());
+		validatePassword(member, memberPasswordUpdateRequest.password());
+		member.updatePassword(memberPasswordUpdateRequest.newPassword());
+	}
+
+	private void validatePassword(Member member, String password) {
+		if (member.isNotValidPassword(password)) {
+			throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+		}
 	}
 
 	private WumoJwt getWumoJwt(String memberId) {
@@ -149,13 +156,6 @@ public class MemberService {
 				jwtTokenProvider.getRefreshTokenExpireSeconds()
 		);
 		return wumoJwt;
-	}
-
-	private Member getMemberEntity(long memberId) {
-		return memberRepository.findById(memberId)
-				.orElseThrow(() -> new EntityNotFoundException(
-						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.MEMBER.name())
-				));
 	}
 
 	private void validateAccess(long memberId) {
@@ -170,5 +170,19 @@ public class MemberService {
 
 	private boolean checkNicknameDuplicate(String nickname) {
 		return memberRepository.existsByNickname(nickname);
+	}
+
+	private Member getMemberEntity(long memberId) {
+		return memberRepository.findById(memberId)
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.MEMBER.name())
+				));
+	}
+
+	private Member getMemberEntityByEmail(String email) {
+		return memberRepository.findByEmail(email)
+				.orElseThrow(() -> new EntityNotFoundException(
+						String.format(ExceptionMessage.ENTITY_NOT_FOUND.name(), ExceptionMessage.MEMBER.name())
+				));
 	}
 }

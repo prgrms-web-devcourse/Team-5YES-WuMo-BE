@@ -6,6 +6,7 @@ import org.prgrms.wumo.domain.member.dto.request.MemberCodeCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberEmailCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberLoginRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberNicknameCheckRequest;
+import org.prgrms.wumo.domain.member.dto.request.MemberPasswordUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberReissueRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
@@ -40,7 +41,7 @@ public class MemberController {
 	@GetMapping("/send-code")
 	@Operation(summary = "이메일 인증코드 전송")
 	public ResponseEntity<Void> sendCode(
-			@RequestParam("address") @Parameter(description = "이메일 인증을 원하는 회원의 이메일 주소") String toAddress) {
+			@RequestParam("address") @Parameter(description = "인증코드를 받을 회원의 이메일 주소") String toAddress) {
 
 		memberService.sendCode(toAddress);
 		return ResponseEntity.ok().build();
@@ -106,18 +107,27 @@ public class MemberController {
 		return ResponseEntity.ok(memberService.reissueMember(memberReissueRequest));
 	}
 
-	@GetMapping
+	@GetMapping("/me")
 	@Operation(summary = "내 정보 조회")
 	public ResponseEntity<MemberGetResponse> getMember() {
 
 		return ResponseEntity.ok(memberService.getMember());
 	}
 
-	@PatchMapping
+	@PatchMapping("/me")
 	@Operation(summary = "내 정보 수정")
 	public ResponseEntity<MemberGetResponse> updateMember(
 			@RequestBody @Valid MemberUpdateRequest memberUpdateRequest) {
 
 		return ResponseEntity.ok(memberService.updateMember(memberUpdateRequest));
+	}
+
+	@PatchMapping
+	@Operation(summary = "내 비밀번호 수정")
+	public ResponseEntity<Void> updateMemberPassword(
+			@RequestBody @Valid MemberPasswordUpdateRequest memberPasswordUpdateRequest) {
+
+		memberService.updateMemberPassword(memberPasswordUpdateRequest);
+		return ResponseEntity.ok().build();
 	}
 }

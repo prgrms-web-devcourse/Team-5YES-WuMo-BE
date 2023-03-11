@@ -121,7 +121,7 @@ public class MemberControllerTest extends MysqlTestContainer {
 	void get_member() throws Exception {
 		//when
 		ResultActions resultActions
-				= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/members"));
+				= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/members/me"));
 
 		//then
 		resultActions
@@ -138,11 +138,11 @@ public class MemberControllerTest extends MysqlTestContainer {
 	void update_member() throws Exception {
 		//given
 		MemberUpdateRequest memberUpdateRequest
-				= new MemberUpdateRequest(memberId, "태희수정", "asd67890", null);
+				= new MemberUpdateRequest(memberId, "태희수정", null);
 
 		//when
 		ResultActions resultActions
-				= mockMvc.perform(MockMvcRequestBuilders.patch("/api/v1/members")
+				= mockMvc.perform(MockMvcRequestBuilders.patch("/api/v1/members/me")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(memberUpdateRequest)));
 
