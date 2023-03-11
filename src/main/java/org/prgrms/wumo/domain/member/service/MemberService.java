@@ -10,6 +10,7 @@ import static org.prgrms.wumo.global.mapper.MemberMapper.toMemberRegisterRespons
 import javax.persistence.EntityNotFoundException;
 
 import org.prgrms.wumo.domain.member.dto.request.MemberLoginRequest;
+import org.prgrms.wumo.domain.member.dto.request.MemberPasswordUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberReissueRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
@@ -138,6 +139,12 @@ public class MemberService {
 				memberUpdateRequest.profileImage()
 		);
 		return toMemberGetResponse(memberRepository.save(member));
+	}
+
+	@Transactional
+	public void updateMemberPassword(MemberPasswordUpdateRequest memberPasswordUpdateRequest) {
+		Member member = getMemberEntity(getMemberId());
+		member.updatePassword(memberPasswordUpdateRequest.password());
 	}
 
 	private WumoJwt getWumoJwt(String memberId) {

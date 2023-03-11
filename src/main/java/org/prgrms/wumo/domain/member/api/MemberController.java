@@ -6,6 +6,7 @@ import org.prgrms.wumo.domain.member.dto.request.MemberCodeCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberEmailCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberLoginRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberNicknameCheckRequest;
+import org.prgrms.wumo.domain.member.dto.request.MemberPasswordUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberReissueRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
@@ -119,5 +120,14 @@ public class MemberController {
 			@RequestBody @Valid MemberUpdateRequest memberUpdateRequest) {
 
 		return ResponseEntity.ok(memberService.updateMember(memberUpdateRequest));
+	}
+
+	@PatchMapping
+	@Operation(summary = "내 비밀번호 수정")
+	public ResponseEntity<Void> updateMemberPassword(
+			@RequestBody @Valid MemberPasswordUpdateRequest memberPasswordUpdateRequest) {
+
+		memberService.updateMemberPassword(memberPasswordUpdateRequest);
+		return ResponseEntity.ok().build();
 	}
 }
