@@ -138,7 +138,7 @@ public class MemberControllerTest extends MysqlTestContainer {
 	void update_member() throws Exception {
 		//given
 		MemberUpdateRequest memberUpdateRequest
-				= new MemberUpdateRequest(memberId, "태희수정", "asd67890", null);
+				= new MemberUpdateRequest(memberId, "태희수정", null);
 
 		//when
 		ResultActions resultActions

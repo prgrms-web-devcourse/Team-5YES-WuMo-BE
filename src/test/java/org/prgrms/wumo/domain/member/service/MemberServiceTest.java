@@ -260,16 +260,15 @@ public class MemberServiceTest {
 		//given
 		String email = "5yes@gmail.com";
 		String nicknameBefore = "오예스오리지널";
-		String passwordBefore = "qwe12345";
+		String password = "qwe12345";
 
 		String nicknameAfter = "오예스딸기";
-		String passwordAfter = "asd56789";
 
 		MemberUpdateRequest memberUpdateRequest
-				= new MemberUpdateRequest(1L, nicknameAfter, passwordAfter, null);
+				= new MemberUpdateRequest(1L, nicknameAfter, null);
 
-		Member memberBefore = getMemberData(email, nicknameBefore, passwordBefore);
-		Member memberAfter = getMemberData(email, nicknameAfter, passwordAfter);
+		Member memberBefore = getMemberData(email, nicknameBefore, password);
+		Member memberAfter = getMemberData(email, nicknameAfter, password);
 
 		@Test
 		@DisplayName("수정 후 수정된 회원 정보를 반환한다")

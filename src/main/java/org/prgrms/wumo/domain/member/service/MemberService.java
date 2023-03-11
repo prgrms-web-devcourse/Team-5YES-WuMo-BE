@@ -135,7 +135,6 @@ public class MemberService {
 		Member member = getMemberEntity(memberId);
 		member.update(
 				memberUpdateRequest.nickname(),
-				memberUpdateRequest.password(),
 				memberUpdateRequest.profileImage()
 		);
 		return toMemberGetResponse(memberRepository.save(member));
