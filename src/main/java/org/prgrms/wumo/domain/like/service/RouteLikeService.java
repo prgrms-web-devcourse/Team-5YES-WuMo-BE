@@ -1,5 +1,8 @@
 package org.prgrms.wumo.domain.like.service;
 
+import static org.prgrms.wumo.global.exception.ExceptionMessage.ENTITY_NOT_FOUND;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.MEMBER;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.ROUTE;
 import static org.prgrms.wumo.global.mapper.LikeMapper.toRouteLike;
 
 import javax.persistence.EntityNotFoundException;
@@ -50,12 +53,12 @@ public class RouteLikeService {
 
 	private Route getRouteEntity(Long routeId) {
 		return routeRepository.findById(routeId)
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 루트가 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND.name(), ROUTE.name())));
 	}
 
 	private Member getMemberEntity(Long memberId) {
 		return memberRepository.findById(memberId)
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND.name(), MEMBER.name())));
 	}
 
 }

@@ -1,5 +1,8 @@
 package org.prgrms.wumo.domain.party.service;
 
+import static org.prgrms.wumo.global.exception.ExceptionMessage.ENTITY_NOT_FOUND;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.MEMBER;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.PARTY;
 import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyMember;
 import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyMemberGetAllResponse;
 import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyMemberGetResponse;
@@ -114,12 +117,12 @@ public class PartyMemberService {
 
 	private Party getPartyEntity(Long partyId) {
 		return partyRepository.findById(partyId)
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 모임이 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND.name(), PARTY.name())));
 	}
 
 	private Member getMemberEntity(Long memberId) {
 		return memberRepository.findById(memberId)
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
+				.orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND.name(), MEMBER.name())));
 	}
 
 	private PartyMember getPartyMemberEntity(Long partyId, Long memberId) {
