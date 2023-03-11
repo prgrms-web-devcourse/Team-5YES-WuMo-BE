@@ -107,14 +107,14 @@ public class MemberController {
 		return ResponseEntity.ok(memberService.reissueMember(memberReissueRequest));
 	}
 
-	@GetMapping
+	@GetMapping("/me")
 	@Operation(summary = "내 정보 조회")
 	public ResponseEntity<MemberGetResponse> getMember() {
 
 		return ResponseEntity.ok(memberService.getMember());
 	}
 
-	@PatchMapping
+	@PatchMapping("/me")
 	@Operation(summary = "내 정보 수정")
 	public ResponseEntity<MemberGetResponse> updateMember(
 			@RequestBody @Valid MemberUpdateRequest memberUpdateRequest) {
