@@ -41,7 +41,7 @@ public class MemberController {
 	@GetMapping("/send-code")
 	@Operation(summary = "이메일 인증코드 전송")
 	public ResponseEntity<Void> sendCode(
-			@RequestParam("address") @Parameter(description = "이메일 인증을 원하는 회원의 이메일 주소") String toAddress) {
+			@RequestParam("address") @Parameter(description = "인증코드를 받을 회원의 이메일 주소") String toAddress) {
 
 		memberService.sendCode(toAddress);
 		return ResponseEntity.ok().build();

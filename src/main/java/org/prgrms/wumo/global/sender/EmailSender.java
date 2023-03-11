@@ -22,8 +22,8 @@ public class EmailSender implements Sender {
 	@Value("${wumo.mail}")
 	private String fromAddress;
 
-	private static final String CODE_SUBJECT = "WuMo(우리들의 모임) 회원가입 이메일 인증 코드입니다.";
-	private static final String CODE_CONTENT = "회원가입 화면에 아래의 이메일 인증 코드를 입력해주세요\n";
+	private static final String CODE_SUBJECT = "WuMo(우리들의 모임) 이메일 인증 코드입니다.";
+	private static final String CODE_CONTENT = "WuMo(우리들의 모임) 화면에 아래의 이메일 인증 코드를 입력해주세요\n";
 	private static final int SAVE_SECONDS = 180000;
 
 	private static final String WELCOME_SUBJECT = "WuMo(우리들의 모임) 회원가입을 환영합니다.";
