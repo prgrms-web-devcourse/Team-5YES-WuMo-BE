@@ -1,18 +1,11 @@
 package org.prgrms.wumo.domain.like.repository;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.prgrms.wumo.domain.like.model.QRouteLike;
 import org.prgrms.wumo.domain.route.model.QRoute;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.springframework.data.util.Pair;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -21,7 +14,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class RouteLikeCustomRepositoryImpl implements RouteLikeCustomRepository {
@@ -62,46 +57,47 @@ public class RouteLikeCustomRepositoryImpl implements RouteLikeCustomRepository 
 	}
 
 	@Override
-	public Map<Long, Long> countAllByRouteId(Long cursorId, int batchSize) {
-		List<Tuple> tuples = jpaQueryFactory
-				.select(qRouteLike.routeId, qRouteLike.count())
-				.from(qRouteLike)
+	public List<Pair<Long, Long>> countAllByRouteId(Long cursorId, int batchSize) {
+		return jpaQueryFactory
+				.select(qRoute.id, qRouteLike.id.count().coalesce(0L))
+				.from(qRoute)
 				.where(gtRouteId(cursorId))
-				.groupBy(qRouteLike.routeId)
-				.orderBy(qRouteLike.routeId.asc())
+				.leftJoin(qRouteLike)
+				.on(qRouteLike.routeId.eq(qRoute.id))
+				.groupBy(qRoute.id)
+				.orderBy(qRoute.id.asc())
 				.limit(batchSize)
-				.fetch();
-
-		HashMap<Long, Long> hashMap = new HashMap<>();
-		tuples.forEach(tuple -> hashMap.put(tuple.get(0, Long.class), tuple.get(1, Long.class)));
-		return hashMap;
+				.fetch()
+				.stream()
+				.map(row -> Pair.of(row.get(0, Long.class), row.get(1, Long.class)))
+				.toList();
 	}
 
 	@Override
-	public void updateLikeCount(Map<Long, Long> likeCounts) {
-		Timestamp NOW = Timestamp.valueOf(LocalDateTime.now());
-		List<Long> routeIds = likeCounts.keySet().stream().toList();
+	public void updateLikeCount(List<Pair<Long, Long>> resultSet) {
+		if (resultSet.size() > 0) {
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE route SET like_count = CASE ");
+			resultSet.forEach(
+					pair -> sql.append(String.format("WHEN id = %d THEN %d ", pair.getFirst(), pair.getSecond()))
+			);
+			sql.append(
+					String.format(
+							"END WHERE id BETWEEN %d AND %d;", resultSet.get(0).getFirst(), resultSet.get(resultSet.size() - 1).getFirst()
+					)
+			);
 
-		jdbcTemplate.batchUpdate(
-				"UPDATE route SET like_count = ?, updated_at = ? WHERE id = ?",
-				new BatchPreparedStatementSetter() {
-					@Override
-					public void setValues(PreparedStatement ps, int i) throws SQLException {
-						ps.setLong(1, likeCounts.get(routeIds.get(i)));
-						ps.setTimestamp(2, NOW);
-						ps.setLong(3, routeIds.get(i));
-					}
+			if (sql.toString().getBytes().length > 1024 * 1024) {
+				log.error("UPDATE 쿼리문의 길이가 1M을 초과하여 실행할 수 없습니다. 배치 사이즈를 조절해야 합니다.");
+				return;
+			}
 
-					@Override
-					public int getBatchSize() {
-						return routeIds.size();
-					}
-				}
-		);
+			jdbcTemplate.update(sql.toString());
+		}
 	}
 
 	private BooleanExpression gtRouteId(Long cursorId) {
-		return (cursorId != null) ? qRouteLike.routeId.gt(cursorId) : null;
+		return (cursorId != null) ? qRoute.id.gt(cursorId) : null;
 	}
 
 	private BooleanExpression eqMemberId(Long memberId) {
