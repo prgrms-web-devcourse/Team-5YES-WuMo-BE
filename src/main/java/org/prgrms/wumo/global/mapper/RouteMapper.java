@@ -27,52 +27,54 @@ public class RouteMapper {
 		ArrayList<Location> list = new ArrayList<>();
 		list.add(location);
 		return Route.builder()
-			.locations(list)
-			.party(party)
-			.build();
+				.locations(list)
+				.party(party)
+				.build();
 	}
 
 	public static RouteGetResponse toRouteGetResponse(Route route) {
 		List<RouteLocationResponse> routeLocations = route.getLocations().stream()
-			.map(location -> new RouteLocationResponse(
-				location.getId(),
-				location.getName(),
-				location.getAddress(),
-				location.getLatitude(),
-				location.getLongitude(),
-				location.getImage(),
-				location.getDescription(),
-				location.getVisitDate(),
-				location.getExpectedCost(),
-				location.getSpending(),
-				location.getCategory().name()))
-			.toList();
-		return new RouteGetResponse(route.getId(), route.isPublic(), routeLocations, route.getParty().getId());
+				.map(location -> new RouteLocationResponse(
+						location.getId(),
+						location.getName(),
+						location.getAddress(),
+						location.getLatitude(),
+						location.getLongitude(),
+						location.getImage(),
+						location.getDescription(),
+						location.getVisitDate(),
+						location.getExpectedCost(),
+						location.getSpending(),
+						location.getCategory().name()))
+				.toList();
+		return new RouteGetResponse(route.getId(), route.getName(), route.isPublic(), routeLocations,
+				route.getParty().getId());
 	}
 
 	public static RouteGetAllResponses toRouteGetAllResponses(List<Route> routes, long lastId) {
 		List<RouteGetAllResponse> routesResponses = routes.stream()
-			.map(route -> new RouteGetAllResponse(
-				route.getId(),
-				route.getLikeCount(),
-				route.isLiking(),
-				toRouteLocationSimpleResponse(route.getLocations()),
-				route.getParty().getName(),
-				route.getParty().getStartDate(),
-				route.getParty().getEndDate(),
-				route.getParty().getCoverImage())
-			)
-			.toList();
+				.map(route -> new RouteGetAllResponse(
+						route.getId(),
+						route.getLikeCount(),
+						route.isLiking(),
+						toRouteLocationSimpleResponse(route.getLocations()),
+						route.getParty().getName(),
+						route.getParty().getStartDate(),
+						route.getParty().getEndDate(),
+						route.getParty().getCoverImage(),
+						route.getParty().getId())
+				)
+				.toList();
 		return new RouteGetAllResponses(routesResponses, lastId);
 	}
 
 	private static List<RouteLocationSimpleResponse> toRouteLocationSimpleResponse(List<Location> locations) {
 		return locations.stream()
-			.map(location -> new RouteLocationSimpleResponse(
-				location.getId(),
-				location.getName(),
-				location.getAddress(),
-				location.getImage()
-			)).toList();
+				.map(location -> new RouteLocationSimpleResponse(
+						location.getId(),
+						location.getName(),
+						location.getAddress(),
+						location.getImage()
+				)).toList();
 	}
 }
