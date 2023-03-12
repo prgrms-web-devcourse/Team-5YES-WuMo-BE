@@ -9,6 +9,9 @@ public record RouteGetResponse(
 	@Schema(description = "루트 식별자", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
 	Long id,
 
+	@Schema(description = "루트 이름", example = "퇴사 기념 여행", requiredMode = Schema.RequiredMode.REQUIRED)
+	String name,
+
 	@Schema(description = "루트의 현재 공개 여부", example = "false", requiredMode = Schema.RequiredMode.REQUIRED)
 	boolean isPublic,
 

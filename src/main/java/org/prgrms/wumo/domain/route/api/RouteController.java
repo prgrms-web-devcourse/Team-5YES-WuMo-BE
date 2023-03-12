@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,16 +35,16 @@ public class RouteController {
 	@PostMapping
 	@Operation(summary = "루트에 후보지 등록")
 	public ResponseEntity<RouteRegisterResponse> registerRoute(
-		@RequestBody @Valid RouteRegisterRequest routeRegisterRequest) {
+			@RequestBody @Valid RouteRegisterRequest routeRegisterRequest) {
 
 		return new ResponseEntity<>(routeService.registerRoute(routeRegisterRequest), HttpStatus.CREATED);
 	}
 
-	@GetMapping("/{partyId}")
+	@GetMapping("/detail")
 	@Operation(summary = "루트 상세 조회")
 	public ResponseEntity<RouteGetResponse> getRoute(
-		@PathVariable @Parameter(description = "조회할 루트가 포함된 모임 아이디") long partyId,
-		@RequestParam("path") @Parameter(description = "접근 경로(모임에서이면 0, 공개 목록에서이면 1)") int fromPublic) {
+			@RequestParam("party") @Parameter(description = "조회할 루트가 포함된 모임 아이디") long partyId,
+			@RequestParam("path") @Parameter(description = "접근 경로(모임에서이면 0, 공개 목록에서이면 1)") int fromPublic) {
 
 		return ResponseEntity.ok(routeService.getRoute(partyId, fromPublic));
 	}
@@ -53,7 +52,7 @@ public class RouteController {
 	@GetMapping
 	@Operation(summary = "공개된 루트 목록 조회")
 	public ResponseEntity<RouteGetAllResponses> getAllRoute(
-		@Valid RouteGetAllRequest routeGetAllRequest) {
+			@Valid RouteGetAllRequest routeGetAllRequest) {
 
 		return ResponseEntity.ok(routeService.getAllRoute(routeGetAllRequest));
 	}
@@ -69,7 +68,7 @@ public class RouteController {
 	@PatchMapping
 	@Operation(summary = "루트 공개여부 변경")
 	public ResponseEntity<Void> updateRoutePublicStatus(
-		@RequestBody @Valid RouteStatusUpdateRequest routeStatusUpdateRequest) {
+			@RequestBody @Valid RouteStatusUpdateRequest routeStatusUpdateRequest) {
 
 		routeService.updateRoutePublicStatus(routeStatusUpdateRequest);
 		return ResponseEntity.ok().build();
