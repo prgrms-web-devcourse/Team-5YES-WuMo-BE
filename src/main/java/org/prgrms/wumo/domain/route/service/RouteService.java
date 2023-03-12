@@ -25,6 +25,8 @@ import org.prgrms.wumo.domain.route.dto.response.RouteRegisterResponse;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.prgrms.wumo.domain.route.repository.RouteRepository;
 import org.prgrms.wumo.global.exception.ExceptionMessage;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.util.Pair;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -71,6 +73,10 @@ public class RouteService {
 		return toRouteGetResponse(route);
 	}
 
+	@Cacheable(
+			cacheNames = "routes",
+			key = "#routeGetAllRequest.sortType().name()",
+			condition = "#routeGetAllRequest.cursorId() == null")
 	@Transactional(readOnly = true)
 	public RouteGetAllResponses getAllRoute(RouteGetAllRequest routeGetAllRequest) {
 		List<Route> routes = routeRepository.findAllByCursorAndSearchWord(
@@ -98,6 +104,7 @@ public class RouteService {
 		return toRouteGetAllResponses(routes, getRouteLikeLastId(routeLikeIds));
 	}
 
+	@CacheEvict(value = "routes", key = "\"NEWEST\"")
 	@Transactional
 	public void updateRoutePublicStatus(RouteStatusUpdateRequest routeStatusUpdateRequest) {
 		Route route = getRouteEntity(routeStatusUpdateRequest.routeId());

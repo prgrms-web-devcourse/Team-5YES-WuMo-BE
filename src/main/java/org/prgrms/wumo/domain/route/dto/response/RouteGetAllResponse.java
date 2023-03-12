@@ -3,6 +3,11 @@ package org.prgrms.wumo.domain.route.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "루트 목록 조회 응답 시 각각의 루트 정보")
@@ -22,9 +27,13 @@ public record RouteGetAllResponse(
 		@Schema(description = "루트 이름", example = "퇴사 기념 여행", requiredMode = Schema.RequiredMode.REQUIRED)
 		String name,
 
+		@JsonSerialize(using = LocalDateTimeSerializer.class)
+		@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 		@Schema(description = "루트가 속한 모임 시작일", example = "2023-02-21T10:00:00", requiredMode = Schema.RequiredMode.REQUIRED)
 		LocalDateTime startDate,
 
+		@JsonSerialize(using = LocalDateTimeSerializer.class)
+		@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 		@Schema(description = "루트가 속한 모임 마지막일", example = "2023-02-25T10:00:00", requiredMode = Schema.RequiredMode.REQUIRED)
 		LocalDateTime endDate,
 
