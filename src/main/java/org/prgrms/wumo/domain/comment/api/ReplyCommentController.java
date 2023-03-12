@@ -2,11 +2,14 @@ package org.prgrms.wumo.domain.comment.api;
 
 import javax.validation.Valid;
 
+import org.prgrms.wumo.domain.comment.dto.request.ReplyCommentGetAllRequest;
 import org.prgrms.wumo.domain.comment.dto.request.ReplyCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.dto.response.ReplyCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.ReplyCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.service.ReplyCommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,5 +33,13 @@ public class ReplyCommentController {
 	) {
 		return new ResponseEntity<>(replyCommentService.registerReplyComment(replyCommentRegisterRequest),
 				HttpStatus.CREATED);
+	}
+
+	@GetMapping
+	@Operation(summary = "대댓글 목록 조회")
+	public ResponseEntity<ReplyCommentGetAllResponse> getAllReplyComment(
+			@Valid ReplyCommentGetAllRequest replyCommentGetAllRequest
+	){
+		return ResponseEntity.ok(replyCommentService.getAllReplyComment(replyCommentGetAllRequest));
 	}
 }
