@@ -1,7 +1,5 @@
 package org.prgrms.wumo.global.exception;
 
-import java.util.List;
-
 import javax.persistence.EntityNotFoundException;
 
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
@@ -66,19 +64,17 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler({
 			BindException.class
 	})
-	public ResponseEntity<List<ExceptionResponse>> handleBindException(BindException bindException) {
+	public ResponseEntity<ExceptionResponse> handleBindException(BindException bindException) {
 		log.info("exception : " + bindException);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(bindException.getAllErrors().stream()
-						.map(error -> new ExceptionResponse(error.getDefaultMessage()))
-						.toList());
+				.body(new ExceptionResponse(bindException.getAllErrors().get(0).getDefaultMessage()));
 	}
 
 	@ExceptionHandler({
 			Exception.class
 	})
 	public ResponseEntity<ExceptionResponse> handleException(Exception exception) {
-		log.info("exception : " + exception);
+		log.error("exception : " + exception);
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.body(new ExceptionResponse(exception.getMessage()));
 	}
