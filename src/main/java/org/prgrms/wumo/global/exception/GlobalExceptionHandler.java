@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSendException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -58,6 +59,24 @@ public class GlobalExceptionHandler {
 		log.info("exception : " + runtimeException);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ExceptionResponse(runtimeException.getMessage()));
+	}
+
+	@ExceptionHandler({
+			BindException.class
+	})
+	public ResponseEntity<ExceptionResponse> handleBindException(BindException bindException) {
+		log.info("exception : " + bindException);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ExceptionResponse(bindException.getAllErrors().get(0).getDefaultMessage()));
+	}
+
+	@ExceptionHandler({
+			Exception.class
+	})
+	public ResponseEntity<ExceptionResponse> handleException(Exception exception) {
+		log.error("exception : " + exception);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(new ExceptionResponse(exception.getMessage()));
 	}
 
 }
