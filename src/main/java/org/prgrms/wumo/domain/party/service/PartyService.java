@@ -102,7 +102,7 @@ public class PartyService {
 		party.update(
 				partyUpdateRequest.name(),
 				LocalDateTime.of(partyUpdateRequest.startDate(), LocalTime.MIN),
-				LocalDateTime.of(partyUpdateRequest.endDate(), LocalTime.MAX),
+				LocalDateTime.of(partyUpdateRequest.endDate(), LocalTime.MIN),
 				partyUpdateRequest.description(),
 				partyUpdateRequest.coverImage()
 		);
