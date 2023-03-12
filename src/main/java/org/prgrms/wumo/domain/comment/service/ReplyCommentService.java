@@ -1,9 +1,13 @@
 package org.prgrms.wumo.domain.comment.service;
 
+import static org.prgrms.wumo.global.exception.ExceptionMessage.COMMENT;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.WRONG_ACCESS;
 import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
 import static org.prgrms.wumo.global.mapper.CommentMapper.toReplyComment;
 import static org.prgrms.wumo.global.mapper.CommentMapper.toReplyCommentGetAllResponse;
 import static org.prgrms.wumo.global.mapper.CommentMapper.toReplyCommentRegisterResponse;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.ENTITY_NOT_FOUND;
+
 
 import java.util.List;
 import java.util.Objects;
@@ -59,12 +63,12 @@ public class ReplyCommentService {
 
 	private LocationComment getLocationCommentEntity(Long locationCommentId) {
 		return locationCommentRepository.findById(locationCommentId)
-				.orElseThrow(() -> new EntityNotFoundException("댓글을 작성하고자 하는 후보지 댓글이 존재하지 않습니다."));
+				.orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND.name(), COMMENT.name())));
 	}
 
 	private void checkMemberInParty(Long partyMemberId) {
 		if (!partyMemberRepository.existsById(partyMemberId))
-			throw new AccessDeniedException("모임 내 회원이 아닙니다.");
+			throw new AccessDeniedException(String.format(WRONG_ACCESS.name()));
 	}
 
 	private boolean getIsEditable(ReplyComment replyComment, Long memberId) {
