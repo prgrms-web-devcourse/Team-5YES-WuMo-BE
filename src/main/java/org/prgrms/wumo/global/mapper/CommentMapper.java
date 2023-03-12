@@ -14,6 +14,8 @@ import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetAllRespon
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentGetResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.dto.response.PartyRouteCommentUpdateResponse;
+import org.prgrms.wumo.domain.comment.dto.response.ReplyCommentGetAllResponse;
+import org.prgrms.wumo.domain.comment.dto.response.ReplyCommentGetResponse;
 import org.prgrms.wumo.domain.comment.dto.response.ReplyCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.model.LocationComment;
 import org.prgrms.wumo.domain.comment.model.PartyRouteComment;
@@ -139,6 +141,31 @@ public class CommentMapper {
 	public static ReplyCommentRegisterResponse toReplyCommentRegisterResponse(ReplyComment replyComment){
 		return new ReplyCommentRegisterResponse(
 				replyComment.getId()
+		);
+	}
+
+	public static ReplyCommentGetResponse toReplyCommentGetResponse(ReplyComment replyComment, boolean isEditable){
+		return new ReplyCommentGetResponse(
+				replyComment.getId(),
+				replyComment.getMember().getNickname(),
+				replyComment.getMember().getProfileImage(),
+				replyComment.getContent(),
+				replyComment.getCreatedAt(),
+				replyComment.getUpdatedAt(),
+				isEditable
+		);
+	}
+
+	public static ReplyCommentGetAllResponse toReplyCommentGetAllResponse(
+			List<ReplyComment> replyComments, List<Boolean> isEditables, long lastId
+	){
+		List<ReplyCommentGetResponse> replyCommentGetResponses = new ArrayList<>();
+		for (int i = 0; i < replyComments.size(); i++) {
+			replyCommentGetResponses.add(toReplyCommentGetResponse(replyComments.get(i), isEditables.get(i)));
+		}
+		return new ReplyCommentGetAllResponse(
+			replyCommentGetResponses,
+			lastId
 		);
 	}
 }

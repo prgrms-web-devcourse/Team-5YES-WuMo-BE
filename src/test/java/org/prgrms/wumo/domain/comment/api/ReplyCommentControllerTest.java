@@ -1,8 +1,6 @@
 package org.prgrms.wumo.domain.comment.api;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -17,10 +15,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.prgrms.wumo.MysqlTestContainer;
-import org.prgrms.wumo.domain.comment.dto.request.LocationCommentRegisterRequest;
-import org.prgrms.wumo.domain.comment.dto.request.LocationCommentUpdateRequest;
+import org.prgrms.wumo.domain.comment.dto.request.ReplyCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.model.LocationComment;
+import org.prgrms.wumo.domain.comment.model.ReplyComment;
 import org.prgrms.wumo.domain.comment.repository.LocationCommentRepository;
+import org.prgrms.wumo.domain.comment.repository.ReplyCommentRepository;
 import org.prgrms.wumo.domain.location.model.Category;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
@@ -46,9 +45,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@DisplayName("LocationCommentController를 통해 ")
-public class LocationCommentControllerTest extends MysqlTestContainer {
-
+@DisplayName("ReplyCommentController를 통해 ")
+public class ReplyCommentControllerTest extends MysqlTestContainer {
 	@Autowired
 	MockMvc mockMvc;
 
@@ -76,6 +74,8 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 	PartyMember partyMember;
 	Location location;
 	LocationComment locationComment;
+	@Autowired
+	private ReplyCommentRepository replyCommentRepository;
 
 	@BeforeEach
 	void beforeEach() {
@@ -153,20 +153,20 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 	}
 
 	@Test
-	@DisplayName("후보지 댓글을 생성할 수 있다.")
-	void registerLocationComment() throws Exception {
+	@DisplayName("후보지 댓글에 대댓글을 작성할 수 있다.")
+	void registerReplyOnLocationComment() throws Exception {
 		// Given
-		LocationCommentRegisterRequest locationCommentRegisterRequest =
-				new LocationCommentRegisterRequest("댓글 댓글", "image.png", location.getId(), party.getId());
+		ReplyCommentRegisterRequest replyCommentRegisterRequest =
+				new ReplyCommentRegisterRequest(locationComment.getId(), "대댓글 쓰자!!!");
 
 		// When
 		ResultActions resultActions =
 				mockMvc.perform(
-						post("/api/v1/location-comments")
+						post("/api/v1/reply-comments/location-comments")
 								.contentType(MediaType.APPLICATION_JSON_VALUE)
 								.characterEncoding("UTF-8")
 								.content(
-										objectMapper.writeValueAsString(locationCommentRegisterRequest)
+										objectMapper.writeValueAsString(replyCommentRegisterRequest)
 								)
 				);
 
@@ -178,96 +178,37 @@ public class LocationCommentControllerTest extends MysqlTestContainer {
 	}
 
 	@Test
-	@DisplayName("특정 후보지의 모든 댓글을 검색할 수 있다.")
-	void getAllLocationCommentTest() throws Exception {
+	@DisplayName("후보지 댓글에 대댓글을 작성할 수 있다.")
+	void getAllReplyCommentTest() throws Exception {
 		// Given
-		LocationComment locationComment1
-				= LocationComment.builder()
-				.image("image.png")
-				.content("첫 번째 댓글")
-				.locationId(location.getId())
-				.partyMember(partyMember)
+		ReplyComment replyComment1 = ReplyComment.builder()
+				.commentId(locationComment.getId())
 				.member(member)
+				.content("대댓글 1호!")
+				.build();
+		ReplyComment replyComment2 = ReplyComment.builder()
+				.commentId(locationComment.getId())
+				.member(member)
+				.content("대댓글 2호!")
 				.build();
 
-		LocationComment locationComment2 = LocationComment.builder()
-				.image("image.png")
-				.content("두 번째 댓글")
-				.locationId(location.getId())
-				.partyMember(partyMember)
-				.member(member)
-				.build();
-
-		locationCommentRepository.saveAll(List.of(locationComment1, locationComment2));
+		replyCommentRepository.saveAll(List.of(replyComment1, replyComment2));
 
 		// When
 		ResultActions resultActions =
 				mockMvc.perform(
-						get("/api/v1/location-comments")
+						get("/api/v1/reply-comments")
 								.param("cursorId", (String)null)
 								.param("pageSize", "2")
-								.param("locationId", String.valueOf(location.getId()))
+								.param("commentId", String.valueOf(locationComment.getId()))
 				);
 
 		// Then
 		resultActions
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.locationComments").isArray())
-				.andExpect(jsonPath("$.locationComments").isNotEmpty())
+				.andExpect(jsonPath("$.replyComments").isNotEmpty())
+				.andExpect(jsonPath("$.replyComments").isArray())
 				.andExpect(jsonPath("$.lastId").isNotEmpty())
-				.andDo(print());
-	}
-
-	@Test
-	@DisplayName(" 후보지 댓글을 수정할 수 있다.")
-	void updateLocationCommentUpdateTest() throws Exception {
-		// Given
-		LocationCommentUpdateRequest request =
-				new LocationCommentUpdateRequest(locationComment.getId(), "다음에는 반얀트리 가야지!!", "image.png");
-
-		// When
-		ResultActions resultActions =
-				mockMvc.perform(
-						patch("/api/v1/location-comments")
-								.contentType(MediaType.APPLICATION_JSON_VALUE)
-								.characterEncoding("UTF-8")
-								.content(
-										objectMapper.writeValueAsString(request)
-								)
-				);
-
-		// Then
-		resultActions
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.content").value("다음에는 반얀트리 가야지!!"))
-				.andExpect(jsonPath("$.image").value("image.png"))
-				.andDo(print());
-
-	}
-
-	@Test
-	@DisplayName(" 후보지 댓글을 삭제할 수 있다.")
-	void deleteLocationComment() throws Exception {
-		// Given
-		LocationComment toBeDeleted = locationCommentRepository.save(
-				LocationComment.builder()
-						.member(member)
-						.image("image.png")
-						.locationId(location.getId())
-						.content("여기 별론데...")
-						.partyMember(partyMember)
-						.build()
-		);
-
-		// When
-		ResultActions resultActions =
-				mockMvc.perform(
-						delete("/api/v1/location-comments/{id}", toBeDeleted.getId())
-				);
-
-		// Then
-		resultActions
-				.andExpect(status().isOk())
 				.andDo(print());
 	}
 }
