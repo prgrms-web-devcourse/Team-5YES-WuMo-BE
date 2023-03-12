@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -18,7 +19,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.prgrms.wumo.domain.comment.dto.request.ReplyCommentGetAllRequest;
 import org.prgrms.wumo.domain.comment.dto.request.ReplyCommentRegisterRequest;
+import org.prgrms.wumo.domain.comment.dto.response.ReplyCommentGetAllResponse;
 import org.prgrms.wumo.domain.comment.dto.response.ReplyCommentRegisterResponse;
 import org.prgrms.wumo.domain.comment.model.LocationComment;
 import org.prgrms.wumo.domain.comment.model.ReplyComment;
@@ -87,7 +90,7 @@ public class ReplyCommentServiceTest {
 		void success() {
 			// Given
 			ReplyCommentRegisterRequest replyCommentRegisterRequest =
-				new ReplyCommentRegisterRequest(locationComment.getId(), "대댓글 쓰자!!!");
+					new ReplyCommentRegisterRequest(locationComment.getId(), "대댓글 쓰자!!!");
 
 			given(locationCommentRepository.findById(any(Long.class))).willReturn(Optional.of(locationComment));
 			given(partyMemberRepository.existsById(any(Long.class))).willReturn(true);
@@ -106,7 +109,7 @@ public class ReplyCommentServiceTest {
 		void failedWithUnAuthorized() {
 			// Given
 			ReplyCommentRegisterRequest replyCommentRegisterRequest =
-				new ReplyCommentRegisterRequest(locationComment.getId(), "대댓글 쓰자!!!");
+					new ReplyCommentRegisterRequest(locationComment.getId(), "대댓글 쓰자!!!");
 
 			given(locationCommentRepository.findById(any(Long.class))).willReturn(Optional.of(locationComment));
 			given(partyMemberRepository.existsById(any(Long.class))).willReturn(false);
@@ -116,6 +119,43 @@ public class ReplyCommentServiceTest {
 			assertThatThrownBy(
 					() -> replyCommentService.registerReplyComment(replyCommentRegisterRequest)
 			).isInstanceOf(AccessDeniedException.class);
+		}
+	}
+
+	@Nested
+	@DisplayName("getAllReplyComment 를 사용해서 ")
+	class getAllReplyComment {
+		@Test
+		@DisplayName("대댓글을 조회할 수 있다.")
+		void success() {
+			// Given
+			ReplyComment replyComment1 = ReplyComment.builder()
+					.id(1L)
+					.commentId(locationComment.getId())
+					.member(member)
+					.content("대댓글 1호!")
+					.build();
+			ReplyComment replyComment2 = ReplyComment.builder()
+					.id(2L)
+					.commentId(locationComment.getId())
+					.member(member)
+					.content("대댓글 2호!")
+					.build();
+
+			List<ReplyComment> replyComments = List.of(replyComment1, replyComment2);
+
+			ReplyCommentGetAllRequest replyCommentGetAllRequest =
+					new ReplyCommentGetAllRequest(null, 2, locationComment.getId());
+
+			given(replyCommentRepository.findAllByCommentId(null, 2, locationComment.getId()))
+					.willReturn(replyComments);
+
+			// When
+			ReplyCommentGetAllResponse replyCommentGetAllResponse =
+					replyCommentService.getAllReplyComment(replyCommentGetAllRequest);
+
+			// Then
+			assertThat(replyCommentGetAllResponse.replyComments().size()).isEqualTo(2);
 		}
 	}
 

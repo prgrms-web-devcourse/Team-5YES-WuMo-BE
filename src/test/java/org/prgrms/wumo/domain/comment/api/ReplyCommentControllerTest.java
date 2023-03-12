@@ -1,5 +1,6 @@
 package org.prgrms.wumo.domain.comment.api;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -7,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +17,9 @@ import org.junit.jupiter.api.Test;
 import org.prgrms.wumo.MysqlTestContainer;
 import org.prgrms.wumo.domain.comment.dto.request.ReplyCommentRegisterRequest;
 import org.prgrms.wumo.domain.comment.model.LocationComment;
+import org.prgrms.wumo.domain.comment.model.ReplyComment;
 import org.prgrms.wumo.domain.comment.repository.LocationCommentRepository;
+import org.prgrms.wumo.domain.comment.repository.ReplyCommentRepository;
 import org.prgrms.wumo.domain.location.model.Category;
 import org.prgrms.wumo.domain.location.model.Location;
 import org.prgrms.wumo.domain.location.repository.LocationRepository;
@@ -70,6 +74,8 @@ public class ReplyCommentControllerTest extends MysqlTestContainer {
 	PartyMember partyMember;
 	Location location;
 	LocationComment locationComment;
+	@Autowired
+	private ReplyCommentRepository replyCommentRepository;
 
 	@BeforeEach
 	void beforeEach() {
@@ -148,7 +154,7 @@ public class ReplyCommentControllerTest extends MysqlTestContainer {
 
 	@Test
 	@DisplayName("후보지 댓글에 대댓글을 작성할 수 있다.")
-	void registerReplyOnLocationComment() throws Exception{
+	void registerReplyOnLocationComment() throws Exception {
 		// Given
 		ReplyCommentRegisterRequest replyCommentRegisterRequest =
 				new ReplyCommentRegisterRequest(locationComment.getId(), "대댓글 쓰자!!!");
@@ -156,18 +162,53 @@ public class ReplyCommentControllerTest extends MysqlTestContainer {
 		// When
 		ResultActions resultActions =
 				mockMvc.perform(
-					post("/api/v1/reply-comments/location-comments")
-							.contentType(MediaType.APPLICATION_JSON_VALUE)
-							.characterEncoding("UTF-8")
-							.content(
-									objectMapper.writeValueAsString(replyCommentRegisterRequest)
-							)
+						post("/api/v1/reply-comments/location-comments")
+								.contentType(MediaType.APPLICATION_JSON_VALUE)
+								.characterEncoding("UTF-8")
+								.content(
+										objectMapper.writeValueAsString(replyCommentRegisterRequest)
+								)
 				);
 
 		// Then
 		resultActions
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.id").isNotEmpty())
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("후보지 댓글에 대댓글을 작성할 수 있다.")
+	void getAllReplyCommentTest() throws Exception {
+		// Given
+		ReplyComment replyComment1 = ReplyComment.builder()
+				.commentId(locationComment.getId())
+				.member(member)
+				.content("대댓글 1호!")
+				.build();
+		ReplyComment replyComment2 = ReplyComment.builder()
+				.commentId(locationComment.getId())
+				.member(member)
+				.content("대댓글 2호!")
+				.build();
+
+		replyCommentRepository.saveAll(List.of(replyComment1, replyComment2));
+
+		// When
+		ResultActions resultActions =
+				mockMvc.perform(
+						get("/api/v1/reply-comments")
+								.param("cursorId", (String)null)
+								.param("pageSize", "2")
+								.param("commentId", String.valueOf(locationComment.getId()))
+				);
+
+		// Then
+		resultActions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.replyComments").isNotEmpty())
+				.andExpect(jsonPath("$.replyComments").isArray())
+				.andExpect(jsonPath("$.lastId").isNotEmpty())
 				.andDo(print());
 	}
 }
