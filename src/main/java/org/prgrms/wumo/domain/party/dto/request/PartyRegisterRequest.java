@@ -26,7 +26,7 @@ public record PartyRegisterRequest(
 		LocalDate endDate,
 
 		@NotBlank(message = "모임 설명은 필수 입력사항입니다.")
-		@Length(max = 255, message = "모임 설명은 {max}자를 초과할 수 없습니다.")
+		@Length(max = 100, message = "모임 설명은 {max}자를 초과할 수 없습니다.")
 		@Schema(description = "모임 설명", example = "팀 설립 기념 워크샵", requiredMode = Schema.RequiredMode.REQUIRED)
 		String description,
 

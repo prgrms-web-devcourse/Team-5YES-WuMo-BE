@@ -39,7 +39,7 @@ public class Party extends BaseTimeEntity {
 	@Column(name = "end_date", nullable = false, unique = false)
 	private LocalDateTime endDate;
 
-	@Column(name = "description", nullable = true, unique = false, length = 255)
+	@Column(name = "description", nullable = true, unique = false, length = 100)
 	private String description;
 
 	@Column(name = "image_url", nullable = false, unique = false, length = 255)
