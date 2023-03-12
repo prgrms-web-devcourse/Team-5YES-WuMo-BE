@@ -14,7 +14,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class RouteLikeCustomRepositoryImpl implements RouteLikeCustomRepository {
@@ -84,6 +86,11 @@ public class RouteLikeCustomRepositoryImpl implements RouteLikeCustomRepository 
 							"END WHERE id BETWEEN %d AND %d;", resultSet.get(0).getFirst(), resultSet.get(resultSet.size() - 1).getFirst()
 					)
 			);
+
+			if (sql.toString().getBytes().length > 1024 * 1024) {
+				log.error("UPDATE 쿼리문의 길이가 1M을 초과하여 실행할 수 없습니다. 배치 사이즈를 조절해야 합니다.");
+				return;
+			}
 
 			jdbcTemplate.update(sql.toString());
 		}
