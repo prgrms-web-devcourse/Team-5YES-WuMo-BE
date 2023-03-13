@@ -46,17 +46,13 @@ public class RouteService {
 
 	@Transactional
 	public RouteRegisterResponse registerRoute(RouteRegisterRequest routeRegisterRequest) {
-		Party party = getPartyEntity(routeRegisterRequest.partyId());
+		long partyId = routeRegisterRequest.partyId();
+		Party party = getPartyEntity(partyId);
 		Location location = getLocationEntity(routeRegisterRequest.locationId());
-		validateAccess(party.getId());
+		validateAccess(partyId);
 
-		if (routeRegisterRequest.routeId() == null) {
-			Route route = routeRepository.save(toRoute(location, party));
-			route.updateLocation(location);
-			return toRouteRegisterResponse(route.getId());
-		}
-
-		Route route = getRouteEntity(routeRegisterRequest.routeId());
+		Route route = routeRepository.findByPartyId(partyId)
+				.orElseGet(() -> routeRepository.save(toRoute(location, party)));
 		route.updateLocation(location);
 
 		return toRouteRegisterResponse(route.getId());

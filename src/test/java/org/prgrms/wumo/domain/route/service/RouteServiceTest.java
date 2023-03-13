@@ -100,10 +100,10 @@ public class RouteServiceTest {
 		void success_not_first_register() {
 			//given
 			RouteRegisterRequest routeRegisterRequest
-					= new RouteRegisterRequest(routeId, locationId, partyId);
+					= new RouteRegisterRequest(locationId, partyId);
 
 			//mocking
-			given(routeRepository.findById(anyLong()))
+			given(routeRepository.findByPartyId(anyLong()))
 					.willReturn(Optional.of(route));
 			given(partyRepository.findById(anyLong()))
 					.willReturn(Optional.of(party));
@@ -119,7 +119,7 @@ public class RouteServiceTest {
 			assertThat(routeRegisterResponse.id()).isEqualTo(routeId);
 			then(routeRepository)
 					.should()
-					.findById(anyLong());
+					.findByPartyId(anyLong());
 		}
 
 		@Test
@@ -127,7 +127,7 @@ public class RouteServiceTest {
 		void success_first_register() {
 			//given
 			RouteRegisterRequest routeRegisterRequest
-					= new RouteRegisterRequest(null, locationId, partyId);
+					= new RouteRegisterRequest(locationId, partyId);
 
 			//mocking
 			given(routeRepository.save(any(Route.class)))
@@ -154,7 +154,7 @@ public class RouteServiceTest {
 		void fail_not_party_member() {
 			//given
 			RouteRegisterRequest routeRegisterRequest
-					= new RouteRegisterRequest(routeId, locationId, partyId);
+					= new RouteRegisterRequest(locationId, partyId);
 
 			//mocking
 			given(partyRepository.findById(anyLong()))
