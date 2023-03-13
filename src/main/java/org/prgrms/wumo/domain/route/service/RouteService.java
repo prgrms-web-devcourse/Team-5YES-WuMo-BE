@@ -61,6 +61,7 @@ public class RouteService {
 	@Transactional(readOnly = true)
 	public RouteGetResponse getRoute(long partyId, int fromPublic) {
 		Route route = getRouteEntityByParty(partyId);
+		route.addIsLiking(routeLikeRepository.existsByRouteIdAndMemberId(route.getId(), getMemberId()));
 
 		if (fromPublic == 0) {
 			validateAccess(route.getParty().getId());
