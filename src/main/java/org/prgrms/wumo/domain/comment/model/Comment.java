@@ -1,6 +1,7 @@
 package org.prgrms.wumo.domain.comment.model;
 
 import static lombok.AccessLevel.PROTECTED;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.WRONG_ACCESS;
 
 import java.util.Objects;
 
@@ -58,7 +59,7 @@ public class Comment extends BaseTimeEntity {
 
 	public void checkAuthorization(Long memberId) {
 		if (!Objects.equals(this.member.getId(), memberId)) {
-			throw new AccessDeniedException("댓글의 수정 및 삭제는 작성자만 할 수 있습니다.");
+			throw new AccessDeniedException(WRONG_ACCESS.name());
 		}
 	}
 }
