@@ -24,7 +24,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.prgrms.wumo.domain.image.repository.ImageRepository;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyGetRequest;
@@ -36,7 +35,6 @@ import org.prgrms.wumo.domain.party.dto.response.PartyGetResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
-import org.prgrms.wumo.domain.party.repository.InvitationRepository;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.global.exception.custom.PartyNotEmptyException;
@@ -56,12 +54,6 @@ class PartyServiceTest {
 
 	@Mock
 	PartyMemberRepository partyMemberRepository;
-
-	@Mock
-	InvitationRepository invitationRepository;
-
-	@Mock
-	ImageRepository imageRepository;
 
 	@InjectMocks
 	PartyService partyService;
@@ -369,15 +361,6 @@ class PartyServiceTest {
 			then(partyMemberRepository)
 					.should()
 					.findByPartyIdAndIsLeader(party.getId());
-			then(imageRepository)
-					.should()
-					.delete(party.getCoverImage());
-			then(invitationRepository)
-					.should()
-					.deleteAllByParty(party);
-			then(partyMemberRepository)
-					.should()
-					.delete(partyMember);
 			then(partyRepository)
 					.should()
 					.deleteById(party.getId());

@@ -1,13 +1,13 @@
 package org.prgrms.wumo.domain.party.service;
 
-import static org.prgrms.wumo.global.exception.ExceptionMessage.ENTITY_NOT_FOUND;
-import static org.prgrms.wumo.global.exception.ExceptionMessage.MEMBER;
-import static org.prgrms.wumo.global.exception.ExceptionMessage.PARTY;
 import static org.prgrms.wumo.domain.party.mapper.PartyMapper.toParty;
 import static org.prgrms.wumo.domain.party.mapper.PartyMapper.toPartyGetAllResponse;
 import static org.prgrms.wumo.domain.party.mapper.PartyMapper.toPartyGetDetailResponse;
 import static org.prgrms.wumo.domain.party.mapper.PartyMapper.toPartyMember;
 import static org.prgrms.wumo.domain.party.mapper.PartyMapper.toPartyRegisterResponse;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.ENTITY_NOT_FOUND;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.MEMBER;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.PARTY;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -16,7 +16,6 @@ import java.util.Objects;
 
 import javax.persistence.EntityNotFoundException;
 
-import org.prgrms.wumo.domain.image.repository.ImageRepository;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.domain.party.dto.request.PartyGetRequest;
@@ -27,7 +26,6 @@ import org.prgrms.wumo.domain.party.dto.response.PartyGetResponse;
 import org.prgrms.wumo.domain.party.dto.response.PartyRegisterResponse;
 import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.party.model.PartyMember;
-import org.prgrms.wumo.domain.party.repository.InvitationRepository;
 import org.prgrms.wumo.domain.party.repository.PartyMemberRepository;
 import org.prgrms.wumo.domain.party.repository.PartyRepository;
 import org.prgrms.wumo.global.exception.custom.PartyNotEmptyException;
@@ -47,10 +45,6 @@ public class PartyService {
 	private final PartyRepository partyRepository;
 
 	private final PartyMemberRepository partyMemberRepository;
-
-	private final InvitationRepository invitationRepository;
-
-	private final ImageRepository imageRepository;
 
 	@Transactional
 	public PartyRegisterResponse registerParty(PartyRegisterRequest partyRegisterRequest) {
@@ -119,9 +113,6 @@ public class PartyService {
 		// 모임장인 경우 모임에 멤버가 본인을 제외하고 없어야만 삭제 가능
 		List<PartyMember> partyMembers = partyMemberRepository.findAllByPartyId(partyId, null, 2);
 		if (partyMembers.size() == 1 && Objects.equals(partyMembers.get(0).getId(), partyLeader.getId())) {
-			imageRepository.delete(partyLeader.getParty().getCoverImage());
-			invitationRepository.deleteAllByParty(partyLeader.getParty());
-			partyMemberRepository.delete(partyLeader);
 			partyRepository.deleteById(partyId);
 		} else {
 			throw new PartyNotEmptyException("본인을 제외하고 모임에 가입된 회원이 없어야 합니다.");
