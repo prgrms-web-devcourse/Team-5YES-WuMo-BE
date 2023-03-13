@@ -73,7 +73,7 @@ public class RouteService {
 	@Cacheable(
 			cacheNames = "routes",
 			key = "#routeGetAllRequest.sortType().name()",
-			condition = "#routeGetAllRequest.cursorId() == null")
+			condition = "{#routeGetAllRequest.cursorId() == null && #routeGetAllRequest.searchWord() == null}")
 	@Transactional(readOnly = true)
 	public RouteGetAllResponses getAllRoute(RouteGetAllRequest routeGetAllRequest) {
 		List<Route> routes = routeRepository.findAllByCursorAndSearchWord(
