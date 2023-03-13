@@ -1,0 +1,4 @@
+logging:
+  slack:
+    webhook-url: ${SLACK_WEBHOOK_URL}
+  config: classpath:logback-spring.xml
