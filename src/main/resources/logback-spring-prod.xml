@@ -11,7 +11,27 @@
         </encoder>
     </appender>
 
+    <!-- slack -->
+    <springProperty name="SLACK_WEBHOOK_URI" source="logging.slack.webhook-url"/>
+    <appender name="SLACK" class="com.github.maricn.logback.SlackAppender">
+        <webhookUri>${SLACK_WEBHOOK_URI}</webhookUri>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] %msg %n</pattern>
+        </layout>
+        <username>WuMo</username>
+        <iconEmoji>:warning:</iconEmoji>
+        <colorCoding>true</colorCoding>
+    </appender>
+
+    <appender name="ASYNC_SLACK" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="SLACK"/>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+
     <root level="INFO">
         <appender-ref ref="Log_FILE"/>
+        <appender-ref ref="ASYNC_SLACK"/>
     </root>
 </included>

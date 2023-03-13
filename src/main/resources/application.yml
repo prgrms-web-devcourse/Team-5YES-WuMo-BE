@@ -9,8 +9,12 @@ spring:
         - aws
         - redis
         - sender
+        - log
       local:
         - local
+  servlet:
+    multipart:
+      max-file-size: 5MB
 
   flyway:
     enabled: true
