@@ -28,7 +28,6 @@ public class RouteCustomRepositoryImpl implements RouteCustomRepository {
 	@Override
 	public List<Route> findAllByCursorAndSearchWord(Long cursorId, int pageSize, SortType sortType, String searchWord) {
 
-		//TODO join해서 내가 좋아요 눌렀는지 여부까지 가져올 수 있을지
 		return jpaQueryFactory
 				.selectFrom(qRoute)
 				.where(inRouteAndHasSearchWord(searchWord),
