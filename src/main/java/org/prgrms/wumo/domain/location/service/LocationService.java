@@ -1,5 +1,9 @@
 package org.prgrms.wumo.domain.location.service;
 
+import static org.prgrms.wumo.global.exception.ExceptionMessage.ENTITY_NOT_FOUND;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.LOCATION;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.PARTY_MEMBER;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.WRONG_ACCESS;
 import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
 import static org.prgrms.wumo.domain.location.mapper.LocationMapper.toLocation;
 import static org.prgrms.wumo.domain.location.mapper.LocationMapper.toLocationGetAllResponse;
@@ -110,17 +114,17 @@ public class LocationService {
 
 	private Location getLocationEntity(Long locationId) {
 		return locationRepository.findById(locationId)
-				.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 후보지입니다"));
+				.orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND.name(), LOCATION.name())));
 	}
 
 	private void checkMemberInParty(Long partyId, Long memberId) {
 		if (!partyMemberRepository.existsByPartyIdAndMemberId(partyId, memberId))
-			throw new AccessDeniedException("모임에 속하지 않은 회원입니다.");
+			throw new AccessDeniedException(WRONG_ACCESS.name());
 	}
 
 	private PartyMember getPartyMemberEntity(Long partyId, Long memberId) {
 		return partyMemberRepository.findByPartyIdAndMemberId(partyId, memberId)
-				.orElseThrow(() -> new EntityNotFoundException("모임 내 존재하지 않는 회원입니다."));
+				.orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND.name(), PARTY_MEMBER.name())));
 	}
 
 	private void checkAuthorization(Location location, Long memberId) {

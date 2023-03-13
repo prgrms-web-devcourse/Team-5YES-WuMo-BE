@@ -1,5 +1,7 @@
 package org.prgrms.wumo.domain.location.model;
 
+import static org.prgrms.wumo.global.exception.ExceptionMessage.WRONG_ACCESS;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -124,7 +126,7 @@ public class Location extends BaseTimeEntity {
 
 	public void checkAuthorization(Long memberId) {
 		if (!Objects.equals(this.memberId, memberId)) {
-			throw new AccessDeniedException("후보지는 작성자 및 모임장만 수정 및 삭제할 수 있습니다.");
+			throw new AccessDeniedException(WRONG_ACCESS.name());
 		}
 	}
 }
