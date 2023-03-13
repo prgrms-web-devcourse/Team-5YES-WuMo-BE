@@ -197,7 +197,6 @@ public class RouteServiceTest {
 		@DisplayName("공개 목록에서 접근한 경우 바로 루트 상세 정보를 반환한다")
 		void success_from_public() {
 			//given
-			SecurityContextHolder.clearContext();
 			int isPublic = 1;
 
 			//mocking
