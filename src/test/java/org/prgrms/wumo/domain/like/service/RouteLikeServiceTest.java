@@ -1,6 +1,7 @@
 package org.prgrms.wumo.domain.like.service;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -30,9 +32,12 @@ import org.prgrms.wumo.domain.party.model.Party;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.prgrms.wumo.domain.route.repository.RouteRepository;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.PlatformTransactionManager;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("RouteLikeService 의")
@@ -46,6 +51,15 @@ class RouteLikeServiceTest {
 
 	@Mock
 	RouteLikeRepository routeLikeRepository;
+
+	@Mock
+	RedissonClient redissonClient;
+
+	@Mock
+	RLock lock;
+
+	@Mock
+	PlatformTransactionManager transactionManager;
 
 	@InjectMocks
 	RouteLikeService routeLikeService;
@@ -99,11 +113,20 @@ class RouteLikeServiceTest {
 	@Nested
 	@DisplayName("registerRouteLike 메소드는 등록 요청시")
 	class RegisterRouteLike {
-
 		@Test
 		@DisplayName("사용자가 좋아요를 누르지 않은 루트라면 좋아요를 등록한다.")
-		void success() {
-			//mocking
+		void success() throws InterruptedException {
+			//mocking (Lock 관련은 동작하지 않도록 null로 설정)
+			given(redissonClient.getLock(anyString()))
+					.willReturn(lock);
+			given(lock.tryLock(2, 3, TimeUnit.SECONDS))
+					.willReturn(true);
+			given(transactionManager.getTransaction(any()))
+					.willReturn(null);
+			given(lock.isLocked())
+					.willReturn(true);
+			given(lock.isHeldByCurrentThread())
+					.willReturn(true);
 			given(memberRepository.findById(member.getId()))
 					.willReturn(Optional.of(member));
 			given(routeRepository.findById(route.getId()))
@@ -131,8 +154,18 @@ class RouteLikeServiceTest {
 
 		@Test
 		@DisplayName("이미 사용자가 좋아요를 누른 루트면 예외가 발생한다.")
-		void failed() {
-			//mocking
+		void failed() throws InterruptedException {
+			//mocking (Lock 관련은 동작하지 않도록 null로 설정)
+			given(redissonClient.getLock(anyString()))
+					.willReturn(lock);
+			given(lock.tryLock(2, 3, TimeUnit.SECONDS))
+					.willReturn(true);
+			given(transactionManager.getTransaction(any()))
+					.willReturn(null);
+			given(lock.isLocked())
+					.willReturn(true);
+			given(lock.isHeldByCurrentThread())
+					.willReturn(true);
 			given(memberRepository.findById(member.getId()))
 					.willReturn(Optional.of(member));
 			given(routeRepository.findById(route.getId()))
