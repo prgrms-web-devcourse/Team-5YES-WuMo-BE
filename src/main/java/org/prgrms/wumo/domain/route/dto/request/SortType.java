@@ -10,19 +10,12 @@ import lombok.Getter;
 
 @Getter
 public enum SortType {
-	NEWEST("NEWEST"),
-	LIKES("LIKES");
-
-	private final String value;
-
-	SortType(String value) {
-		this.value = value;
-	}
+	NEWEST, LIKES;
 
 	@JsonCreator
 	public static SortType from(String value) {
 		return Arrays.stream(SortType.values())
-			.filter(sortType -> sortType.equals(value))
+			.filter(sortType -> sortType.name().equals(value))
 			.findFirst()
 			.orElseThrow(() -> new ValidationException("올바른 정렬 기준이 아닙니다."));
 	}
