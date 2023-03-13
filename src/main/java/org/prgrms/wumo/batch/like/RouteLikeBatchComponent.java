@@ -14,9 +14,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RouteLikeBatchComponent {
 
-	private static final int BATCH_FREQUENCY = 600000; 	// MilliSeconds
+	private static final int BATCH_FREQUENCY = 60000; // MilliSeconds
 
-	private static final int BATCH_SIZE = 1000;					// COUNT Record Result Size
+	private static final int BATCH_SIZE = 1000; // COUNT Record Result Size
 
 	private final RouteLikeRepository routeLikeRepository;
 
