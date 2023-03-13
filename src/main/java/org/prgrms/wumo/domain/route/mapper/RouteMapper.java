@@ -45,10 +45,16 @@ public class RouteMapper {
 						location.getVisitDate(),
 						location.getExpectedCost(),
 						location.getSpending(),
-						location.getCategory().name()))
+						location.getCategory().name())
+				)
 				.toList();
-		return new RouteGetResponse(route.getId(), route.getName(), route.isPublic(), routeLocations,
-				route.getParty().getId(), route.isLiking());
+		return new RouteGetResponse(
+				route.getId(),
+				route.getName(),
+				route.isPublic(),
+				routeLocations,
+				route.getParty().getId(),
+				route.isLiking());
 	}
 
 	public static RouteGetAllResponses toRouteGetAllResponses(List<Route> routes, long lastId) {
@@ -74,7 +80,8 @@ public class RouteMapper {
 						location.getId(),
 						location.getName(),
 						location.getAddress(),
-						location.getImage()
-				)).toList();
+						location.getImage())
+				)
+				.toList();
 	}
 }
