@@ -64,7 +64,7 @@ public class RouteMapper {
 						route.getLikeCount(),
 						route.isLiking(),
 						toRouteLocationSimpleResponse(route.getLocations()),
-						route.getParty().getName(),
+						route.getName(),
 						route.getParty().getStartDate(),
 						route.getParty().getEndDate(),
 						route.getParty().getCoverImage(),
