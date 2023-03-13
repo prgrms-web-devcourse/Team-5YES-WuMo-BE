@@ -48,7 +48,7 @@ public class RouteMapper {
 						location.getCategory().name()))
 				.toList();
 		return new RouteGetResponse(route.getId(), route.getName(), route.isPublic(), routeLocations,
-				route.getParty().getId());
+				route.getParty().getId(), route.isLiking());
 	}
 
 	public static RouteGetAllResponses toRouteGetAllResponses(List<Route> routes, long lastId) {
