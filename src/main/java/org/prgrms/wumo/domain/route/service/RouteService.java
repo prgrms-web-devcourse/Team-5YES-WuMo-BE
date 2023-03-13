@@ -1,10 +1,10 @@
 package org.prgrms.wumo.domain.route.service;
 
 import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
-import static org.prgrms.wumo.global.mapper.RouteMapper.toRoute;
-import static org.prgrms.wumo.global.mapper.RouteMapper.toRouteGetAllResponses;
-import static org.prgrms.wumo.global.mapper.RouteMapper.toRouteGetResponse;
-import static org.prgrms.wumo.global.mapper.RouteMapper.toRouteRegisterResponse;
+import static org.prgrms.wumo.domain.route.mapper.RouteMapper.toRoute;
+import static org.prgrms.wumo.domain.route.mapper.RouteMapper.toRouteGetAllResponses;
+import static org.prgrms.wumo.domain.route.mapper.RouteMapper.toRouteGetResponse;
+import static org.prgrms.wumo.domain.route.mapper.RouteMapper.toRouteRegisterResponse;
 
 import java.util.List;
 

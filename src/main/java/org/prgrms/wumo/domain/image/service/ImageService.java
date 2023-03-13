@@ -1,6 +1,6 @@
 package org.prgrms.wumo.domain.image.service;
 
-import static org.prgrms.wumo.global.mapper.ImageMapper.toImageRegisterResponse;
+import static org.prgrms.wumo.domain.image.mapper.ImageMapper.toImageRegisterResponse;
 
 import org.prgrms.wumo.domain.image.dto.request.ImageDeleteRequest;
 import org.prgrms.wumo.domain.image.dto.request.ImageRegisterRequest;

@@ -5,7 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationGetResponse;
+import static org.prgrms.wumo.domain.location.mapper.LocationMapper.toLocationGetResponse;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

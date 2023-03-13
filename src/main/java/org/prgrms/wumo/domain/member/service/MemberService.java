@@ -2,10 +2,10 @@ package org.prgrms.wumo.domain.member.service;
 
 import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
 import static org.prgrms.wumo.global.jwt.JwtUtil.isValidAccess;
-import static org.prgrms.wumo.global.mapper.MemberMapper.toMember;
-import static org.prgrms.wumo.global.mapper.MemberMapper.toMemberGetResponse;
-import static org.prgrms.wumo.global.mapper.MemberMapper.toMemberLoginResponse;
-import static org.prgrms.wumo.global.mapper.MemberMapper.toMemberRegisterResponse;
+import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toMember;
+import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toMemberGetResponse;
+import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toMemberLoginResponse;
+import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toMemberRegisterResponse;
 
 import javax.persistence.EntityNotFoundException;
 

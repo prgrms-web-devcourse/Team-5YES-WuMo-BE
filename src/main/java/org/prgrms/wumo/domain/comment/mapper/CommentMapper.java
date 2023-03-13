@@ -1,4 +1,4 @@
-package org.prgrms.wumo.global.mapper;
+package org.prgrms.wumo.domain.comment.mapper;
 
 import java.util.ArrayList;
 import java.util.List;

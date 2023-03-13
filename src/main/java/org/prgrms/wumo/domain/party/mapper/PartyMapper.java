@@ -1,4 +1,4 @@
-package org.prgrms.wumo.global.mapper;
+package org.prgrms.wumo.domain.party.mapper;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

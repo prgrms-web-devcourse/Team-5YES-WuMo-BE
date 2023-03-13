@@ -1,4 +1,4 @@
-package org.prgrms.wumo.global.mapper;
+package org.prgrms.wumo.domain.route.mapper;
 
 import java.util.ArrayList;
 import java.util.List;

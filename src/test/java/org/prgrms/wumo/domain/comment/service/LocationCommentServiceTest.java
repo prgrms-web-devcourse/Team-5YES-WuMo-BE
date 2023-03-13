@@ -5,7 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.prgrms.wumo.global.mapper.CommentMapper.toLocationCommentGetAllResponse;
+import static org.prgrms.wumo.domain.comment.mapper.CommentMapper.toLocationCommentGetAllResponse;
 
 import java.time.LocalDateTime;
 import java.util.Collections;

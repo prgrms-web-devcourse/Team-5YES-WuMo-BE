@@ -1,7 +1,7 @@
 package org.prgrms.wumo.domain.party.service;
 
-import static org.prgrms.wumo.global.mapper.PartyMapper.toInvitationRegisterResponse;
-import static org.prgrms.wumo.global.mapper.PartyMapper.toInvitationValidateResponse;
+import static org.prgrms.wumo.domain.party.mapper.PartyMapper.toInvitationRegisterResponse;
+import static org.prgrms.wumo.domain.party.mapper.PartyMapper.toInvitationValidateResponse;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
