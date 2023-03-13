@@ -124,7 +124,7 @@ public class RouteControllerTest extends MysqlTestContainer {
 	void register_route() throws Exception {
 		//given
 		RouteRegisterRequest routeRegisterRequest
-				= new RouteRegisterRequest(null, locationId, partyId);
+				= new RouteRegisterRequest(locationId, partyId);
 
 		//when
 		ResultActions resultActions
