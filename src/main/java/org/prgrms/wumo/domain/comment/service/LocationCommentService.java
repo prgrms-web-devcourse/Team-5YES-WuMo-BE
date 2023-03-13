@@ -1,5 +1,9 @@
 package org.prgrms.wumo.domain.comment.service;
 
+import static org.prgrms.wumo.global.exception.ExceptionMessage.ENTITY_NOT_FOUND;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.LOCATION;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.PARTY_MEMBER;
+import static org.prgrms.wumo.global.exception.ExceptionMessage.WRONG_ACCESS;
 import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
 import static org.prgrms.wumo.domain.comment.mapper.CommentMapper.toLocationComment;
 import static org.prgrms.wumo.domain.comment.mapper.CommentMapper.toLocationCommentGetAllResponse;
@@ -89,18 +93,18 @@ public class LocationCommentService {
 
 	private void checkMemberInParty(Long partyMemberId) {
 		if (!partyMemberRepository.existsById(partyMemberId)) {
-			throw new AccessDeniedException("모임 내 회원이 아닙니다.");
+			throw new AccessDeniedException(WRONG_ACCESS.name());
 		}
 	}
 
 	private PartyMember getPartyMemberEntity(Long partyId, Long memberId) {
 		return partyMemberRepository.findByPartyIdAndMemberId(partyId, memberId)
-				.orElseThrow(() -> new EntityNotFoundException("모임 내 존재하지 않는 회원입니다."));
+				.orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND.name(), PARTY_MEMBER.name())));
 	}
 
 	private LocationComment getLocationCommentEntity(Long locationCommentId) {
 		return locationCommentRepository.findById(locationCommentId)
-				.orElseThrow(() -> new EntityNotFoundException("존재 하지 않는 후보지 댓글입니다."));
+				.orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND.name(), LOCATION.name())));
 	}
 
 	private void checkAuthorization(LocationComment locationComment, Long memberId) {
