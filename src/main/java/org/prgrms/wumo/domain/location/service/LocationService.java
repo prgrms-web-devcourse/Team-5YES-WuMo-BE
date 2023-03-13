@@ -1,12 +1,12 @@
 package org.prgrms.wumo.domain.location.service;
 
 import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
-import static org.prgrms.wumo.global.mapper.LocationMapper.toLocation;
-import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationGetAllResponse;
-import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationGetResponse;
-import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationRegisterResponse;
-import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationSpendingUpdateResponse;
-import static org.prgrms.wumo.global.mapper.LocationMapper.toLocationUpdateResponse;
+import static org.prgrms.wumo.domain.location.mapper.LocationMapper.toLocation;
+import static org.prgrms.wumo.domain.location.mapper.LocationMapper.toLocationGetAllResponse;
+import static org.prgrms.wumo.domain.location.mapper.LocationMapper.toLocationGetResponse;
+import static org.prgrms.wumo.domain.location.mapper.LocationMapper.toLocationRegisterResponse;
+import static org.prgrms.wumo.domain.location.mapper.LocationMapper.toLocationSpendingUpdateResponse;
+import static org.prgrms.wumo.domain.location.mapper.LocationMapper.toLocationUpdateResponse;
 
 import java.util.List;
 import java.util.Objects;

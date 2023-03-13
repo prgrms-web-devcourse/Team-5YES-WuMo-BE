@@ -3,9 +3,9 @@ package org.prgrms.wumo.domain.comment.service;
 import static org.prgrms.wumo.global.exception.ExceptionMessage.COMMENT;
 import static org.prgrms.wumo.global.exception.ExceptionMessage.WRONG_ACCESS;
 import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
-import static org.prgrms.wumo.global.mapper.CommentMapper.toReplyComment;
-import static org.prgrms.wumo.global.mapper.CommentMapper.toReplyCommentGetAllResponse;
-import static org.prgrms.wumo.global.mapper.CommentMapper.toReplyCommentRegisterResponse;
+import static org.prgrms.wumo.domain.comment.mapper.CommentMapper.toReplyComment;
+import static org.prgrms.wumo.domain.comment.mapper.CommentMapper.toReplyCommentGetAllResponse;
+import static org.prgrms.wumo.domain.comment.mapper.CommentMapper.toReplyCommentRegisterResponse;
 import static org.prgrms.wumo.global.exception.ExceptionMessage.ENTITY_NOT_FOUND;
 
 

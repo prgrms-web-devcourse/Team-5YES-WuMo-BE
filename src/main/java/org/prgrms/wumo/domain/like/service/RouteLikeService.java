@@ -3,7 +3,7 @@ package org.prgrms.wumo.domain.like.service;
 import static org.prgrms.wumo.global.exception.ExceptionMessage.ENTITY_NOT_FOUND;
 import static org.prgrms.wumo.global.exception.ExceptionMessage.MEMBER;
 import static org.prgrms.wumo.global.exception.ExceptionMessage.ROUTE;
-import static org.prgrms.wumo.global.mapper.LikeMapper.toRouteLike;
+import static org.prgrms.wumo.domain.like.mapper.LikeMapper.toRouteLike;
 
 import javax.persistence.EntityNotFoundException;
 

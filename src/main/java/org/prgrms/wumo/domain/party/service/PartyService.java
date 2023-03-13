@@ -3,11 +3,11 @@ package org.prgrms.wumo.domain.party.service;
 import static org.prgrms.wumo.global.exception.ExceptionMessage.ENTITY_NOT_FOUND;
 import static org.prgrms.wumo.global.exception.ExceptionMessage.MEMBER;
 import static org.prgrms.wumo.global.exception.ExceptionMessage.PARTY;
-import static org.prgrms.wumo.global.mapper.PartyMapper.toParty;
-import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyGetAllResponse;
-import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyGetDetailResponse;
-import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyMember;
-import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyRegisterResponse;
+import static org.prgrms.wumo.domain.party.mapper.PartyMapper.toParty;
+import static org.prgrms.wumo.domain.party.mapper.PartyMapper.toPartyGetAllResponse;
+import static org.prgrms.wumo.domain.party.mapper.PartyMapper.toPartyGetDetailResponse;
+import static org.prgrms.wumo.domain.party.mapper.PartyMapper.toPartyMember;
+import static org.prgrms.wumo.domain.party.mapper.PartyMapper.toPartyRegisterResponse;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;

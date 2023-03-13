@@ -1,4 +1,4 @@
-package org.prgrms.wumo.global.mapper;
+package org.prgrms.wumo.domain.member.mapper;
 
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
 import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;

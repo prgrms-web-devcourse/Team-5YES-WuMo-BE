@@ -1,10 +1,10 @@
 package org.prgrms.wumo.domain.comment.service;
 
 import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
-import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteComment;
-import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteCommentGetAllResponse;
-import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteCommentRegisterResponse;
-import static org.prgrms.wumo.global.mapper.CommentMapper.toPartyRouteCommentUpdateResponse;
+import static org.prgrms.wumo.domain.comment.mapper.CommentMapper.toPartyRouteComment;
+import static org.prgrms.wumo.domain.comment.mapper.CommentMapper.toPartyRouteCommentGetAllResponse;
+import static org.prgrms.wumo.domain.comment.mapper.CommentMapper.toPartyRouteCommentRegisterResponse;
+import static org.prgrms.wumo.domain.comment.mapper.CommentMapper.toPartyRouteCommentUpdateResponse;
 
 import java.util.List;
 import java.util.Objects;

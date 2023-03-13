@@ -3,9 +3,9 @@ package org.prgrms.wumo.domain.party.service;
 import static org.prgrms.wumo.global.exception.ExceptionMessage.ENTITY_NOT_FOUND;
 import static org.prgrms.wumo.global.exception.ExceptionMessage.MEMBER;
 import static org.prgrms.wumo.global.exception.ExceptionMessage.PARTY;
-import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyMember;
-import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyMemberGetAllResponse;
-import static org.prgrms.wumo.global.mapper.PartyMapper.toPartyMemberGetResponse;
+import static org.prgrms.wumo.domain.party.mapper.PartyMapper.toPartyMember;
+import static org.prgrms.wumo.domain.party.mapper.PartyMapper.toPartyMemberGetAllResponse;
+import static org.prgrms.wumo.domain.party.mapper.PartyMapper.toPartyMemberGetResponse;
 
 import java.util.List;
 import java.util.Objects;

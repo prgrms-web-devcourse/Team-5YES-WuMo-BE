@@ -1,4 +1,4 @@
-package org.prgrms.wumo.global.mapper;
+package org.prgrms.wumo.domain.like.mapper;
 
 import org.prgrms.wumo.domain.like.model.RouteLike;
 import org.prgrms.wumo.domain.member.model.Member;

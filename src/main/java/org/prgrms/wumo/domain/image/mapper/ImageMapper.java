@@ -1,4 +1,4 @@
-package org.prgrms.wumo.global.mapper;
+package org.prgrms.wumo.domain.image.mapper;
 
 import org.prgrms.wumo.domain.image.dto.response.ImageRegisterResponse;
 
