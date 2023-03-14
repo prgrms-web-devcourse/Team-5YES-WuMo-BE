@@ -58,6 +58,10 @@ public class ImageRepository {
 	}
 
 	public void delete(String imageUrl) {
+		if (imageUrl == null || imageUrl.isBlank()) {
+			return;
+		}
+
 		try {
 			String imageUrlWithHost = removeProtocols(imageUrl);
 			validateHost(imageUrlWithHost);

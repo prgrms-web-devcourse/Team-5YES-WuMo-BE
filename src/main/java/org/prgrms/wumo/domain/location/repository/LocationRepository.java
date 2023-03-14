@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Long>, LocationCustomRepository {
+
+	void deleteAllByPartyId(Long partyId);
+
 }

@@ -10,6 +10,10 @@ public interface RouteLikeRepository extends JpaRepository<RouteLike, Long>, Rou
 	boolean existsByRouteIdAndMemberId(Long routeId, Long memberId);
 
 	@Modifying
+	@Query("DELETE FROM RouteLike routeLike WHERE routeLike.routeId = :routeId")
+	void deleteAllByRouteId(Long routeId);
+
+	@Modifying
 	@Query("DELETE FROM RouteLike routeLike WHERE routeLike.routeId = :routeId AND routeLike.memberId = :memberId")
 	int deleteByRouteIdAndMemberId(Long routeId, Long memberId);
 
