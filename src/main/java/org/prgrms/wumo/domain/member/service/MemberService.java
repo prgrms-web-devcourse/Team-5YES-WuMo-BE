@@ -109,7 +109,7 @@ public class MemberService {
 		jwtTokenProvider.validateToken(refreshToken);
 		String memberId = jwtTokenProvider.extractMember(accessToken);
 
-		if (!keyValueRepository.get(memberId).equals(refreshToken)) {
+		if (!refreshToken.equals(keyValueRepository.get(memberId))) {
 			throw new ExpiredTokenException("인증 정보가 만료되었습니다.");
 		}
 
