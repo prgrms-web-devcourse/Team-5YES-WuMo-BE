@@ -6,10 +6,15 @@ import org.hibernate.event.service.spi.EventListenerRegistry;
 import org.hibernate.event.spi.EventType;
 import org.hibernate.integrator.spi.Integrator;
 import org.hibernate.service.spi.SessionFactoryServiceRegistry;
+import org.prgrms.wumo.domain.comment.listener.LocationCommentListener;
+import org.prgrms.wumo.domain.comment.listener.PartyRouteCommentListener;
+import org.prgrms.wumo.domain.comment.listener.ReplyCommentListener;
 import org.prgrms.wumo.domain.image.listener.ImageListener;
 import org.prgrms.wumo.domain.like.listener.RouteLikeListener;
+import org.prgrms.wumo.domain.location.listener.LocationListener;
 import org.prgrms.wumo.domain.party.listener.InvitationListener;
 import org.prgrms.wumo.domain.party.listener.PartyMemberListener;
+import org.prgrms.wumo.domain.route.listener.RouteListener;
 
 public class EventListenerIntegrator implements Integrator {
 
@@ -25,7 +30,12 @@ public class EventListenerIntegrator implements Integrator {
 						new ImageListener(),
 						new InvitationListener(),
 						new PartyMemberListener(),
-						new RouteLikeListener()
+						new RouteLikeListener(),
+						new LocationListener(),
+						new RouteListener(),
+						new LocationCommentListener(),
+						new PartyRouteCommentListener(),
+						new ReplyCommentListener()
 				);
 	}
 

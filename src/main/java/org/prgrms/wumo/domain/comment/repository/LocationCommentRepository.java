@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LocationCommentRepository extends JpaRepository<LocationComment, Long>, LocationCommentCustomRepository {
+
+	void deleteAllByLocationId(Long locationId);
+
 }
