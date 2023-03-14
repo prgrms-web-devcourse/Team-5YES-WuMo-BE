@@ -4,15 +4,16 @@ import javax.persistence.EntityNotFoundException;
 
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.exception.custom.ExpiredInvitationException;
+import org.prgrms.wumo.global.exception.custom.ExpiredTokenException;
 import org.prgrms.wumo.global.exception.custom.ImageDeleteFailedException;
 import org.prgrms.wumo.global.exception.custom.ImageUploadFailedException;
 import org.prgrms.wumo.global.exception.custom.InvalidCodeException;
-import org.prgrms.wumo.global.exception.custom.InvalidRefreshTokenException;
 import org.prgrms.wumo.global.exception.custom.PartyNotEmptyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSendException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -24,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler({
-			InvalidRefreshTokenException.class
+			ExpiredTokenException.class
 	})
 	public ResponseEntity<ExceptionResponse> handleRefreshTokenException(RuntimeException runtimeException) {
 		log.info("exception : " + runtimeException);
@@ -53,7 +54,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler({
 			ImageUploadFailedException.class, IllegalArgumentException.class, ImageDeleteFailedException.class,
 			EntityNotFoundException.class, PartyNotEmptyException.class, ExpiredInvitationException.class,
-			MailSendException.class, InvalidCodeException.class
+			MailSendException.class, InvalidCodeException.class, BadCredentialsException.class
 	})
 	public ResponseEntity<ExceptionResponse> handleException(RuntimeException runtimeException) {
 		log.info("exception : " + runtimeException);
