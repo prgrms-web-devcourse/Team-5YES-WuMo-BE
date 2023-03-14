@@ -4,10 +4,10 @@ import javax.persistence.EntityNotFoundException;
 
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.exception.custom.ExpiredInvitationException;
+import org.prgrms.wumo.global.exception.custom.ExpiredTokenException;
 import org.prgrms.wumo.global.exception.custom.ImageDeleteFailedException;
 import org.prgrms.wumo.global.exception.custom.ImageUploadFailedException;
 import org.prgrms.wumo.global.exception.custom.InvalidCodeException;
-import org.prgrms.wumo.global.exception.custom.InvalidRefreshTokenException;
 import org.prgrms.wumo.global.exception.custom.PartyNotEmptyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler({
-			InvalidRefreshTokenException.class
+			ExpiredTokenException.class
 	})
 	public ResponseEntity<ExceptionResponse> handleRefreshTokenException(RuntimeException runtimeException) {
 		log.info("exception : " + runtimeException);
