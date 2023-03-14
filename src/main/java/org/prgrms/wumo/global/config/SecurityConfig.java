@@ -32,7 +32,7 @@ public class SecurityConfig {
 	private final OauthAuthenticationSuccessHandler oauthAuthenticationSuccessHandler;
 
 	private final String[] apiUrls = {
-			"/wumo/**", "/swagger/**", "/swagger-ui.html", "/swagger-ui/**", "/favicon.ico", "/favicon.io"
+			"/wumo/**", "/wumo-ui", "/swagger/**", "/swagger-ui.html", "/swagger-ui/**", "/favicon.ico", "/favicon.io"
 	};
 
 	@Bean

@@ -28,10 +28,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(
-		HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-		throws ServletException, IOException {
+			HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
 
-		String token = extractToken((HttpServletRequest)request);
+		String token = extractToken(request);
 
 		if (StringUtils.hasText(token)) {
 			jwtTokenProvider.validateToken(token);
@@ -40,6 +40,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		filterChain.doFilter(request, response);
+	}
+
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) {
+		return request.getRequestURI().endsWith("reissue")
+				&& request.getMethod().equalsIgnoreCase("POST");
 	}
 
 	private String extractToken(HttpServletRequest request) {
