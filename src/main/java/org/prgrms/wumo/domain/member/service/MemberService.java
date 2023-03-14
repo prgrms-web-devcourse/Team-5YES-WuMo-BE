@@ -1,11 +1,12 @@
 package org.prgrms.wumo.domain.member.service;
 
-import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
-import static org.prgrms.wumo.global.jwt.JwtUtil.isValidAccess;
 import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toMember;
 import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toMemberGetResponse;
 import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toMemberLoginResponse;
 import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toMemberRegisterResponse;
+import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toOauthLoginResponse;
+import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
+import static org.prgrms.wumo.global.jwt.JwtUtil.isValidAccess;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -27,7 +28,8 @@ import org.prgrms.wumo.global.exception.custom.InvalidRefreshTokenException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.JwtUtil;
 import org.prgrms.wumo.global.jwt.WumoJwt;
-import org.prgrms.wumo.global.repository.RedisRepository;
+import org.prgrms.wumo.global.oauth.dto.OauthLoginResponse;
+import org.prgrms.wumo.global.repository.KeyValueRepository;
 import org.prgrms.wumo.global.sender.Sender;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
@@ -44,7 +46,7 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final JwtTokenProvider jwtTokenProvider;
-	private final RedisRepository redisRepository;
+	private final KeyValueRepository keyValueRepository;
 	private final Sender sender;
 	private final ApplicationEventPublisher applicationEventPublisher;
 
@@ -53,7 +55,7 @@ public class MemberService {
 	}
 
 	public void checkCode(String toAddress, String code) {
-		if (!redisRepository.get(toAddress).equals(code)) {
+		if (!keyValueRepository.get(toAddress).equals(code)) {
 			throw new InvalidCodeException("유효하지 않은 인증 코드입니다.");
 		}
 	}
@@ -96,7 +98,7 @@ public class MemberService {
 
 	@Transactional
 	public void logoutMember() {
-		redisRepository.delete(String.valueOf(getMemberId()));
+		keyValueRepository.delete(String.valueOf(getMemberId()));
 		SecurityContextHolder.clearContext();
 	}
 
@@ -107,11 +109,11 @@ public class MemberService {
 		jwtTokenProvider.validateToken(refreshToken);
 		String memberId = jwtTokenProvider.extractMember(accessToken);
 
-		if (!redisRepository.get(memberId).equals(refreshToken)) {
+		if (!keyValueRepository.get(memberId).equals(refreshToken)) {
 			throw new InvalidRefreshTokenException("인증 정보가 만료되었습니다.");
 		}
 
-		redisRepository.delete(memberId);
+		keyValueRepository.delete(memberId);
 		WumoJwt wumoJwt = getWumoJwt(memberId);
 
 		return toMemberLoginResponse(wumoJwt);
@@ -142,6 +144,14 @@ public class MemberService {
 		member.updatePassword(memberPasswordUpdateRequest.newPassword());
 	}
 
+	@Transactional
+	public OauthLoginResponse registerOrGet(String email) {
+		Member member = memberRepository.findByEmail(email)
+				.orElseGet(() -> memberRepository.save(toMember(email)));
+		WumoJwt wumoJwt = getWumoJwt(String.valueOf(member.getId()));
+		return toOauthLoginResponse(wumoJwt);
+	}
+
 	private void validatePassword(Member member, String password) {
 		if (member.isNotValidPassword(password)) {
 			throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
@@ -150,7 +160,7 @@ public class MemberService {
 
 	private WumoJwt getWumoJwt(String memberId) {
 		WumoJwt wumoJwt = jwtTokenProvider.generateToken(memberId);
-		redisRepository.save(
+		keyValueRepository.save(
 				memberId,
 				wumoJwt.getRefreshToken(),
 				jwtTokenProvider.getRefreshTokenExpireSeconds()

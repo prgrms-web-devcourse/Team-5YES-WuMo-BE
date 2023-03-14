@@ -36,7 +36,7 @@ import org.prgrms.wumo.global.exception.ExceptionMessage;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.WumoJwt;
-import org.prgrms.wumo.global.repository.RedisRepository;
+import org.prgrms.wumo.global.repository.KeyValueRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -57,7 +57,7 @@ public class MemberServiceTest {
 	JwtTokenProvider jwtTokenProvider;
 
 	@Mock
-	RedisRepository redisRepository;
+	KeyValueRepository keyValueRepository;
 
 	@Mock
 	ApplicationEventPublisher applicationEventPublisher;
