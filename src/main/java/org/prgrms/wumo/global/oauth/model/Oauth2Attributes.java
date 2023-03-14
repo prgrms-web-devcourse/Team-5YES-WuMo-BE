@@ -2,6 +2,13 @@ package org.prgrms.wumo.global.oauth.model;
 
 import java.util.Map;
 
+/**
+ * provider로부터 오는 다른 JSON 형식들을 관리하기 위한 클래스
+ * @param sub
+ * @param provider
+ * @param email
+ * @param attributes
+ */
 public record Oauth2Attributes(
 		String sub,
 		SocialOauthType provider,

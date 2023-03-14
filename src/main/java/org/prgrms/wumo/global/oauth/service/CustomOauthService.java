@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * provider로부터 받은 회원 정보를 가공
+ */
 @Service
 @RequiredArgsConstructor
 public class CustomOauthService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {

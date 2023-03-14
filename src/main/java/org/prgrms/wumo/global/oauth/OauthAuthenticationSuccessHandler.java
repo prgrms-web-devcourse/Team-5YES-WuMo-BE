@@ -17,6 +17,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * OAuth 로그인 성공 시 호출되는 handler
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
