@@ -84,6 +84,9 @@ dependencies {
 
     //Logging
     implementation 'com.github.maricn:logback-slack-appender:1.6.1'
+
+    //OAuth
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 dependencyManagement {
