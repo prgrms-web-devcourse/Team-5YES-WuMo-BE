@@ -16,7 +16,7 @@ public class LocationCommentListener implements JpaEventListener, PostDeleteEven
 	private static LocationCommentRepository locationCommentRepository;
 
 	@Autowired
-	public void setInvitationRepository(LocationCommentRepository locationCommentRepository) {
+	public void setLocationCommentRepository(LocationCommentRepository locationCommentRepository) {
 		LocationCommentListener.locationCommentRepository = locationCommentRepository;
 	}
 

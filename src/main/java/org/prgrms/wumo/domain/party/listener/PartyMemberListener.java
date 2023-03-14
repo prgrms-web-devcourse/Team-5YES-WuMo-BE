@@ -16,7 +16,7 @@ public class PartyMemberListener implements JpaEventListener, PostDeleteEventLis
 	private static PartyMemberRepository partyMemberRepository;
 
 	@Autowired
-	public void setInvitationRepository(PartyMemberRepository partyMemberRepository) {
+	public void setPartyMemberRepository(PartyMemberRepository partyMemberRepository) {
 		PartyMemberListener.partyMemberRepository = partyMemberRepository;
 	}
 

@@ -16,7 +16,7 @@ public class RouteListener implements JpaEventListener, PostDeleteEventListener 
 	private static RouteRepository routeRepository;
 
 	@Autowired
-	public void setInvitationRepository(RouteRepository routeRepository) {
+	public void setRouteRepository(RouteRepository routeRepository) {
 		RouteListener.routeRepository = routeRepository;
 	}
 

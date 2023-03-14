@@ -16,7 +16,7 @@ public class LocationListener implements JpaEventListener, PostDeleteEventListen
 	private static LocationRepository locationRepository;
 
 	@Autowired
-	public void setInvitationRepository(LocationRepository locationRepository) {
+	public void setLocationRepository(LocationRepository locationRepository) {
 		LocationListener.locationRepository = locationRepository;
 	}
 

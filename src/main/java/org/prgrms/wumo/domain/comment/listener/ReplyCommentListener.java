@@ -16,7 +16,7 @@ public class ReplyCommentListener implements JpaEventListener, PostDeleteEventLi
 	private static ReplyCommentRepository replyCommentRepository;
 
 	@Autowired
-	public void setInvitationRepository(ReplyCommentRepository replyCommentRepository) {
+	public void setReplyCommentRepository(ReplyCommentRepository replyCommentRepository) {
 		ReplyCommentListener.replyCommentRepository = replyCommentRepository;
 	}
 

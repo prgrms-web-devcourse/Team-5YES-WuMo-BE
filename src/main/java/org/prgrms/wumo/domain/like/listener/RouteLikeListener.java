@@ -16,7 +16,7 @@ public class RouteLikeListener implements JpaEventListener, PostDeleteEventListe
 	private static RouteLikeRepository routeLikeRepository;
 
 	@Autowired
-	public void setInvitationRepository(RouteLikeRepository routeLikeRepository) {
+	public void setRouteLikeRepository(RouteLikeRepository routeLikeRepository) {
 		RouteLikeListener.routeLikeRepository = routeLikeRepository;
 	}
 

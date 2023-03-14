@@ -18,7 +18,7 @@ public class PartyRouteCommentListener implements JpaEventListener, PostDeleteEv
 	private static PartyRouteCommentRepository partyRouteCommentRepository;
 
 	@Autowired
-	public void setInvitationRepository(PartyRouteCommentRepository partyRouteCommentRepository) {
+	public void setPartyRouteCommentRepository(PartyRouteCommentRepository partyRouteCommentRepository) {
 		PartyRouteCommentListener.partyRouteCommentRepository = partyRouteCommentRepository;
 	}
 
