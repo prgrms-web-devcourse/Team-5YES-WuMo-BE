@@ -38,7 +38,14 @@ public class SecurityConfig {
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return web -> web.ignoring()
-				.antMatchers(apiUrls);
+				.antMatchers(apiUrls)
+				.antMatchers("/api/v1/members/signup")
+				.antMatchers("/api/v1/members/check-email")
+				.antMatchers("/api/v1/members/check-nickname")
+				.antMatchers("/api/v1/members/login")
+				.antMatchers("/api/v1/members/send-code")
+				.antMatchers("/api/v1/members/check-code")
+				.antMatchers("/api/v1/members/reissue");
 	}
 
 	@Bean
@@ -64,6 +71,8 @@ public class SecurityConfig {
 				.antMatchers(
 						"/api/v1/members/signup",
 						"/api/v1/members/login",
+						"/api/v1/members/check-email",
+						"/api/v1/members/check-nickname",
 						"/api/v1/members/send-code",
 						"/api/v1/members/check-code",
 						"/api/v1/members/reissue",
