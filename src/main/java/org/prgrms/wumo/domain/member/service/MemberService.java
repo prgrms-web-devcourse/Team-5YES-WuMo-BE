@@ -23,7 +23,7 @@ import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.global.event.MemberCreateEvent;
 import org.prgrms.wumo.global.exception.ExceptionMessage;
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
-import org.prgrms.wumo.global.exception.custom.ExpiredTokenException;
+import org.prgrms.wumo.global.exception.custom.ExpiredRefreshTokenException;
 import org.prgrms.wumo.global.exception.custom.InvalidCodeException;
 import org.prgrms.wumo.global.jwt.JwtTokenProvider;
 import org.prgrms.wumo.global.jwt.JwtUtil;
@@ -110,7 +110,7 @@ public class MemberService {
 		String memberId = jwtTokenProvider.extractMember(accessToken);
 
 		if (!refreshToken.equals(keyValueRepository.get(memberId))) {
-			throw new ExpiredTokenException("인증 정보가 만료되었습니다.");
+			throw new ExpiredRefreshTokenException("인증 정보가 만료되었습니다.");
 		}
 
 		keyValueRepository.delete(memberId);

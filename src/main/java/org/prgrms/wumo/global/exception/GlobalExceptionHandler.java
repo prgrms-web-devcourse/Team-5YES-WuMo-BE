@@ -4,7 +4,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.prgrms.wumo.global.exception.custom.DuplicateException;
 import org.prgrms.wumo.global.exception.custom.ExpiredInvitationException;
-import org.prgrms.wumo.global.exception.custom.ExpiredTokenException;
+import org.prgrms.wumo.global.exception.custom.ExpiredRefreshTokenException;
 import org.prgrms.wumo.global.exception.custom.ImageDeleteFailedException;
 import org.prgrms.wumo.global.exception.custom.ImageUploadFailedException;
 import org.prgrms.wumo.global.exception.custom.InvalidCodeException;
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler({
-			ExpiredTokenException.class
+			ExpiredRefreshTokenException.class
 	})
 	public ResponseEntity<ExceptionResponse> handleRefreshTokenException(RuntimeException runtimeException) {
 		log.info("exception : " + runtimeException);
