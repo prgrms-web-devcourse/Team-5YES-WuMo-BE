@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.prgrms.wumo.global.exception.ExceptionResponse;
 import org.prgrms.wumo.global.exception.custom.TokenException;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  * JwtTokenProvider에서 발생한 예외 처리
  */
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class JwtExceptionFilter extends OncePerRequestFilter {
 

@@ -72,14 +72,12 @@ public class LocationServiceTest {
 				.id(1L)
 				.password("qwe12345")
 				.email("wumo@email.com")
-				.profileImage("http://profile.png")
 				.nickname("DaRamG")
 				.build();
 		member = Member.builder()
 				.id(2L)
 				.password("qwe12345")
 				.email("wumo@gmail.com")
-				.profileImage("http://profile.png")
 				.nickname("HoRangE")
 				.build();
 		party = Party.builder()

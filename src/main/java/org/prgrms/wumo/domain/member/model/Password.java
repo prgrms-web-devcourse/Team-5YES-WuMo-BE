@@ -24,7 +24,7 @@ public class Password {
 	@Transient
 	private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-	@Column(name = "password", nullable = false, updatable = true, length = 60)
+	@Column(name = "password", nullable = true, updatable = true, length = 60)
 	private String password;
 
 	public Password(String password) {

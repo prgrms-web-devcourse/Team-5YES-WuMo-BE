@@ -37,13 +37,17 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "image_url", nullable = true, updatable = true, unique = false)
 	private String profileImage;
 
+	public Member(String email, String nickname) {
+		this.email = new Email(email);
+		this.nickname = nickname;
+	}
+
 	@Builder
-	public Member(Long id, String email, String nickname, String password, String profileImage) {
+	public Member(Long id, String email, String nickname, String password) {
 		this.id = id;
 		this.email = new Email(email);
 		this.nickname = nickname;
 		this.password = new Password(password);
-		this.profileImage = profileImage;
 	}
 
 	public boolean isNotValidPassword(String inputPassword) {

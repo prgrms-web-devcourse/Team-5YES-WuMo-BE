@@ -5,7 +5,7 @@ import java.util.Random;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.prgrms.wumo.global.repository.RedisRepository;
+import org.prgrms.wumo.global.repository.KeyValueRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -32,7 +32,7 @@ public class EmailSender implements Sender {
 	private static final Random random = new Random();
 
 	private final JavaMailSender javaMailSender;
-	private final RedisRepository redisRepository;
+	private final KeyValueRepository keyValueRepository;
 
 	@Override
 	public void sendCode(String toAddress) {
@@ -40,7 +40,7 @@ public class EmailSender implements Sender {
 			String verificationCode = generateVerificationCode();
 			MimeMessage message = getMessage(toAddress, CODE_SUBJECT, CODE_CONTENT + verificationCode);
 			javaMailSender.send(message);
-			redisRepository.save(toAddress, verificationCode, SAVE_SECONDS);
+			keyValueRepository.save(toAddress, verificationCode, SAVE_SECONDS);
 		} catch (MessagingException exception) {
 			throw new MailSendException("메일 전송에 실패하였습니다.");
 		}

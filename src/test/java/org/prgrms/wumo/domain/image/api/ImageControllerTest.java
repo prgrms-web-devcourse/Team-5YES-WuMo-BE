@@ -6,15 +6,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Collections;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.prgrms.wumo.domain.image.dto.request.ImageDeleteRequest;
+import org.prgrms.wumo.domain.member.model.Member;
+import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -33,11 +42,34 @@ class ImageControllerTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	@Autowired
+	private MemberRepository memberRepository;
+
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 
 	@Value("${cloud.aws.region.static}")
 	private String region;
+
+	private Member member;
+
+	@BeforeEach
+	void setup() {
+		member = memberRepository.save(
+				Member.builder()
+						.email("ted-chang@gmail.com")
+						.password("qwe12345")
+						.nickname("테드창")
+						.build()
+		);
+		setAuthentication(member.getId());
+	}
+
+	@AfterEach
+	void clean() {
+		memberRepository.deleteById(member.getId());
+		SecurityContextHolder.clearContext();
+	}
 
 	@Test
 	@DisplayName("Content-Type 이 image/* 인 이미지를 저장할 수 있다.")
@@ -98,6 +130,13 @@ class ImageControllerTest {
 		resultActions
 				.andExpect(status().isOk())
 				.andDo(print());
+	}
+
+	private void setAuthentication(Long memberId) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+				new UsernamePasswordAuthenticationToken(memberId, null, Collections.emptyList());
+		context.setAuthentication(usernamePasswordAuthenticationToken);
 	}
 
 }
