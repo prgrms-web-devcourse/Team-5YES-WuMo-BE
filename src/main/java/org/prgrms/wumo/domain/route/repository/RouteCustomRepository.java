@@ -8,7 +8,7 @@ import org.prgrms.wumo.domain.route.model.Route;
 
 public interface RouteCustomRepository {
 
-	List<Route> findAllByCursorAndSearchWord(Long cursorId, int pageSize, SortType sortType, String searchWord);
+	List<Route> findAllByCursorAndSearchWord(Route route, int pageSize, SortType sortType, String searchWord);
 
 	Optional<Route> findByPartyId(long partyId);
 }
