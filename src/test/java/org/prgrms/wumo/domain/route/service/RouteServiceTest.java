@@ -219,6 +219,7 @@ public class RouteServiceTest {
 	@DisplayName("getAllRoute 메소드는 공개 루트 목록 조회 요청 시 ")
 	class GetAllRoute {
 		//given
+		Route route = getRouteData();
 		List<Route> routes;
 
 		@Test
@@ -231,6 +232,8 @@ public class RouteServiceTest {
 			routes = List.of(getPublicRouteData2(), getPublicRouteData1());
 
 			//mocking
+			given(routeRepository.findById(anyLong()))
+					.willReturn(Optional.of(route));
 			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), any(SortType.class), any()))
 					.willReturn(routes);
 			given(routeLikeRepository.existsByRouteIdAndMemberId(anyLong(), anyLong()))
@@ -254,6 +257,8 @@ public class RouteServiceTest {
 			routes = List.of(getPublicRouteData1());
 
 			//mocking
+			given(routeRepository.findById(anyLong()))
+					.willReturn(Optional.of(route));
 			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), any(SortType.class), anyString()))
 					.willReturn(routes);
 			given(routeLikeRepository.existsByRouteIdAndMemberId(anyLong(), anyLong()))
@@ -277,6 +282,8 @@ public class RouteServiceTest {
 			routes = Collections.emptyList();
 
 			//mocking
+			given(routeRepository.findById(anyLong()))
+					.willReturn(Optional.of(route));
 			given(routeRepository.findAllByCursorAndSearchWord(any(), anyInt(), any(SortType.class), anyString()))
 					.willReturn(routes);
 
