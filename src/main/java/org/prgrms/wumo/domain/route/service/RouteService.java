@@ -77,7 +77,7 @@ public class RouteService {
 	@Transactional(readOnly = true)
 	public RouteGetAllResponses getAllRoute(RouteGetAllRequest routeGetAllRequest) {
 		List<Route> routes = routeRepository.findAllByCursorAndSearchWord(
-				routeGetAllRequest.cursorId(),
+				getCursorRoute(routeGetAllRequest.cursorId()),
 				routeGetAllRequest.pageSize(),
 				routeGetAllRequest.sortType(),
 				routeGetAllRequest.searchWord()
@@ -144,6 +144,14 @@ public class RouteService {
 			lastId = routeLikeIds.get(routeLikeIds.size() - 1);
 		}
 		return lastId;
+	}
+
+	private Route getCursorRoute(Long cursorId) {
+		Route cursorRoute = null;
+		if(cursorId != null) {
+			cursorRoute = getRouteEntity(cursorId);
+		}
+		return cursorRoute;
 	}
 
 	private Route getRouteEntity(long routeId) {

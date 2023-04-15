@@ -9,7 +9,9 @@ import org.prgrms.wumo.domain.route.model.QRoute;
 import org.prgrms.wumo.domain.route.model.Route;
 import org.springframework.stereotype.Repository;
 
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -26,12 +28,13 @@ public class RouteCustomRepositoryImpl implements RouteCustomRepository {
 	private final QLocation qLocation = QLocation.location;
 
 	@Override
-	public List<Route> findAllByCursorAndSearchWord(Long cursorId, int pageSize, SortType sortType, String searchWord) {
+	public List<Route> findAllByCursorAndSearchWord(Route route, int pageSize, SortType sortType, String searchWord) {
 
 		return jpaQueryFactory
 				.selectFrom(qRoute)
 				.where(inRouteAndHasSearchWord(searchWord),
-						ltRouteId(cursorId),
+						cursor(route, sortType),
+						cursorFilter(route, sortType),
 						isPublic())
 				.orderBy(getSortType(sortType))
 				.limit(pageSize)
@@ -60,12 +63,30 @@ public class RouteCustomRepositoryImpl implements RouteCustomRepository {
 				.exists();
 	}
 
-	private BooleanExpression ltRouteId(Long cursorId) {
-		if (cursorId == null) {
+	private Predicate cursor(Route cursorRoute, SortType sortType) {
+
+		if (cursorRoute == null) {
 			return null;
 		}
 
-		return qRoute.id.lt(cursorId);
+		switch (sortType) {
+			case LIKES:
+				return qRoute.likeCount.loe(cursorRoute.getLikeCount());
+			default:
+				return qRoute.id.lt(cursorRoute.getId());
+		}
+	}
+
+	private Predicate cursorFilter(Route cursorRoute, SortType sortType) {
+
+		if (cursorRoute == null) {
+			return null;
+		}
+
+		if (sortType == SortType.LIKES) {
+			return ExpressionUtils.or(qRoute.likeCount.ne(cursorRoute.getLikeCount()), qRoute.id.lt(cursorRoute.getId()));
+		}
+		return null;
 	}
 
 	private BooleanExpression isPublic() {
