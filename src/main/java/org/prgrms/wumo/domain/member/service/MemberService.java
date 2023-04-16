@@ -2,8 +2,8 @@ package org.prgrms.wumo.domain.member.service;
 
 import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toMember;
 import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toMemberGetResponse;
-import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toMemberLoginResponse;
 import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toMemberRegisterResponse;
+import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toMemberTokenResponse;
 import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toOauthLoginResponse;
 import static org.prgrms.wumo.global.jwt.JwtUtil.getMemberId;
 import static org.prgrms.wumo.global.jwt.JwtUtil.isValidAccess;
@@ -16,8 +16,8 @@ import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberReissueRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
-import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
+import org.prgrms.wumo.domain.member.dto.response.MemberTokenResponse;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.global.event.MemberCreateEvent;
@@ -86,14 +86,14 @@ public class MemberService {
 	}
 
 	@Transactional
-	public MemberLoginResponse loginMember(MemberLoginRequest memberLoginRequest) {
+	public MemberTokenResponse loginMember(MemberLoginRequest memberLoginRequest) {
 		Member member = getMemberEntityByEmail(memberLoginRequest.email());
 		validatePassword(member, memberLoginRequest.password());
 
 		String memberId = String.valueOf(member.getId());
 		WumoJwt wumoJwt = getWumoJwt(memberId);
 
-		return toMemberLoginResponse(wumoJwt);
+		return toMemberTokenResponse(wumoJwt);
 	}
 
 	@Transactional
@@ -103,9 +103,8 @@ public class MemberService {
 	}
 
 	@Transactional
-	public MemberLoginResponse reissueMember(MemberReissueRequest memberReissueRequest) {
+	public MemberTokenResponse reissueMember(MemberReissueRequest memberReissueRequest, String refreshToken) {
 		String accessToken = memberReissueRequest.accessToken();
-		String refreshToken = memberReissueRequest.refreshToken();
 		jwtTokenProvider.validateToken(refreshToken);
 		String memberId = jwtTokenProvider.extractMember(accessToken);
 
@@ -116,7 +115,7 @@ public class MemberService {
 		keyValueRepository.delete(memberId);
 		WumoJwt wumoJwt = getWumoJwt(memberId);
 
-		return toMemberLoginResponse(wumoJwt);
+		return toMemberTokenResponse(wumoJwt);
 	}
 
 	@Transactional(readOnly = true)

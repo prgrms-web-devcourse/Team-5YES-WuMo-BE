@@ -4,6 +4,7 @@ import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
 import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
+import org.prgrms.wumo.domain.member.dto.response.MemberTokenResponse;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.global.jwt.WumoJwt;
 import org.prgrms.wumo.global.oauth.dto.OauthLoginResponse;
@@ -26,8 +27,14 @@ public class MemberMapper {
 		return new MemberRegisterResponse(memberId);
 	}
 
-	public static MemberLoginResponse toMemberLoginResponse(WumoJwt wumoJwt) {
+	public static MemberLoginResponse toMemberLoginResponse(MemberTokenResponse memberTokenResponse) {
 		return new MemberLoginResponse(
+				memberTokenResponse.grantType(),
+				memberTokenResponse.accessToken());
+	}
+
+	public static MemberTokenResponse toMemberTokenResponse(WumoJwt wumoJwt) {
+		return new MemberTokenResponse(
 				wumoJwt.getGrantType(),
 				wumoJwt.getAccessToken(),
 				wumoJwt.getRefreshToken());

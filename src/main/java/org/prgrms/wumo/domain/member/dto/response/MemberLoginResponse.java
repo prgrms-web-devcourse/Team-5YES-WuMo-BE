@@ -8,9 +8,6 @@ public record MemberLoginResponse(
 	String grantType,
 
 	@Schema(description = "액세스토큰", example = "토큰값", requiredMode = Schema.RequiredMode.REQUIRED)
-	String accessToken,
-
-	@Schema(description = "리프레시토큰", example = "토큰값", requiredMode = Schema.RequiredMode.REQUIRED)
-	String refreshToken
+	String accessToken
 ) {
 }
