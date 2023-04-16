@@ -28,8 +28,8 @@ import org.prgrms.wumo.domain.member.dto.request.MemberNicknameCheckRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberRegisterRequest;
 import org.prgrms.wumo.domain.member.dto.request.MemberUpdateRequest;
 import org.prgrms.wumo.domain.member.dto.response.MemberGetResponse;
-import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
+import org.prgrms.wumo.domain.member.dto.response.MemberTokenResponse;
 import org.prgrms.wumo.domain.member.model.Member;
 import org.prgrms.wumo.domain.member.repository.MemberRepository;
 import org.prgrms.wumo.global.exception.ExceptionMessage;
@@ -182,7 +182,7 @@ public class MemberServiceTest {
 					.willReturn(wumoJwt);
 
 			//when
-			MemberLoginResponse result = memberService.loginMember(memberLoginRequest);
+			MemberTokenResponse result = memberService.loginMember(memberLoginRequest);
 
 			//then
 			assertThat(result).usingRecursiveComparison().isEqualTo(wumoJwt);
