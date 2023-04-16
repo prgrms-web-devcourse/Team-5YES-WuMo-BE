@@ -1,5 +1,6 @@
 package org.prgrms.wumo.domain.member.api;
 
+import javax.servlet.http.Cookie;
 import javax.validation.Valid;
 
 import org.prgrms.wumo.domain.member.dto.request.MemberCodeCheckRequest;
@@ -129,5 +130,13 @@ public class MemberController {
 
 		memberService.updateMemberPassword(memberPasswordUpdateRequest);
 		return ResponseEntity.ok().build();
+	}
+
+	private Cookie generateTokenCookie(String refreshToken) {
+		Cookie cookie = new Cookie("refreshToken", refreshToken);
+		cookie.setMaxAge(60 * 60 * 24 * 7);
+		cookie.setHttpOnly(true);
+		cookie.setSecure(true);
+		return cookie;
 	}
 }
