@@ -139,4 +139,11 @@ public class MemberController {
 		cookie.setSecure(true);
 		return cookie;
 	}
+
+	private Cookie generateExpiredTokenCookie() {
+		Cookie cookie = new Cookie("refreshToken", "");
+		cookie.setMaxAge(0);
+		return cookie;
+	}
+
 }
