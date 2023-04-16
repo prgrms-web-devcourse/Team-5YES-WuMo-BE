@@ -101,9 +101,11 @@ public class MemberController {
 
 	@DeleteMapping("/logout")
 	@Operation(summary = "로그아웃")
-	public ResponseEntity<Void> logoutMember() {
+	public ResponseEntity<Void> logoutMember(
+			HttpServletResponse httpServletResponse) {
 
 		memberService.logoutMember();
+		httpServletResponse.addCookie(generateExpiredTokenCookie());
 		return ResponseEntity.ok().build();
 	}
 
