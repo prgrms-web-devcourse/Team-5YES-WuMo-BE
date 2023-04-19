@@ -1,5 +1,6 @@
 package org.prgrms.wumo.global.jwt;
 
+import org.springframework.boot.web.server.Cookie;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +29,7 @@ public class CookieProvider {
         return ResponseCookie.from(REFRESH_TOKEN, value)
                 .httpOnly(true)
                 .secure(true)
-                .path("/");
+                .path("/")
+                .sameSite(Cookie.SameSite.NONE.attributeValue());
     }
 }
