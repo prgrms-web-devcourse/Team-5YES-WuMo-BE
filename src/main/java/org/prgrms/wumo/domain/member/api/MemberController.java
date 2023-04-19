@@ -2,8 +2,6 @@ package org.prgrms.wumo.domain.member.api;
 
 import static org.prgrms.wumo.domain.member.mapper.MemberMapper.toMemberLoginResponse;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.prgrms.wumo.domain.member.dto.request.MemberCodeCheckRequest;
@@ -19,7 +17,10 @@ import org.prgrms.wumo.domain.member.dto.response.MemberLoginResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberRegisterResponse;
 import org.prgrms.wumo.domain.member.dto.response.MemberTokenResponse;
 import org.prgrms.wumo.domain.member.service.MemberService;
+import org.prgrms.wumo.global.jwt.CookieProvider;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,6 +44,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
 	private final MemberService memberService;
+	private final CookieProvider cookieProvider;
 
 	@GetMapping("/send-code")
 	@Operation(summary = "이메일 인증코드 전송")
@@ -91,34 +93,37 @@ public class MemberController {
 	@PostMapping("/login")
 	@Operation(summary = "로그인")
 	public ResponseEntity<MemberLoginResponse> loginMember(
-			@RequestBody @Valid MemberLoginRequest memberLoginRequest,
-			HttpServletResponse httpServletResponse) {
+			@RequestBody @Valid MemberLoginRequest memberLoginRequest) {
 
 		MemberTokenResponse memberTokenResponse = memberService.loginMember(memberLoginRequest);
-		httpServletResponse.addCookie(generateTokenCookie(memberTokenResponse.refreshToken()));
-		return ResponseEntity.ok(toMemberLoginResponse(memberTokenResponse));
+		ResponseCookie responseCookie = cookieProvider.generateTokenCookie(memberTokenResponse.refreshToken());
+		return ResponseEntity.ok()
+				.header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+				.body(toMemberLoginResponse(memberTokenResponse));
 	}
 
 	@DeleteMapping("/logout")
 	@Operation(summary = "로그아웃")
-	public ResponseEntity<Void> logoutMember(
-			HttpServletResponse httpServletResponse) {
+	public ResponseEntity<Void> logoutMember() {
 
 		memberService.logoutMember();
-		httpServletResponse.addCookie(generateExpiredTokenCookie());
-		return ResponseEntity.ok().build();
+		ResponseCookie responseCookie = cookieProvider.generateResetTokenCookie();
+		return ResponseEntity.ok()
+				.header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+				.build();
 	}
 
 	@PostMapping("/reissue")
 	@Operation(summary = "토큰 재발급")
 	public ResponseEntity<MemberLoginResponse> reissueMember(
 			@CookieValue String refreshToken,
-			@RequestBody @Valid MemberReissueRequest memberReissueRequest,
-			HttpServletResponse httpServletResponse) {
+			@RequestBody @Valid MemberReissueRequest memberReissueRequest) {
 
 		MemberTokenResponse memberTokenResponse = memberService.reissueMember(memberReissueRequest, refreshToken);
-		httpServletResponse.addCookie(generateTokenCookie(refreshToken));
-		return ResponseEntity.ok(toMemberLoginResponse(memberTokenResponse));
+		ResponseCookie responseCookie = cookieProvider.generateTokenCookie(memberTokenResponse.refreshToken());
+		return ResponseEntity.ok()
+				.header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+				.body(toMemberLoginResponse(memberTokenResponse));
 	}
 
 	@GetMapping("/me")
@@ -144,19 +149,4 @@ public class MemberController {
 		memberService.updateMemberPassword(memberPasswordUpdateRequest);
 		return ResponseEntity.ok().build();
 	}
-
-	private Cookie generateTokenCookie(String refreshToken) {
-		Cookie cookie = new Cookie("refreshToken", refreshToken);
-		cookie.setMaxAge(60 * 60 * 24 * 7);
-		cookie.setHttpOnly(true);
-		cookie.setSecure(true);
-		return cookie;
-	}
-
-	private Cookie generateExpiredTokenCookie() {
-		Cookie cookie = new Cookie("refreshToken", "");
-		cookie.setMaxAge(0);
-		return cookie;
-	}
-
 }
